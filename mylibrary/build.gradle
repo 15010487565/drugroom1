@@ -1,0 +1,93 @@
+apply plugin: 'com.android.library'
+
+buildscript {
+    repositories {
+        mavenCentral()
+
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.1'
+    }
+}
+android {
+    signingConfigs {
+//        config {
+//            keyAlias 'quanka'
+//            keyPassword 'bigdata123456'
+//            storeFile file('D:/quanka.jks')
+//            storePassword 'bigdata123456'
+//        }
+    }
+    dexOptions {
+        preDexLibraries = false
+        javaMaxHeapSize "4g"
+//        incremental true
+    }
+
+    compileSdkVersion 24
+    buildToolsVersion '25.0.3'
+    defaultConfig {
+        multiDexEnabled true
+        minSdkVersion 17
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+//        abiFilters 'armeabi', "armeabi-v7a"
+    }
+    buildTypes {
+        debug {
+            debuggable true
+            jniDebuggable true
+            zipAlignEnabled true
+            minifyEnabled false
+            multiDexEnabled true
+            shrinkResources true
+//            signingConfig signingConfigs.config
+            // 打包时混淆
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+            debuggable true
+            jniDebuggable true
+            zipAlignEnabled true
+            multiDexEnabled true
+            //是否混淆
+            minifyEnabled false
+            // 打包去除没有用到的资源
+            shrinkResources true
+//            signingConfig signingConfigs.config
+            // 打包时混淆
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets.main{
+        jniLibs.srcDir 'libs'
+        jni.srcDirs = []
+    }
+//    去掉第三方jar包中重复的类
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/maven/com.squareup.okio/okio/pom.xml'
+        exclude 'META-INF/maven/com.squareup.okio/okio/pom.properties'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    testCompile 'junit:junit:4.12'
+    compile files('libs/okhttp-3.3.1.jar')
+    compile files('libs/okio-1.8.0.jar')
+    compile 'jp.wasabeef:glide-transformations:2.0.1'
+}

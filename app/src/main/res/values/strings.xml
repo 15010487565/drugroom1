@@ -1,0 +1,15 @@
+<resources>
+    <string name="home">首页</string>
+    <string name="recentchat">消息</string>
+    <string name="me">我的</string>
+    <string name="mevip">我的会员</string>
+
+    <string name="moredrugstore">查看更多药店信息</string>
+    <string name="getrugstorenumber">获取药店联系方式</string>
+    <string name="morelook">被更多药店查看</string>
+
+    <string name="opinionfeedback">意见反馈</string>
+    <string name="aboutme">关于我们</string>
+
+    <string name="register">注册</string>
+</resources>

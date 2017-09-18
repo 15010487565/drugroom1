@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:clickable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center_horizontal"
+    android:background="@color/background_f3f3f3"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_simple_topbar" />
+
+    <ImageView
+        android:id="@+id/settingbindinghead_head"
+        android:layout_marginTop="@dimen/height_45"
+        android:layout_width="@dimen/height_50"
+        android:layout_height="@dimen/height_50"
+        android:contentDescription="@null"
+        android:src="@mipmap/defaulthead" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mevipfragment_head"
+        android:layout_marginTop="@dimen/margin_10"
+        android:duplicateParentState="true"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="当前绑定手机号"
+        android:textColor="@color/black_33"
+        android:textSize="@dimen/textsize_18" />
+    <TextView
+        android:id="@+id/settingbindinghead_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mevipfragment_head"
+        android:layout_marginTop="@dimen/margin_10"
+        android:duplicateParentState="true"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="**********"
+        android:textColor="@color/black_66"
+        android:textSize="@dimen/textsize_18" />
+    <Button
+        android:id="@+id/updatamobile"
+        android:text="更改手机号"
+        style="@style/login_button" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mevipfragment_head"
+        android:layout_marginTop="@dimen/margin_10"
+        android:duplicateParentState="true"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:gravity="center"
+        android:layout_marginLeft="@dimen/margin_20"
+        android:layout_marginRight="@dimen/margin_20"
+        android:text="为确保账号安全，更换手机号码需验证手机号"
+        android:textColor="@color/black_99"
+        android:textSize="@dimen/textsize_14" />
+</LinearLayout>

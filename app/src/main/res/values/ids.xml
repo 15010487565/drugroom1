@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="main_topbar_add_right" type="id"></item>
+    <item name="setting" type="id"/>
+    <item name="me_func_vipsupplier" type="id"/>
+    <item name="me_func_drugstoreneed" type="id"/>
+    <item name="me_func_supplierchat" type="id"/>
+    <item name="me_func_good" type="id"/>
+
+    <item name="me_account_head" type="id"/>
+    <item name="me_account_name" type="id"/>
+    <item name="me_account_gender" type="id"/>
+    <item name="me_account_region" type="id"/>
+</resources>

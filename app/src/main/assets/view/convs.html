@@ -1,0 +1,37 @@
+	{{if (con_lists&& con_lists.length>0)}}
+		{{each con_lists as value i}}
+			<li class="post-item" id="{{value.id}}">
+				<div class="avt-box fl">
+					<img src="" onerror="defaultAvatar($(this))">
+				</div>
+				<div class="pi-r">
+					<div class="p-auth">
+						<span class="u-name ellipsis font1" >{{value.username}}</span>
+					</div>
+					<div class="p-cont clearfix">
+						{{#value.cont}}
+					</div>
+					<div class="clearfix post-foot">
+						<div class="gray1 fl">{{value.ts | dateFormat:'yyyy-MM-dd hh:mm:ss'}}</div>
+						<div class="prase fr"><span class="prase-num">{{value.praiseUsers | count}}</span></div>
+						<div class="reply-btn fr">
+							<b class="reply-icon">{{value.replyList | count}}<input style="visibility:hidden;"/></b>
+						</div>
+					</div>
+					<div class="reply-blk clearfix {{if !(value.replyList && value.replyList.length)}}hidden{{/if}}">
+						<b class="tri-up fl"></b>
+						{{if (value.replyList && value.replyList.length)}}
+								{{each value.replyList as value1 j}}
+								<!-- <p class="reply-item" id="{{value1.id}}"><a mid="{{value1.member_id}}" class="reply">{{value1.name}}</a> -->
+								<p class="reply-item" id="{{value1.id}}"><a class="reply">{{value1.nickNameFrom}}</a>
+								{{if value1.nickNameTo}}
+								<span style="margin:0 2px;">回复</span><a>{{value1.nickNameTo}}</a>
+								{{/if}} 
+								：{{#value1.cont}} </p>
+								{{/each}}
+						{{/if}}
+					</div>
+				</div>
+			</li>
+		{{/each}}
+	{{/if}}	

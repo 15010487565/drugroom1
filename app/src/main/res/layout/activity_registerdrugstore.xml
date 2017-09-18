@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:clickable="true"
+    android:focusableInTouchMode="true"
+    android:fitsSystemWindows="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include
+        layout="@layout/view_simple_topbar"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/height_40"
+        android:layout_marginRight="@dimen/height_40"
+        android:layout_marginTop="@dimen/height_40"
+        android:textSize="@dimen/textsize_18"
+        android:textColor="@color/black_33"
+        android:text="请填写请柬上的邀请码"
+        />
+    <EditText
+        android:id="@+id/invitationcode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/height_40"
+        android:layout_marginRight="@dimen/height_40"
+        android:layout_marginTop="@dimen/margin_20"
+        android:textSize="@dimen/textsize_18"
+        android:background="@null"
+        android:textColor="@color/black_66"
+        android:textColorHint="@color/black_99"
+        android:hint="请输入邀请码" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin_1"
+        android:layout_marginLeft="@dimen/height_40"
+        android:layout_marginRight="@dimen/height_40"
+        android:background="@color/line_c3"
+        />
+    <Button
+        android:id="@+id/next"
+        android:text="@string/next"
+        style="@style/login_button" />
+</LinearLayout>

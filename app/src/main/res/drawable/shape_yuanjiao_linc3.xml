@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">    <!-- 填充的颜色 -->
+    <solid android:color="@color/background_f3f3f3"/>
+    <corners android:radius="2.5dp"/>
+    <stroke android:color="@color/line_c3"
+        android:width="@dimen/margin_1"/>
+</shape>

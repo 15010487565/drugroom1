@@ -1,0 +1,110 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="login_button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_below">@id/linear_phone</item>
+        <item name="android:layout_height">@dimen/height_45</item>
+        <item name="android:layout_marginTop">@dimen/height_45</item>
+        <item name="android:layout_marginLeft">@dimen/margin_20</item>
+        <item name="android:layout_marginRight">@dimen/margin_20</item>
+        <item name="android:background">@drawable/shape_yuanjiao_main</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/textsize_18</item>
+    </style>
+
+    <style name="login_linear">
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/height_45</item>
+        <item name="android:layout_above">@id/lin2</item>
+        <item name="android:layout_marginLeft">@dimen/margin_20</item>
+        <item name="android:layout_marginRight">@dimen/margin_20</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="login_textview">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginLeft">@dimen/margin_20</item>
+        <item name="android:background">@null</item>
+        <item name="android:inputType">number</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textSize">@dimen/textsize_16</item>
+        <item name="android:textColor">@color/black_66</item>
+        <item name="android:textColorHint">@color/black_99</item>
+    </style>
+    <style name="me_textview">
+        <item name="android:layout_marginLeft">@dimen/margin_20</item>
+        <item name="android:background">@null</item>
+        <item name="android:inputType">number</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textSize">@dimen/textsize_16</item>
+        <item name="android:textColor">@color/black_66</item>
+        <item name="android:textColorHint">@color/black_99</item>
+    </style>
+    <style name="password_textview" parent="login_textview">
+        <item name="android:inputType">textPassword</item>
+    </style>
+
+    <style name="home_textview">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/margin_20</item>
+        <item name="android:background">@null</item>
+        <item name="android:inputType">number</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/black_66</item>
+        <item name="android:textColorHint">@color/black_99</item>
+    </style>
+
+    <style name="homebulldata_textview" parent="home_textview">
+        <item name="android:textSize">@dimen/textsize_20</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="style_textcolor_black_33">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@color/black_33</item>
+    </style>
+
+    <style name="style_textcolor_black_66">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@color/black_66</item>
+    </style>
+
+    <style name="style_textcolor_black_99">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@color/black_99</item>
+    </style>
+
+    <style name="style_textcolor_top_bar">
+        <item name="android:textSize">18dp</item>
+        <item name="android:textColor">@color/top_bar_background</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="CustomCheckBoxTheme" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/selector_person</item>
+    </style>
+    <style name="take_photo_anim" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/pop_show_anim</item>
+        <item name="android:windowExitAnimation">@anim/pop_exit_anim</item>
+    </style>
+</resources>

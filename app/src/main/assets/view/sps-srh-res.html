@@ -1,0 +1,16 @@
+		<ul class="sps-srh-res">
+			{{each space_list as value i}}
+				<li class="clearfix">
+					<div class="space-logo rainbow-{{value.name | firstLetter}}">新三农</div>
+					<div  class="r-blk clearfix">
+						<!--{{if value.state}}-->
+						<!--<div class="joined join-sts fr"></div>-->
+						<!--{{else}}-->
+						<div class="unjoined join-sts fr" sid ="{{value.id}}"></div>
+						<!--{{/if}}-->
+						<div><span class="space-name">{{value.name}}</span><span class="time"></span></div>
+						<div class="space-brief">{{value.intro}}</div>
+					</div>
+				</li>
+			{{/each}}
+		</ul>

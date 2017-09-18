@@ -1,0 +1,179 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_simple_topbar" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ScrollView
+            android:scrollbars="none"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical">
+
+                <com.bigkoo.convenientbanner.ConvenientBanner
+                    android:id="@+id/home_convenientBanner"
+                    app:canLoop="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp">
+
+                </com.bigkoo.convenientbanner.ConvenientBanner>
+                <TextView
+                    android:id="@+id/count"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_40"
+                    android:gravity="center_vertical|left"
+                    android:text="XX市加盟药店共***家"
+                    android:textColor="@color/white"
+                    android:paddingLeft="@dimen/margin_15"
+                    android:background="@color/top_bar_background"
+                    android:textSize="@dimen/textsize_16" />
+                <www.xcd.com.mylibrary.base.view.XListViewHome
+                    android:id="@+id/listview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:divider="@color/line_c3"
+                    android:scrollbars="none"
+                    android:paddingLeft="@dimen/margin_15"
+                    android:paddingRight="@dimen/margin_15"
+                    android:dividerHeight="@dimen/margin_1">
+
+                </www.xcd.com.mylibrary.base.view.XListViewHome>
+
+                <LinearLayout
+                    android:id="@+id/home_viphint"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/margin_20"
+                    android:visibility="gone"
+                    android:background="@color/background_f3f3f3"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/home_dredgeviphint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_3"
+                        android:gravity="center"
+                        android:text="想查看更多药店数量，快去开通会员"
+                        android:textColor="@color/black_99"
+                        android:textSize="@dimen/textsize_16" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_5"
+                        android:gravity="center"
+                        android:text="开通会员可以直接与药店沟通"
+                        android:textColor="@color/black_99"
+                        android:textSize="@dimen/textsize_16" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/nulllinear"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/height_80"
+                        android:layout_height="@dimen/height_80"
+                        android:layout_marginTop="@dimen/margin_45"
+                        android:background="@mipmap/medicine_black" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_45"
+                        android:gravity="center"
+                        android:text="当前地区暂未开放，敬请期待"
+                        android:textColor="@color/black_99"
+                        android:textSize="@dimen/textsize_18" />
+
+                    <Button
+                        android:id="@+id/homelookovernull"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/textsize_16"
+                        android:layout_marginTop="@dimen/margin_25"
+                        android:background="@drawable/shape_yuanjiao_main"
+                        android:paddingLeft="@dimen/margin_20"
+                        android:paddingRight="@dimen/margin_20"
+                        android:text="查看其他地区"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+        <LinearLayout
+            android:id="@+id/address_select"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"
+            android:background="@color/background_f3f3f3"
+            android:orientation="vertical">
+            <LinearLayout
+                android:padding="@dimen/margin_20"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/btn_off"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/textsize_18"
+                    android:gravity="center_vertical"
+                    android:text="取消"
+                    android:textColor="@color/top_bar_background" />
+                <TextView
+                    android:id="@+id/btn_confirm"
+                    android:layout_width="0dp"
+                    android:textSize="@dimen/textsize_18"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|right"
+                    android:text="完成"
+                    android:textColor="@color/top_bar_background" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginBottom="80dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <com.medicinedot.www.medicinedot.threelevelganged.WheelView
+                    android:id="@+id/id_province"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+                </com.medicinedot.www.medicinedot.threelevelganged.WheelView>
+
+                <com.medicinedot.www.medicinedot.threelevelganged.WheelView
+                    android:id="@+id/id_city"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+                <com.medicinedot.www.medicinedot.threelevelganged.WheelView
+                    android:id="@+id/id_district"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>
+
