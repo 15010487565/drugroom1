@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.rong.imkit.RongIM;
 import www.xcd.com.mylibrary.base.fragment.BaseFragment;
 import www.xcd.com.mylibrary.base.view.XListViewHome;
 import www.xcd.com.mylibrary.utils.ToastUtil;
@@ -125,8 +126,11 @@ public class HomeDrugstoreFragment extends BaseFragment implements
                 case HOMECHATIMAGE:
                     Bundle bundle_car = msg.getData();
                     int position_chat = bundle_car.getInt("position");
-                    String userid = bundle_car.getString("userid");
-                    ToastUtil.showToast("点击的是第" + position_chat + "item" + ",他的id=" + userid);
+                    String uid = bundle_car.getString("uid");
+                    ToastUtil.showToast("点击的是第" + position_chat + "item" + ",他的uid=" + uid);
+                    if (RongIM.getInstance() != null) {
+                        RongIM.getInstance().startPrivateChat(getActivity(), uid,data.get(position_chat).getName());
+                    }
                     break;
             }
         }

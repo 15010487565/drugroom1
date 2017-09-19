@@ -31,6 +31,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.rong.imkit.RongIM;
+import io.rong.imlib.RongIMClient;
+import io.rong.imlib.model.UserInfo;
 import www.xcd.com.mylibrary.activity.PermissionsActivity;
 import www.xcd.com.mylibrary.base.activity.SimpleTopbarActivity;
 import www.xcd.com.mylibrary.utils.ClassUtils;
@@ -39,12 +42,13 @@ import www.xcd.com.mylibrary.utils.XCDSharePreference;
 
 import static www.xcd.com.mylibrary.activity.PermissionsActivity.PERMISSIONS_GRANTED;
 
-public class LoginActivity extends SimpleTopbarActivity {
+public class LoginActivity extends SimpleTopbarActivity implements RongIM.UserInfoProvider{
 
     private EditText login_phone, login_password;
     private Button login;
     private TextView register, forget_password;
-
+    public static boolean isRongYunConnect = false;//记录融云是否连接成功
+    private final static String TAG = "TAG_融云";
     @Override
     protected Object getTopbarTitle() {
         return "登录";
@@ -130,28 +134,34 @@ public class LoginActivity extends SimpleTopbarActivity {
             switch (requestCode) {
                 case 100:
                     Logininfo info = JSON.parseObject(returnData, Logininfo.class);
-                    String utype = info.getData().getUtype();
-                    String uid = info.getData().getUid();
+                    Logininfo.DataBean data = info.getData();
+                    String rongtoken = data.getRongtoken();
+                    XCDSharePreference.getInstantiation(this).setSharedPreferences("rongtoken", rongtoken);
+                    String ronguserId = data.getRonguserId();
+                    XCDSharePreference.getInstantiation(this).setSharedPreferences("ronguserId", ronguserId);
+                    connect(rongtoken);//连接融云
+                    String utype = data.getUtype();
+                    String uid = data.getUid();
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("uid", uid);
-                    String strname = info.getData().getName();
+                    String strname = data.getName();
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("name", strname);
-                    String content = info.getData().getContent();
+                    String content = data.getContent();
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("content", content);
-                    String sex = info.getData().getSex();
+                    String sex = data.getSex();
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("sex", sex);
-                    String headimage = info.getData().getHeadimg();
+                    String headimage = data.getHeadimg();
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("headimg", headimage);
-                    String token = info.getData().getToken();
+                    String token = data.getToken();
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("token", token);
-                    String straddress = info.getData().getRegion();
+                    String straddress = data.getRegion();
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("region", straddress);
-                    String detailednessaddress = info.getData().getAddress();
+                    String detailednessaddress = data.getAddress();
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("address", detailednessaddress);
-                    String phone = info.getData().getPhone();
+                    String phone = data.getPhone();
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("phone", phone);
-                    String is_member = info.getData().getIs_member();
+                    String is_member = data.getIs_member();
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("is_member", is_member);
-                    String endtime = info.getData().getEndtime();
+                    String endtime = data.getEndtime();
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("endtime", endtime);
                     Log.e("TAG_","region="+straddress+";endtime="+endtime);
                     if ("1".equals(utype)) {
@@ -166,6 +176,17 @@ public class LoginActivity extends SimpleTopbarActivity {
                 case 101:
                     CityListAllInfo cityallinfo = JSON.parseObject(returnData, CityListAllInfo.class);
                     creatCityList(cityallinfo);
+                    break;
+                case 102:
+//                    RongYunUserInfo result = JSON.parseObject(returnData, RongYunUserInfo.class);
+//                    RongYunUserInfo.FragmentMeInfoData userdata = result.getData();
+//                    String nickname = userdata.getNickname();
+//                    String image_head = userdata.getUserpicture();
+//                    String userid = userdata.getUser_id();
+//                    if (nickname!=null&&image_head!=null&&userid!=null){
+//                        RongIM.getInstance().refreshUserInfoCache(new UserInfo(userid, nickname, Uri.parse(GlobalParam.IP+image_head)));
+//
+//                    }
                     break;
             }
         } else if (returnCode == 300) {
@@ -286,5 +307,50 @@ public class LoginActivity extends SimpleTopbarActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    /**
+     * 连接融云服务器
+     */
+    private void connect(String token) {
+        RongIM.connect(token, new RongIMClient.ConnectCallback() {
+
+            /**
+             * Token 错误，在线上环境下主要是因为 Token 已经过期，您需要向 App Server 重新请求一个新的 Token
+             */
+            @Override
+            public void onTokenIncorrect() {
+                Log.e(TAG, "Token 错误---onTokenIncorrect---" + '\n');
+                isRongYunConnect = false;
+            }
+
+            /**
+             * 连接融云成功
+             * @param userid 当前 token
+             */
+            @Override
+            public void onSuccess(final String userid) {
+                Log.e(TAG, "连接融云成功---onSuccess---用户ID:" + userid + '\n');
+                isRongYunConnect = true;
+            }
+
+            /**
+             * 连接融云失败
+             * @param errorCode 错误码，可到官网 查看错误码对应的注释
+             */
+            @Override
+            public void onError(RongIMClient.ErrorCode errorCode) {
+                Log.e(TAG, "连接融云失败, 错误码: " + errorCode + '\n');
+                isRongYunConnect = false;
+            }
+        });
+    }
+
+    @Override
+    public UserInfo getUserInfo(String s) {
+//        Map<String, Object> params = new HashMap<String, Object>();
+//        params.put("id", userid);
+//        params.put("token", token);
+//        okHttpPost(102, GlobalParam.FRAGMENTWODEINFO, params);
+        return null;
     }
 }

@@ -20,8 +20,6 @@ import com.medicinedot.www.medicinedot.fragment.HomeSupplierFragment;
 
 import java.util.List;
 
-import www.xcd.com.mylibrary.utils.XCDSharePreference;
-
 
 /**
  * Created by Android on 2017/8/9.
@@ -37,7 +35,7 @@ public class HomeDrugstoreFragmentAdapter extends BaseAdapter{
         this.handler = handler;
     }
     public void  setData( List<HomeDrugstoreinfo.DataBean> list){
-        is_member = XCDSharePreference.getInstantiation(context).getSharedPreferences("is_member");
+//        is_member = XCDSharePreference.getInstantiation(context).getSharedPreferences("is_member");
         this.list = list;
         notifyDataSetChanged();
     }
@@ -93,11 +91,7 @@ public class HomeDrugstoreFragmentAdapter extends BaseAdapter{
         styledText.setSpan(new TextAppearanceSpan(context, R.style.style_textcolor_black_66), 0, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styledText.setSpan(new TextAppearanceSpan(context, R.style.style_textcolor_black_99), 6, homecontext.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         hodler.home_context.setText(styledText, TextView.BufferType.SPANNABLE);
-        if ("1".equals(is_member)){
-            hodler.homechatimage.setVisibility(View.VISIBLE);
-        }else{
-            hodler.homechatimage.setVisibility(View.GONE);
-        }
+        final String uid = dataBean.getUid();
         hodler.homechatimage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,7 +99,7 @@ public class HomeDrugstoreFragmentAdapter extends BaseAdapter{
                 message.what = HomeSupplierFragment.HOMECHATIMAGE;
                 Bundle bundle = new Bundle();
                 bundle.putInt("position", position);
-                bundle.putString("userid",String.valueOf(position));
+                bundle.putString("uid",uid);
                 message.setData(bundle);
                 message.sendToTarget();
             }

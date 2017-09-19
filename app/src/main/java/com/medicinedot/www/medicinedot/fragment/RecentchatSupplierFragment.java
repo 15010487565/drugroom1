@@ -1,5 +1,6 @@
 package com.medicinedot.www.medicinedot.fragment;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,8 @@ import com.medicinedot.www.medicinedot.R;
 import java.io.IOException;
 import java.util.Map;
 
+import io.rong.imkit.fragment.ConversationListFragment;
+import io.rong.imlib.model.Conversation;
 import www.xcd.com.mylibrary.base.fragment.BaseFragment;
 
 
@@ -30,7 +33,18 @@ public class RecentchatSupplierFragment extends BaseFragment implements View.OnC
 
     @Override
     protected void initView(LayoutInflater inflater, View view) {
-
+        ConversationListFragment listFragment=new ConversationListFragment();
+        Uri uri=Uri.parse("rong://com.medicinedot.www.medicinedot").buildUpon()
+                .appendPath("conversationlist")
+                .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(),"false")
+                .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "false")
+                .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(),"false")
+                .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")
+                .build();
+        listFragment.setUri(uri);
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .add(R.id.rong_container,listFragment,null)
+                .commit();
     }
 
     @Override

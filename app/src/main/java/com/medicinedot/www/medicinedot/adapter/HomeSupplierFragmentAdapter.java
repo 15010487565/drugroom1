@@ -90,6 +90,7 @@ public class HomeSupplierFragmentAdapter extends BaseAdapter{
             hodler.home_location.setVisibility(View.GONE);
             hodler.homechatimage.setVisibility(View.GONE);
         }
+        final String uid = dataBean.getUid();
         hodler.homechatimage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -97,7 +98,7 @@ public class HomeSupplierFragmentAdapter extends BaseAdapter{
                 message.what = HomeSupplierFragment.HOMECHATIMAGE;
                 Bundle bundle = new Bundle();
                 bundle.putInt("position", position);
-                bundle.putString("userid",String.valueOf(position));
+                bundle.putString("uid",uid);
                 message.setData(bundle);
                 message.sendToTarget();
             }

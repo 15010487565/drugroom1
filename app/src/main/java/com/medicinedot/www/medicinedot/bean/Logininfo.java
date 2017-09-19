@@ -70,6 +70,24 @@ public class Logininfo implements Serializable{
         private String sex;
         private String headimg;
         private String token;
+        private String ronguserId;
+        private String rongtoken;
+
+        public String getRonguserId() {
+            return ronguserId;
+        }
+
+        public void setRonguserId(String ronguserId) {
+            this.ronguserId = ronguserId;
+        }
+
+        public String getRongtoken() {
+            return rongtoken;
+        }
+
+        public void setRongtoken(String rongtoken) {
+            this.rongtoken = rongtoken;
+        }
 
         public String getUid() {
             return uid;

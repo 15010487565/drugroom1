@@ -12,14 +12,34 @@ public class HomeSupplierinfo implements Serializable{
     /**
      * errorcode : 200
      * msg : 查询成功
-     * data : [{"uid":2,"utype":2,"name":"朱芸","region":"北京","content":"供应药品1000+种，包括药品1、药品2、药品3...","address":"北京市昌平区","sex":null,"headimg":""}]
+     * is_member : 2
+     * endtime : 
+     * count : 1
+     * data : [{"uid":"19","utype":"1","name":"Qqqqq","phone":"15727393984","region":"北京市","content":"Qqqqqqq","address":"","sex":"1","headimg":"/uploads/headimg/20170916/30983428c1bcab5fc2051e0989fc7bb3."}]
      */
 
     private String errorcode;
     private String msg;
-    private String count;
     private String is_member;
     private String endtime;
+    private String count;
+    private List<HomeSupplierinfo.DataBean> data;
+
+    public String getErrorcode() {
+        return errorcode;
+    }
+
+    public void setErrorcode(String errorcode) {
+        this.errorcode = errorcode;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
 
     public String getIs_member() {
         return is_member;
@@ -45,75 +65,50 @@ public class HomeSupplierinfo implements Serializable{
         this.count = count;
     }
 
-    private List<DataBean> data;
-
-    public String getErrorcode() {
-        return errorcode;
-    }
-
-    public void setErrorcode(String errorcode) {
-        this.errorcode = errorcode;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public List<DataBean> getData() {
+    public List<HomeSupplierinfo.DataBean> getData() {
         return data;
     }
 
-    public void setData(List<DataBean> data) {
+    public void setData(List<HomeSupplierinfo.DataBean> data) {
         this.data = data;
     }
 
     public static class DataBean {
         /**
-         * uid : 2
-         * utype : 2
-         * name : 朱芸
-         * region : 北京
-         * content : 供应药品1000+种，包括药品1、药品2、药品3...
-         * address : 北京市昌平区
-         * sex : null
-         * headimg :
+         * uid : 19
+         * utype : 1
+         * name : Qqqqq
+         * phone : 15727393984
+         * region : 北京市
+         * content : Qqqqqqq
+         * address : 
+         * sex : 1
+         * headimg : /uploads/headimg/20170916/30983428c1bcab5fc2051e0989fc7bb3.
          */
 
-        private int uid;
-        private int utype;
+        private String uid;
+        private String utype;
         private String name;
+        private String phone;
         private String region;
         private String content;
         private String address;
-        private Object sex;
+        private String sex;
         private String headimg;
-        private String phone;
 
-        public String getPhone() {
-            return phone;
-        }
-
-        public void setPhone(String phone) {
-            this.phone = phone;
-        }
-
-        public int getUid() {
+        public String getUid() {
             return uid;
         }
 
-        public void setUid(int uid) {
+        public void setUid(String uid) {
             this.uid = uid;
         }
 
-        public int getUtype() {
+        public String getUtype() {
             return utype;
         }
 
-        public void setUtype(int utype) {
+        public void setUtype(String utype) {
             this.utype = utype;
         }
 
@@ -123,6 +118,14 @@ public class HomeSupplierinfo implements Serializable{
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
         }
 
         public String getRegion() {
@@ -149,11 +152,11 @@ public class HomeSupplierinfo implements Serializable{
             this.address = address;
         }
 
-        public Object getSex() {
+        public String getSex() {
             return sex;
         }
 
-        public void setSex(Object sex) {
+        public void setSex(String sex) {
             this.sex = sex;
         }
 

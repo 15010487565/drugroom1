@@ -40,9 +40,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.rong.imkit.RongIM;
 import www.xcd.com.mylibrary.base.view.XListViewHome;
 import www.xcd.com.mylibrary.utils.ToastUtil;
-import www.xcd.com.mylibrary.utils.XCDSharePreference;
+
+import static www.xcd.com.mylibrary.utils.XCDSharePreference.getInstantiation;
 
 /**
  * Created by Android on 2017/9/5.
@@ -93,7 +95,7 @@ public class HomeSupplierFragment extends BaseThreeFragment implements
 
     @Override
     protected void initView(LayoutInflater inflater, View view) {
-        uid = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("uid");
+        uid = getInstantiation(getActivity()).getSharedPreferences("uid");
         listview = (XListViewHome) view.findViewById(R.id.listview);
         count = (TextView) view.findViewById(R.id.count);
         listview.setPullLoadEnable(false);//设置上拉刷新
@@ -116,7 +118,7 @@ public class HomeSupplierFragment extends BaseThreeFragment implements
         //初始化轮播图
         initViewPagerImage();
         //首页数据
-        String region = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("region");
+        String region = getInstantiation(getActivity()).getSharedPreferences("region");
         initData(region);
         //城市选择器
         setUpViews(view);
@@ -239,8 +241,11 @@ public class HomeSupplierFragment extends BaseThreeFragment implements
                 case HOMECHATIMAGE:
                     Bundle bundle_car = msg.getData();
                     int position_chat = bundle_car.getInt("position");
-                    String userid = bundle_car.getString("userid");
-                    ToastUtil.showToast("点击的是第" + position_chat + "item" + ",他的id=" + userid);
+                    String uid = bundle_car.getString("uid");
+                    ToastUtil.showToast("点击的是第" + position_chat + "item" + ",他的uid=" + uid);
+                    if (RongIM.getInstance() != null) {
+                        RongIM.getInstance().startPrivateChat(getActivity(), uid,data.get(position_chat).getName());
+                    }
                     break;
             }
         }
@@ -291,9 +296,9 @@ public class HomeSupplierFragment extends BaseThreeFragment implements
                         HomeSupplierinfo info = JSON.parseObject(returnData, HomeSupplierinfo.class);
                         data = info.getData();
                         String is_member = info.getIs_member();
-                        XCDSharePreference.getInstantiation(getActivity()).setSharedPreferences("is_member", is_member);
+                        getInstantiation(getActivity()).setSharedPreferences("is_member", is_member);
                         String endtime = info.getEndtime();
-                        XCDSharePreference.getInstantiation(getActivity()).setSharedPreferences("endtime", endtime);
+                        getInstantiation(getActivity()).setSharedPreferences("endtime", endtime);
                         if (data == null || data.size() == 0) {
                             nulllinear.setVisibility(View.VISIBLE);
                             home_viphint.setVisibility(View.VISIBLE);
