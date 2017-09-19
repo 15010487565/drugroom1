@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -78,17 +79,12 @@ public class HomeDrugstoreFragment extends BaseFragment implements
         adapter = new HomeDrugstoreFragmentAdapter(getActivity(), handler);
         mHandler = new Handler();
         nulllinear = (LinearLayout) view.findViewById(R.id.nulllinear);
-//        home_viphint = (LinearLayout) view.findViewById(home_viphint);
-//        home_dredgeviphint = (TextView) view.findViewById(R.id.home_dredgeviphint);
-//        SpannableString styledText = new SpannableString("想查看更多药店数量，快去开通会员");
-//        styledText.setSpan(new TextAppearanceSpan(getActivity(), R.style.style_textcolor_black_99), 0, 12, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//        styledText.setSpan(new TextAppearanceSpan(getActivity(), R.style.style_textcolor_top_bar), 12, 16, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//        home_dredgeviphint.setText(styledText, TextView.BufferType.SPANNABLE);
         homeConvenientBanner = (ConvenientBanner) view.findViewById(R.id.home_convenientBanner);
         //初始化轮播图
         initViewPagerImage();
         //首页数据
-        initData();
+        String region = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("region");
+        initData(region);
     }
 
     private void initViewPagerImage() {
@@ -96,11 +92,28 @@ public class HomeDrugstoreFragment extends BaseFragment implements
         params.put("uid", uid);
         okHttpGet(101, GlobalParam.BANNERIMG, params);
     }
-
-    private void initData() {
+    private String titleregion;
+    private void initData(String titleregion) {
+        Log.e("TAG_首页开始", "titleregion=" + titleregion);
+        if (titleregion == null || "".equals(titleregion)) {
+            titleregion = "北京市";
+        } else {
+            if (titleregion.indexOf("-") != -1) {
+                String[] split = titleregion.split("-");
+                if (split.length>1){
+                    titleregion = split[1];
+                }else {
+                    titleregion = "北京市";
+                }
+                Log.e("TAG_首页城市选择", "titleregion=" + titleregion);
+            } else {
+                titleregion = "北京市";
+            }
+        }
+        this.titleregion = titleregion;
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("uid", uid);
-        params.put("city", "北京");
+        params.put("city",titleregion);
         okHttpGet(100, GlobalParam.HOMEDATA, params);
     }
 
@@ -154,7 +167,7 @@ public class HomeDrugstoreFragment extends BaseFragment implements
                         HomeDrugstoreinfo info = JSON.parseObject(returnData, HomeDrugstoreinfo.class);
                         String infoCount = info.getCount();
                         String infocount_ = ((infoCount == null) || ("".equals(infoCount)) ? "0" : infoCount);
-                        count.setText("XX市共入住" + infocount_ + "位供应商");
+                        count.setText(titleregion+"共入住" + infocount_ + "位供应商");
                         data = info.getData();
                         adapter.setData(data);
                         listview.setAdapter(adapter);
@@ -236,7 +249,7 @@ public class HomeDrugstoreFragment extends BaseFragment implements
             public void run() {
 //                list.clear();
 //                geneItems();//获取数据
-                initData();
+//                initData();
                 onLoad();
             }
         }, 2000);

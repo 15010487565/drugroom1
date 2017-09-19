@@ -1,6 +1,7 @@
 package com.medicinedot.www.medicinedot.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -24,6 +25,7 @@ import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
+import com.medicinedot.www.medicinedot.action.MeNVipSupplierAction;
 import com.medicinedot.www.medicinedot.adapter.HomeSupplierFragmentAdapter;
 import com.medicinedot.www.medicinedot.bean.ErroeInfo;
 import com.medicinedot.www.medicinedot.bean.HomeSupplierinfo;
@@ -41,8 +43,6 @@ import java.util.Map;
 import www.xcd.com.mylibrary.base.view.XListViewHome;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
-
-import static www.xcd.com.mylibrary.utils.XCDSharePreference.context;
 
 /**
  * Created by Android on 2017/9/5.
@@ -104,6 +104,7 @@ public class HomeSupplierFragment extends BaseThreeFragment implements
         nulllinear = (LinearLayout) view.findViewById(R.id.nulllinear);
         home_viphint = (LinearLayout) view.findViewById(R.id.home_viphint);
         home_dredgeviphint = (TextView) view.findViewById(R.id.home_dredgeviphint);
+        home_dredgeviphint.setOnClickListener(this);
         SpannableString styledText = new SpannableString("想查看更多药店数量，快去开通会员");
         styledText.setSpan(new TextAppearanceSpan(getActivity(), R.style.style_textcolor_black_99), 0, 12, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styledText.setSpan(new TextAppearanceSpan(getActivity(), R.style.style_textcolor_top_bar), 12, 16, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -204,7 +205,7 @@ public class HomeSupplierFragment extends BaseThreeFragment implements
         params.put("uid", uid);
         okHttpGet(101, GlobalParam.BANNERIMG, params);
     }
-
+    private String titleregion;
     private void initData(String titleregion) {
         Log.e("TAG_首页开始", "titleregion=" + titleregion);
         if (titleregion == null || "".equals(titleregion)) {
@@ -222,6 +223,7 @@ public class HomeSupplierFragment extends BaseThreeFragment implements
                 titleregion = "北京市";
             }
         }
+        this.titleregion = titleregion;
         resetTopbarTitle(titleregion);
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("uid", uid);
@@ -258,6 +260,9 @@ public class HomeSupplierFragment extends BaseThreeFragment implements
             case R.id.btn_off:
                 address_select.setVisibility(View.GONE);
                 break;
+            case R.id.home_dredgeviphint:
+                startActivity(new Intent(getActivity(), MeNVipSupplierAction.class));
+                break;
         }
     }
 
@@ -285,6 +290,10 @@ public class HomeSupplierFragment extends BaseThreeFragment implements
                     } else {
                         HomeSupplierinfo info = JSON.parseObject(returnData, HomeSupplierinfo.class);
                         data = info.getData();
+                        String is_member = info.getIs_member();
+                        XCDSharePreference.getInstantiation(getActivity()).setSharedPreferences("is_member", is_member);
+                        String endtime = info.getEndtime();
+                        XCDSharePreference.getInstantiation(getActivity()).setSharedPreferences("endtime", endtime);
                         if (data == null || data.size() == 0) {
                             nulllinear.setVisibility(View.VISIBLE);
                             home_viphint.setVisibility(View.VISIBLE);
@@ -294,15 +303,15 @@ public class HomeSupplierFragment extends BaseThreeFragment implements
                             count.setVisibility(View.VISIBLE);
                             listview.setVisibility(View.VISIBLE);
                             nulllinear.setVisibility(View.GONE);
-                            String is_member = XCDSharePreference.getInstantiation(context).getSharedPreferences("is_member");
                             if ("1".equals(is_member)) {//会员
                                 home_viphint.setVisibility(View.GONE);
                             } else {//非会员
                                 home_viphint.setVisibility(View.VISIBLE);
                             }
+
                             String infoCount = info.getCount();
                             String infocount_ = ((infoCount == null) || ("".equals(infoCount)) ? "0" : infoCount);
-                            count.setText("XX市加盟药店共" + infocount_ + "家");
+                            count.setText(titleregion+"加盟药店共" + infocount_ + "家");
                             info.getCount();
                             adapter.setData(data);
                             listview.setAdapter(adapter);
