@@ -14,11 +14,16 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.bean.HomeDrugstoreinfo;
+import com.medicinedot.www.medicinedot.entity.GlobalParam;
 import com.medicinedot.www.medicinedot.fragment.HomeSupplierFragment;
 
 import java.util.List;
+
+import www.xcd.com.mylibrary.utils.GlideCircleTransform;
 
 
 /**
@@ -91,6 +96,16 @@ public class HomeDrugstoreFragmentAdapter extends BaseAdapter{
         styledText.setSpan(new TextAppearanceSpan(context, R.style.style_textcolor_black_66), 0, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styledText.setSpan(new TextAppearanceSpan(context, R.style.style_textcolor_black_99), 6, homecontext.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         hodler.home_context.setText(styledText, TextView.BufferType.SPANNABLE);
+        String headimg = dataBean.getHeadimg();
+        Glide.with(context.getApplicationContext())
+                .load(GlobalParam.IP+headimg)
+                .centerCrop()
+                .crossFade()
+                .transform(new GlideCircleTransform(context))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.mipmap.upload_image_side)
+                .error(R.mipmap.upload_image_side)
+                .into( hodler.titleimage);
         final String uid = dataBean.getUid();
         hodler.homechatimage.setOnClickListener(new View.OnClickListener() {
             @Override

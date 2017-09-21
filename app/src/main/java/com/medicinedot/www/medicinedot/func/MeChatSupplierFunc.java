@@ -2,12 +2,9 @@ package com.medicinedot.www.medicinedot.func;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.view.Gravity;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.medicinedot.www.medicinedot.R;
-import com.medicinedot.www.medicinedot.activity.ChatSupplierActivity;
+import com.medicinedot.www.medicinedot.activity.MessageInformActivity;
 
 import www.xcd.com.mylibrary.func.BaseFunc;
 
@@ -42,7 +39,7 @@ public class MeChatSupplierFunc extends BaseFunc {
 
 	@Override
 	public void onclick() {
-		Intent intent = new Intent(getActivity(), ChatSupplierActivity.class);
+		Intent intent = new Intent(getActivity(), MessageInformActivity.class);
 		getActivity().startActivity(intent);
 	}
 //	@Override
@@ -53,22 +50,22 @@ public class MeChatSupplierFunc extends BaseFunc {
 //		funcView.setLayoutParams(params2);
 //		return funcView;
 //	}
-	@Override
-	protected void initCustomView(LinearLayout customView) {
-		super.initCustomView(customView);
-		//创建保存布局参数的对象
-		LinearLayout.LayoutParams params =
-				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT
-						, LinearLayout.LayoutParams.WRAP_CONTENT);
-		TextView textview=new TextView(getActivity());
-		params.leftMargin = (int) getActivity().getResources().getDimension(R.dimen.margin_10);
-		textview.setLayoutParams(params);//设置布局参数
-		textview.setText("99+");
-		textview.setPadding(5,5,5,5);
-		textview.setBackgroundResource(R.drawable.shape_reddot);
-		textview.setTextSize(12);
-		textview.setGravity(Gravity.LEFT);
-		textview.setTextColor(getActivity().getColor(R.color.white));
-		customView.addView(textview);
-	}
+//	@Override
+//	protected void initCustomView(LinearLayout customView) {
+//		super.initCustomView(customView);
+//		//创建保存布局参数的对象
+//		LinearLayout.LayoutParams params =
+//				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT
+//						, LinearLayout.LayoutParams.WRAP_CONTENT);
+//		TextView textview=new TextView(getActivity());
+//		params.leftMargin = (int) getActivity().getResources().getDimension(R.dimen.margin_10);
+//		textview.setLayoutParams(params);//设置布局参数
+//		textview.setText("99+");
+//		textview.setPadding(5,5,5,5);
+//		textview.setBackgroundResource(R.drawable.shape_reddot);
+//		textview.setTextSize(12);
+//		textview.setGravity(Gravity.LEFT);
+//		textview.setTextColor(getActivity().getColor(R.color.white));
+//		customView.addView(textview);
+//	}
 }

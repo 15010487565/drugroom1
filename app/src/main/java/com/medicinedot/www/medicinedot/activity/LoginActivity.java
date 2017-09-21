@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -20,6 +21,7 @@ import com.alibaba.fastjson.JSON;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.bean.CityListAllInfo;
 import com.medicinedot.www.medicinedot.bean.Logininfo;
+import com.medicinedot.www.medicinedot.bean.RongYunUserInfo;
 import com.medicinedot.www.medicinedot.entity.GlobalParam;
 
 import org.xmlpull.v1.XmlSerializer;
@@ -42,7 +44,7 @@ import www.xcd.com.mylibrary.utils.XCDSharePreference;
 
 import static www.xcd.com.mylibrary.activity.PermissionsActivity.PERMISSIONS_GRANTED;
 
-public class LoginActivity extends SimpleTopbarActivity implements RongIM.UserInfoProvider{
+public class LoginActivity extends SimpleTopbarActivity {
 
     private EditText login_phone, login_password;
     private Button login;
@@ -135,13 +137,16 @@ public class LoginActivity extends SimpleTopbarActivity implements RongIM.UserIn
                 case 100:
                     Logininfo info = JSON.parseObject(returnData, Logininfo.class);
                     Logininfo.DataBean data = info.getData();
-                    String rongtoken = data.getRongtoken();
-                    XCDSharePreference.getInstantiation(this).setSharedPreferences("rongtoken", rongtoken);
                     String ronguserId = data.getRonguserId();
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("ronguserId", ronguserId);
-                    connect(rongtoken);//连接融云
+                    String rongtoken = data.getRongtoken();
+                    XCDSharePreference.getInstantiation(this).setSharedPreferences("rongtoken", rongtoken);
+                    if (!"".equals(rongtoken)){
+                        connect(rongtoken);//连接融云
+                    }
                     String utype = data.getUtype();
                     String uid = data.getUid();
+                    Log.e("TAG_uid","uid");
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("uid", uid);
                     String strname = data.getName();
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("name", strname);
@@ -163,7 +168,6 @@ public class LoginActivity extends SimpleTopbarActivity implements RongIM.UserIn
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("is_member", is_member);
                     String endtime = data.getEndtime();
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("endtime", endtime);
-                    Log.e("TAG_","region="+straddress+";endtime="+endtime);
                     if ("1".equals(utype)) {
                         //供应商Main
                         startActivity(new Intent(LoginActivity.this, MainSupplierActivity.class));
@@ -178,15 +182,15 @@ public class LoginActivity extends SimpleTopbarActivity implements RongIM.UserIn
                     creatCityList(cityallinfo);
                     break;
                 case 102:
-//                    RongYunUserInfo result = JSON.parseObject(returnData, RongYunUserInfo.class);
-//                    RongYunUserInfo.FragmentMeInfoData userdata = result.getData();
-//                    String nickname = userdata.getNickname();
-//                    String image_head = userdata.getUserpicture();
-//                    String userid = userdata.getUser_id();
-//                    if (nickname!=null&&image_head!=null&&userid!=null){
-//                        RongIM.getInstance().refreshUserInfoCache(new UserInfo(userid, nickname, Uri.parse(GlobalParam.IP+image_head)));
-//
-//                    }
+                    RongYunUserInfo result = JSON.parseObject(returnData, RongYunUserInfo.class);
+                    RongYunUserInfo.DataBean userdata = result.getData();
+                    String nickname = userdata.getName();
+                    String image_head = userdata.getHeadimg();
+                    String userid = userdata.getRonguserId();
+                    if (nickname!=null&&image_head!=null&&userid!=null){
+                        RongIM.getInstance().refreshUserInfoCache(new UserInfo(userid, nickname, Uri.parse(GlobalParam.IP+image_head)));
+
+                    }
                     break;
             }
         } else if (returnCode == 300) {
@@ -276,10 +280,10 @@ public class LoginActivity extends SimpleTopbarActivity implements RongIM.UserIn
             serializer.endTag(null, "root");
             serializer.endDocument();
             fos.close();
-            ToastUtil.showToast( "写入成功");
+            Log.e("TAG_城市列表", "写入成功");
         } catch (Exception e) {
             e.printStackTrace();
-            ToastUtil.showToast("写入失败");
+            Log.e("TAG_城市列表", "写入失败");
         }
     }
     protected AlertDialog registerNotifyDialog;
@@ -343,14 +347,5 @@ public class LoginActivity extends SimpleTopbarActivity implements RongIM.UserIn
                 isRongYunConnect = false;
             }
         });
-    }
-
-    @Override
-    public UserInfo getUserInfo(String s) {
-//        Map<String, Object> params = new HashMap<String, Object>();
-//        params.put("id", userid);
-//        params.put("token", token);
-//        okHttpPost(102, GlobalParam.FRAGMENTWODEINFO, params);
-        return null;
     }
 }

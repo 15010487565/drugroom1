@@ -20,10 +20,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.rong.imkit.RongIM;
+import io.rong.imlib.RongIMClient;
 import www.xcd.com.mylibrary.base.activity.SimpleTopbarActivity;
 import www.xcd.com.mylibrary.utils.ClassUtils;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
+
+import static com.medicinedot.www.medicinedot.activity.LoginActivity.isRongYunConnect;
 
 public class RegisterSupplierActivity extends SimpleTopbarActivity {
 
@@ -73,7 +77,9 @@ public class RegisterSupplierActivity extends SimpleTopbarActivity {
         switch (v.getId()){
 
             case R.id.agreement_text:
-                agreement_checkbox.setChecked(!agreement_checkbox.isChecked());
+                Intent intent = new Intent(this, LocalityWebView.class);
+                intent.putExtra("url", "file:///android_asset/vipuseragreement.html");
+                startActivity(intent);
                 break;
             case R.id.login:
                 startActivity(new Intent(this,LoginActivity.class));
@@ -189,21 +195,47 @@ public class RegisterSupplierActivity extends SimpleTopbarActivity {
             switch (requestCode){
                 case 100:
                     RegisterSupplierinfo info = JSON.parseObject(returnData, RegisterSupplierinfo.class);
-                    String utype = info.getData().getUtype();
+                    RegisterSupplierinfo.DataBean data = info.getData();
+                    String ronguserId = data.getRonguserId();
+                    XCDSharePreference.getInstantiation(this).setSharedPreferences("ronguserId", ronguserId);
+                    String rongtoken = data.getRongtoken();
+                    XCDSharePreference.getInstantiation(this).setSharedPreferences("rongtoken", rongtoken);
+
+                    XCDSharePreference.getInstantiation(this).setSharedPreferences("name", "");
+
+                    XCDSharePreference.getInstantiation(this).setSharedPreferences("content", "");
+
+                    XCDSharePreference.getInstantiation(this).setSharedPreferences("sex", "1");
+
+                    XCDSharePreference.getInstantiation(this).setSharedPreferences("headimg", "");
+
+                    XCDSharePreference.getInstantiation(this).setSharedPreferences("region", "");
+
+                    XCDSharePreference.getInstantiation(this).setSharedPreferences("address", "");
+
+                    XCDSharePreference.getInstantiation(this).setSharedPreferences("phone", forget_phone.getText().toString().trim());
+                    String is_member = data.getIs_member();
+                    XCDSharePreference.getInstantiation(this).setSharedPreferences("is_member", is_member);
+
+                    XCDSharePreference.getInstantiation(this).setSharedPreferences("endtime", "");
+                    if (!"".equals(rongtoken)){
+                        connect(rongtoken);//连接融云
+                    }
+                    String utype = data.getUtype();
                     if ("2".equals(utype)){
                         Intent intent = new Intent(this, RegisterDrugstoreInfoActivity.class);
-                        String uid = info.getData().getUid();
+                        String uid = data.getUid();
                         XCDSharePreference.getInstantiation(this).setSharedPreferences("uid", uid);
-                        String token = info.getData().getToken();
+                        String token = data.getToken();
                         XCDSharePreference.getInstantiation(this).setSharedPreferences("token", token);
                         intent.putExtra("uid",uid);
                         startActivity(intent);
                     }else if ("1".equals(utype)){
                         Intent intent = new Intent(this, RegisterSupplierInfoActivity.class);
-                        String uid = info.getData().getUid();
+                        String uid = data.getUid();
                         intent.putExtra("uid",uid);
                         XCDSharePreference.getInstantiation(this).setSharedPreferences("uid", uid);
-                        String token = info.getData().getToken();
+                        String token = data.getToken();
                         XCDSharePreference.getInstantiation(this).setSharedPreferences("token", token);
                         startActivity(intent);
                     }
@@ -236,5 +268,38 @@ public class RegisterSupplierActivity extends SimpleTopbarActivity {
     @Override
     public void onFinishResult() {
 
+    }
+    /**
+     * 连接融云服务器
+     */
+    private void connect(String token) {
+        RongIM.connect(token, new RongIMClient.ConnectCallback() {
+
+            /**
+             * Token 错误，在线上环境下主要是因为 Token 已经过期，您需要向 App Server 重新请求一个新的 Token
+             */
+            @Override
+            public void onTokenIncorrect() {
+                isRongYunConnect = false;
+            }
+
+            /**
+             * 连接融云成功
+             * @param userid 当前 token
+             */
+            @Override
+            public void onSuccess(final String userid) {
+                isRongYunConnect = true;
+            }
+
+            /**
+             * 连接融云失败
+             * @param errorCode 错误码，可到官网 查看错误码对应的注释
+             */
+            @Override
+            public void onError(RongIMClient.ErrorCode errorCode) {
+                isRongYunConnect = false;
+            }
+        });
     }
 }

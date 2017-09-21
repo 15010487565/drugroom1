@@ -120,26 +120,24 @@
             android:hardwareAccelerated="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" >
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.VIEW" />-->
-                <!--<category android:name="android.intent.category.DEFAULT" />-->
-                <!--<data-->
-                    <!--android:host="${applicationId}"-->
-                    <!--android:pathPrefix="/conversationlist"-->
-                    <!--android:scheme="rong" />-->
-            <!--</intent-filter>-->
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
 
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.VIEW" /> -->
+            <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+            <!-- <data -->
+            <!-- android:host="${applicationId}" -->
+            <!-- android:pathPrefix="/conversationlist" -->
+            <!-- android:scheme="rong" /> -->
+            <!-- </intent-filter> -->
+        </activity>
         <activity
             android:name=".activity.MainDrugstoreActivity"
             android:configChanges="keyboard|keyboardHidden|orientation"
             android:hardwareAccelerated="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" >
-        </activity>
-
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
             android:name=".activity.RegisterActivity"
             android:configChanges="keyboard|keyboardHidden|orientation"
@@ -182,7 +180,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
-
         <activity
             android:name=".activity.MeSettingActivity"
             android:configChanges="keyboard|keyboardHidden|orientation"
@@ -233,7 +230,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity
-            android:name=".activity.ChatSupplierActivity"
+            android:name=".activity.MessageInformActivity"
             android:configChanges="keyboard|keyboardHidden|orientation"
             android:hardwareAccelerated="true"
             android:launchMode="singleTop"
@@ -253,7 +250,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
-
         <activity
             android:name=".action.MeDrugstoreNeedAction"
             android:configChanges="keyboard|keyboardHidden|orientation"
@@ -296,12 +292,18 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
-        <!--会话界面-->
+        <activity
+            android:name=".activity.MessageinforDetailsActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
+        <!-- 会话界面 -->
         <activity
             android:name=".activity.RongChatActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize">
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -313,6 +315,7 @@
                     android:scheme="rong" />
             </intent-filter>
         </activity>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}"
@@ -322,7 +325,25 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/rc_file_path" />
         </provider>
-
+        <!-- 支付宝回调页 -->
+        <activity
+            android:name="com.alipay.sdk.app.H5PayActivity"
+            android:configChanges="orientation|keyboardHidden|navigation|screenSize"
+            android:exported="false"
+            android:screenOrientation="behind"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name="com.alipay.sdk.app.H5AuthActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:exported="false"
+            android:screenOrientation="behind"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <!-- 微信回调页 -->
+        <activity
+            android:name=".wxapi.WXPayEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTop" />
+        <activity android:name=".activity.LocalityWebView"></activity>
     </application>
 
 </manifest>

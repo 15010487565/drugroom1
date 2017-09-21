@@ -12,7 +12,9 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.medicinedot.www.medicinedot.R;
+import com.medicinedot.www.medicinedot.bean.UpResumeInfo;
 import com.medicinedot.www.medicinedot.entity.GlobalParam;
 import com.medicinedot.www.medicinedot.func.AccountGenderFunc;
 import com.medicinedot.www.medicinedot.func.AccountHeadFunc;
@@ -134,7 +136,7 @@ public class MeSupplierInfoActivity extends BaseThreeActivity
             case R.id.btn_confirm:
                 address_select.setVisibility(View.GONE);
                 AccountRegionFunc regionfunc = (AccountRegionFunc) htFunc.get(R.id.me_account_region);
-                regionfunc.refreshRigion(mCurrentProviceName + "-" + mCurrentCityName + "-"
+                regionfunc.refreshRigion(mCurrentProviceName + "-" + mCurrentCityName
 //                        +mCurrentDistrictName
                 );
                 break;
@@ -360,8 +362,11 @@ public class MeSupplierInfoActivity extends BaseThreeActivity
         if (returnCode ==200){
             switch (requestCode){
                 case 100:
-                    if (image_head !=null&&!"".equals(image_head)){
-                        XCDSharePreference.getInstantiation(this).setSharedPreferences("headimg", image_head);
+                    UpResumeInfo upResumeInfo = JSON.parseObject(returnData,UpResumeInfo.class);
+                    UpResumeInfo.DataBean data = upResumeInfo.getData();
+                    String headimg = data.getHeadimg();
+                    if (headimg !=null&&!"".equals(headimg)){
+                        XCDSharePreference.getInstantiation(this).setSharedPreferences("headimg", headimg);
                     }
                     if (!"".equals(nameright)){
                         XCDSharePreference.getInstantiation(this).setSharedPreferences("name", nameright);

@@ -74,6 +74,7 @@ public class HomeSupplierinfo implements Serializable{
     }
 
     public static class DataBean {
+
         /**
          * uid : 19
          * utype : 1
@@ -81,9 +82,11 @@ public class HomeSupplierinfo implements Serializable{
          * phone : 15727393984
          * region : 北京市
          * content : Qqqqqqq
-         * address : 
+         * address :
          * sex : 1
          * headimg : /uploads/headimg/20170916/30983428c1bcab5fc2051e0989fc7bb3.
+         * ronguserId :
+         * rongtoken :
          */
 
         private String uid;
@@ -95,6 +98,8 @@ public class HomeSupplierinfo implements Serializable{
         private String address;
         private String sex;
         private String headimg;
+        private String ronguserId;
+        private String rongtoken;
 
         public String getUid() {
             return uid;
@@ -166,6 +171,22 @@ public class HomeSupplierinfo implements Serializable{
 
         public void setHeadimg(String headimg) {
             this.headimg = headimg;
+        }
+
+        public String getRonguserId() {
+            return ronguserId;
+        }
+
+        public void setRonguserId(String ronguserId) {
+            this.ronguserId = ronguserId;
+        }
+
+        public String getRongtoken() {
+            return rongtoken;
+        }
+
+        public void setRongtoken(String rongtoken) {
+            this.rongtoken = rongtoken;
         }
     }
 }

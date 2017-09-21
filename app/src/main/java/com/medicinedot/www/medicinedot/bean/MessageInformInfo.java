@@ -7,12 +7,11 @@ import java.util.List;
  * Created by Android on 2017/9/11.
  */
 
-public class ChatSupplierInfo implements Serializable {
-
+public class MessageInformInfo implements Serializable {
     /**
      * errorcode : 200
-     * msg : u4feeu6539u6210u529f
-     * data : [{"type":"1","time":"2013-12-31","title":"u6b64u6761u6d88u606f","image":"url","content":"u70b9u51fbuff0cu5219u4e0du663eu793au201cu67e5u770bu8be6u60c5u6309u94ae"},{"type":"1","time":"2013-12-31","title":"u6b64u6761u6d88u606f","image":"url","content":"u70b9u51fbu201cu67e5u770bu8be6u60c5u201du8df3u8f6cu81f3u5bf9u5e94u9875u9762u3002u82e5u8be5u6761u6d88u606fu65e0u5bf9u5e94u8be6u60c5u9875u9762uff0cu5219u4e0du663eu793au201cu67e5u770bu8be6u60c5u201du6309u94ae"}]
+     * msg : 查询成功
+     * data : [{"id":"1","type":"1","time":"2017-09-11 10:47:25","title":"测试","image":"1.jpg","content":"都能打时间大牛哈伦裤骄傲山东矿机"}]
      */
 
     private String errorcode;
@@ -43,20 +42,30 @@ public class ChatSupplierInfo implements Serializable {
         this.data = data;
     }
 
-    public static class DataBean {
+    public static class DataBean implements Serializable{
         /**
+         * id : 1
          * type : 1
-         * time : 2013-12-31
-         * title : u6b64u6761u6d88u606f
-         * image : url
-         * content : u70b9u51fbuff0cu5219u4e0du663eu793au201cu67e5u770bu8be6u60c5u6309u94ae
+         * time : 2017-09-11 10:47:25
+         * title : 测试
+         * image : 1.jpg
+         * content : 都能打时间大牛哈伦裤骄傲山东矿机
          */
 
+        private String id;
         private String type;
         private String time;
         private String title;
         private String image;
         private String content;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
 
         public String getType() {
             return type;

@@ -95,21 +95,29 @@ public class OkHttpHelper {
             @Override
             public void run() {
                 //处理参数
-                StringBuilder tempParams = new StringBuilder();
+                StringBuilder tempParams;
+                String requestUrl="";
                 int pos = 0;
-                for (String key : paramsMaps.keySet()) {
-                    if (pos > 0) {
-                        tempParams.append("&");
+                if (paramsMaps ==null){
+                    //补全请求地址
+                    requestUrl = url;
+                }else {
+                    tempParams = new StringBuilder();
+                    for (String key : paramsMaps.keySet()) {
+                        if (pos > 0) {
+                            tempParams.append("&");
+                        }
+                        try {
+                            tempParams.append(String.format("%s=%s", key, URLEncoder.encode(((String)paramsMaps.get(key)), "utf-8")));
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        pos++;
                     }
-                    try {
-                        tempParams.append(String.format("%s=%s", key, URLEncoder.encode(((String)paramsMaps.get(key)), "utf-8")));
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                    pos++;
+                    //补全请求地址
+                    requestUrl = url+"?"+tempParams.toString();
                 }
-                //补全请求地址
-                String requestUrl = url+"?"+tempParams.toString();
+
                 Log.e("TAG_","requestUrl="+requestUrl);
                 Request.Builder builder = new Request.Builder();
                 builder.url(requestUrl);

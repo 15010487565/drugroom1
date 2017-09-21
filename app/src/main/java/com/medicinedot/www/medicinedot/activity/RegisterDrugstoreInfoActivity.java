@@ -75,6 +75,7 @@ public class RegisterDrugstoreInfoActivity extends BaseThreeActivity implements 
         setUpViews();
         setUpListener();
         setUpData();
+
     }
     private String strname;
     private String straddress;
@@ -88,8 +89,7 @@ public class RegisterDrugstoreInfoActivity extends BaseThreeActivity implements 
                 break;
             case R.id.btn_confirm:
                 address_select.setVisibility(View.GONE);
-                address.setText(mCurrentProviceName + "-"+mCurrentCityName
-                        +"-"+mCurrentDistrictName);
+                address.setText(mCurrentProviceName + "-"+mCurrentCityName);
                 break;
             case R.id.btn_off:
                 address_select.setVisibility(View.GONE);

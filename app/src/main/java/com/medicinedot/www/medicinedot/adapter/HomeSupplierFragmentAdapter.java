@@ -14,12 +14,16 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.bean.HomeSupplierinfo;
+import com.medicinedot.www.medicinedot.entity.GlobalParam;
 import com.medicinedot.www.medicinedot.fragment.HomeSupplierFragment;
 
 import java.util.List;
 
+import www.xcd.com.mylibrary.utils.GlideCircleTransform;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
 
 
@@ -90,6 +94,16 @@ public class HomeSupplierFragmentAdapter extends BaseAdapter{
             hodler.home_location.setVisibility(View.GONE);
             hodler.homechatimage.setVisibility(View.GONE);
         }
+        String headimg = dataBean.getHeadimg();
+        Glide.with(context.getApplicationContext())
+                .load(GlobalParam.IP+headimg)
+                .centerCrop()
+                .crossFade()
+                .transform(new GlideCircleTransform(context))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.mipmap.upload_image_side)
+                .error(R.mipmap.upload_image_side)
+                .into( hodler.titleimage);
         final String uid = dataBean.getUid();
         hodler.homechatimage.setOnClickListener(new View.OnClickListener() {
             @Override

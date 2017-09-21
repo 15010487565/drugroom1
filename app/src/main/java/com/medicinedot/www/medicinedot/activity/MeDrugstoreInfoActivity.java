@@ -10,9 +10,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
+import com.medicinedot.www.medicinedot.bean.UpResumeInfo;
 import com.medicinedot.www.medicinedot.entity.GlobalParam;
 import com.medicinedot.www.medicinedot.func.MeDruginfoSaveTextTopBtnFunc;
 import com.medicinedot.www.medicinedot.threelevelganged.ArrayWheelAdapter;
@@ -88,7 +90,7 @@ public class MeDrugstoreInfoActivity extends BaseThreeActivity implements View.O
         String straddress = getInstantiation(this).getSharedPreferences("address");
         detailedness_address.setText(straddress);
         String headimg = getInstantiation(this).getSharedPreferences("headimg");
-        uploadHead(headimg);
+        uploadHead(GlobalParam.IP+headimg);
         setUpViews();
         setUpListener();
         setUpData();
@@ -114,9 +116,7 @@ public class MeDrugstoreInfoActivity extends BaseThreeActivity implements View.O
                 break;
             case R.id.btn_confirm:
                 address_select.setVisibility(View.GONE);
-                address.setText(mCurrentProviceName + "-" + mCurrentCityName + "-" +
-                        mCurrentDistrictName
-                );
+                address.setText(mCurrentProviceName + "-" + mCurrentCityName);
                 break;
             case R.id.btn_off:
                 address_select.setVisibility(View.GONE);
@@ -161,7 +161,7 @@ public class MeDrugstoreInfoActivity extends BaseThreeActivity implements View.O
 
     private void uploadHead(String imageurl) {
         Glide.with(this)
-                .load(GlobalParam.IP+imageurl)
+                .load(imageurl)
                 .centerCrop()
                 .crossFade()
                 .transform(new GlideCircleTransform(this))
@@ -277,8 +277,11 @@ public class MeDrugstoreInfoActivity extends BaseThreeActivity implements View.O
         if (returnCode ==200){
             switch (requestCode){
                 case 100:
-                    if (image_head !=null&&!"".equals(image_head)){
-                        XCDSharePreference.getInstantiation(this).setSharedPreferences("headimg", image_head);
+                    UpResumeInfo upResumeInfo = JSON.parseObject(returnData,UpResumeInfo.class);
+                    UpResumeInfo.DataBean data = upResumeInfo.getData();
+                    String headimg = data.getHeadimg();
+                    if (headimg !=null&&!"".equals(headimg)){
+                        XCDSharePreference.getInstantiation(this).setSharedPreferences("headimg", headimg);
                     }
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("name", name);
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("region", region);

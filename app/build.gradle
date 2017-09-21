@@ -64,7 +64,7 @@ android {
 //        all*.exclude group: 'com.android.support',module:'support-v4'
 //        all*.exclude group: 'com.android.support',module:'support-annotations'
 //    }
-
+    useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {
@@ -80,4 +80,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(':IMKit')
     compile project(':IMLib')
+    compile files('libs/wechat-sdk-android-with-mta-1.1.7.jar')
+    compile files('libs/alipaySdk-20170725.jar')
 }

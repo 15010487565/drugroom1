@@ -1,34 +1,37 @@
 package com.medicinedot.www.medicinedot.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
 
+import com.alibaba.fastjson.JSON;
 import com.medicinedot.www.medicinedot.R;
-import com.medicinedot.www.medicinedot.adapter.ChatSupplierAdapter;
-import com.medicinedot.www.medicinedot.bean.ChatSupplierInfo;
+import com.medicinedot.www.medicinedot.adapter.MessageInformAdapter;
+import com.medicinedot.www.medicinedot.bean.MessageInformInfo;
 import com.medicinedot.www.medicinedot.entity.GlobalParam;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import www.xcd.com.mylibrary.base.activity.SimpleTopbarActivity;
 import www.xcd.com.mylibrary.base.view.XListView;
 import www.xcd.com.mylibrary.utils.ToastUtil;
+import www.xcd.com.mylibrary.utils.XCDSharePreference;
 
-public class ChatSupplierActivity extends SimpleTopbarActivity implements
+public class MessageInformActivity extends SimpleTopbarActivity implements
         XListView.IXListViewListener, AdapterView.OnItemClickListener {
 
     private XListView listview;
     private Handler mHandler;
-    private ChatSupplierAdapter adapter;
-    private List<ChatSupplierInfo.DataBean> data;
+    private MessageInformAdapter adapter;
     public static final int CHATDETAILS = 100;
-
+    private String uid;
     @Override
     protected Object getTopbarTitle() {
         return "消息通知";
@@ -37,52 +40,28 @@ public class ChatSupplierActivity extends SimpleTopbarActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chatsupplier);
+        setContentView(R.layout.activity_messageinform);
     }
 
     @Override
     protected void afterSetContentView() {
         super.afterSetContentView();
+        uid = XCDSharePreference.getInstantiation(this).getSharedPreferences("uid");
         listview = (XListView) findViewById(R.id.chat_listview);
         listview.setPullLoadEnable(false);//设置上拉刷新
-        listview.setPullRefreshEnable(false);//设置下拉刷新
+        listview.setPullRefreshEnable(true);//设置下拉刷新
         listview.setXListViewListener(this); //设置监听事件，重写两个方法
         listview.setOnItemClickListener(this);
-        adapter = new ChatSupplierAdapter(this, handler);
+        adapter = new MessageInformAdapter(this, handler);
         mHandler = new Handler();
         initData();
-
     }
 
     private void initData() {
-        //临时数据接入
-        data = new ArrayList<ChatSupplierInfo.DataBean>();
-        for (int i = 0; i < 5; i++) {
-            ChatSupplierInfo.DataBean dataBean = new ChatSupplierInfo.DataBean();
-            if (i==0){
-                dataBean.setTitle("锄禾日当午");
-                dataBean.setType("1");
-                dataBean.setContent("电风扇电风扇电风扇反对");
-                dataBean.setImage(GlobalParam.headurl);
-            }else if (i==1){
-                dataBean.setTitle("汗滴禾下土");
-                dataBean.setType("3");
-                dataBean.setContent("与交通银行");
-            }else if (i==2){
-                dataBean.setTitle("系统消息");
-                dataBean.setType("2");
-                dataBean.setContent("电风扇电风扇电风扇反对");
-                dataBean.setImage(GlobalParam.headurl);
-            }
-            data.add(dataBean);
-        }
-        adapter.setData(data);
-        listview.setAdapter(adapter);
-//        setListViewHeightBasedOnChildren(listview);
-//        Map<String, Object> params = new HashMap<String, Object>();
-//        params.put("type", "top");
-//        params.put("key", "49c4ede2b341aa948a3760c578647054");
-//        okHttpPost(100,"http://v.juhe.cn/toutiao/index?", params);
+        createDialogshow();
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("uid", uid);
+        okHttpGet(100, GlobalParam.GETMESSAGEINFORM, params);
     }
 
     private Handler handler = new Handler() {
@@ -93,16 +72,30 @@ public class ChatSupplierActivity extends SimpleTopbarActivity implements
                 case CHATDETAILS:
                     Bundle bundle_car = msg.getData();
                     int position_chat = bundle_car.getInt("position");
-                    String userid = bundle_car.getString("userid");
-                    ToastUtil.showToast("点击的是第" + position_chat + "item" + ",他的id=" + userid);
+                    ToastUtil.showToast("点击的是第" + position_chat + "item");
+                    Intent intent = new Intent(MessageInformActivity.this, MessageinforDetailsActivity.class);
+                    intent.putExtra("messageinform", (Serializable)messageInformInfo );
+                    intent.putExtra("position",position_chat);
+                    startActivity(intent);
                     break;
             }
         }
     };
-
+    private MessageInformInfo messageInformInfo;
     @Override
     public void onSuccessResult(int requestCode, int returnCode, String returnMsg, String returnData, Map<String, Object> paramsMaps) {
-
+        if (returnCode ==200){
+            switch (requestCode){
+                case 100:
+                    messageInformInfo = JSON.parseObject(returnData,MessageInformInfo.class);
+                    List<MessageInformInfo.DataBean> dataBean = messageInformInfo.getData();
+                    if (dataBean !=null &&dataBean.size()>0){
+                        adapter.setData(dataBean);
+                        listview.setAdapter(adapter);
+                    }
+                    break;
+            }
+        }
     }
 
     @Override

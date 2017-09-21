@@ -34,6 +34,16 @@ public class GlobalParam {
     public final static String MEVIPCITYLIST = IP + "/Index/Index/insider";
     //城市列表
     public final static String ALLCITYLIST = IP + "/Index/Index/citylist";
-    //会员订单
-    public final static String CREATEORDER = IP + "/Index/Index/createorder";
+    //会员订单信息
+    public final static String CREATEORDER = IP + "/Index/Members/createorder";
+    //获取个人信息
+    public final static String GETUSERINFOFORID = IP + "/Index/User/getUserInfoForID";
+    //供应商是否是会员
+    public final static String ISMEMBERFORUSER = IP + "/Index/Index/isMemberForUser";
+    //微信回调地址异步通知
+    public final static String CERT_NOTIFYWEXIN = IP + "wxpay2/example/notify2.php";
+    //获取会员价格列表
+    public final static String GETMONEYFORLEVEL = IP + "/Index/Members/getMoneyForLevel";
+    //消息通知
+    public final static String GETMESSAGEINFORM = IP + "/Index/Index/message";
 }

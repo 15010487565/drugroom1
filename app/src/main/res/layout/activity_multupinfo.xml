@@ -9,17 +9,35 @@
     android:layout_height="match_parent">
     <include
         layout="@layout/view_simple_topbar"/>
-    <EditText
-        android:id="@+id/updata_edit"
-        android:layout_margin="@dimen/margin_20"
+    <RelativeLayout
+        android:background="@drawable/edit_text_black"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColorHint="@color/black_99"
-        android:textSize="@dimen/textsize_18"
-        android:textColor="@color/black_66"
-        android:hint="请填写您的药品需求，可以输入您最近急需的3-5种药品"
-        android:padding="@dimen/margin_10"
-        android:minHeight="@dimen/height_120"
-        android:gravity="left"
-        android:background="@drawable/edit_text_black"/>
+        android:layout_height="@dimen/height_245">
+        <EditText
+            android:id="@+id/updata_edit"
+            android:layout_margin="@dimen/margin_20"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColorHint="@color/black_99"
+            android:textSize="@dimen/textsize_18"
+            android:textColor="@color/black_66"
+            android:hint="请填写您的药品需求，可以输入您最近急需的3-5种药品。内容60个字以为"
+            android:padding="@dimen/margin_10"
+            android:gravity="left"
+            android:background="@color/white"
+            android:maxLength="60" />
+        <TextView
+            android:id="@+id/contentcun"
+            android:layout_above="@id/updata_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/textsize_14"
+            android:textColor="@color/black_99"
+            android:layout_alignParentBottom="true"
+            android:padding="@dimen/margin_10"
+            android:layout_margin="@dimen/margin_20"
+            android:background="@color/white"
+            android:gravity="right"
+            android:text="0/60"/>
+    </RelativeLayout>
 </LinearLayout>

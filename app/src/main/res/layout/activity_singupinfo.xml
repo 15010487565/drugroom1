@@ -21,5 +21,6 @@
         android:singleLine="true"
         android:hint=""
         android:maxLines="1"
+        android:maxLength="20"
         android:background="@drawable/edit_text_black"/>
 </LinearLayout>

@@ -145,15 +145,15 @@ public class MeDrugstoreFragment extends BaseFragment implements OnClickListener
         initCustomFunc();
         // 初始化系统功能
         initSystemFunc();
-        initData();
-    }
-    private void initData(){
+        String headimg = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("headimg");
         String name = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("name");
+        initData(name,GlobalParam.IP+headimg);
+    }
+    private void initData(String name,String headimg){
         mefragment_name.setText(name);
         //加载圆形头像
-        String headimg = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("headimg");
         Glide.with(getActivity())
-                .load(GlobalParam.IP+headimg)
+                .load(headimg)
                 .centerCrop()
                 .crossFade()
                 .transform(new GlideCircleTransform(getActivity()))
@@ -161,7 +161,7 @@ public class MeDrugstoreFragment extends BaseFragment implements OnClickListener
                 .placeholder(R.mipmap.defaulthead)
                 .error(R.mipmap.defaulthead)
                 .into(mefragment_head);
-        if (headimg ==null||"".equals(headimg)){
+        if (headimg ==null||(GlobalParam.IP).equals(headimg)){
             Glide.with(getActivity())
                     .load(GlobalParam.headurl)
                     .placeholder(R.mipmap.upload_image_side)
@@ -171,7 +171,7 @@ public class MeDrugstoreFragment extends BaseFragment implements OnClickListener
                     .into(mefragment_headbg);
         }else {
             Glide.with(getActivity())
-                    .load(GlobalParam.IP+headimg)
+                    .load(headimg)
                     .placeholder(R.mipmap.defaulthead)
                     .error(R.mipmap.defaulthead)
                     .crossFade(1000)
@@ -272,7 +272,9 @@ public class MeDrugstoreFragment extends BaseFragment implements OnClickListener
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case 0:
-                    initData();
+                    String headimg = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("headimg");
+                    String name = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("name");
+                    initData(name,GlobalParam.IP+headimg);
                     break;
             }
         }

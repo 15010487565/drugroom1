@@ -1,7 +1,9 @@
 package com.medicinedot.www.medicinedot.adapter;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +15,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
-import com.medicinedot.www.medicinedot.bean.ChatSupplierInfo;
+import com.medicinedot.www.medicinedot.activity.MessageInformActivity;
+import com.medicinedot.www.medicinedot.bean.MessageInformInfo;
 import com.medicinedot.www.medicinedot.entity.GlobalParam;
 
 import java.util.List;
@@ -21,15 +24,15 @@ import java.util.List;
 /**
  * Created by Android on 2017/9/11.
  */
-public class ChatSupplierAdapter extends BaseAdapter {
+public class MessageInformAdapter extends BaseAdapter {
     private Context context;
-    private List<ChatSupplierInfo.DataBean> list;
+    private List<MessageInformInfo.DataBean> list;
     private Handler handler;
-    public ChatSupplierAdapter(Context context, Handler handler) {
+    public MessageInformAdapter(Context context, Handler handler) {
         this.context = context;
         this.handler = handler;
     }
-    public void  setData( List<ChatSupplierInfo.DataBean> list){
+    public void  setData( List<MessageInformInfo.DataBean> list){
         this.list = list;
         notifyDataSetChanged();
     }
@@ -54,7 +57,7 @@ public class ChatSupplierAdapter extends BaseAdapter {
         ViewHodler hodler = null;
         if (convertView == null) {
             hodler = new ViewHodler();
-            convertView = LayoutInflater.from(context).inflate(R.layout.chatsupplier_listitem,viewGroup,false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.messageinform_listitem,viewGroup,false);
             hodler.chat_title = (TextView) convertView.findViewById(R.id.chat_title);
             hodler.chat_content = (TextView) convertView.findViewById(R.id.chat_content);
             hodler.chat_time = (TextView) convertView.findViewById(R.id.chat_time);
@@ -64,7 +67,7 @@ public class ChatSupplierAdapter extends BaseAdapter {
         } else {
             hodler = (ViewHodler) convertView.getTag();
         }
-        ChatSupplierInfo.DataBean dataBean = list.get(position);
+        MessageInformInfo.DataBean dataBean = list.get(position);
         String type = dataBean.getType();
         if ("1".equals(type)){//1:正文，2:系统消息，3:优惠活动
             hodler.chat_look.setVisibility(View.VISIBLE);
@@ -94,18 +97,17 @@ public class ChatSupplierAdapter extends BaseAdapter {
                     .into(hodler.chat_image);
         }
 
-//        hodler.chat_look.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Message message = handler.obtainMessage();
-//                message.what = HomeSupplierFragment.HOMECHATIMAGE;
-//                Bundle bundle = new Bundle();
-//                bundle.putInt("position", position);
-//                bundle.putString("userid",String.valueOf(position));
-//                message.setData(bundle);
-//                message.sendToTarget();
-//            }
-//        });
+        hodler.chat_look.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Message message = handler.obtainMessage();
+                message.what = MessageInformActivity.CHATDETAILS;
+                Bundle bundle = new Bundle();
+                bundle.putInt("position", position);
+                message.setData(bundle);
+                message.sendToTarget();
+            }
+        });
         Log.e("TAG_","position="+position);
         return convertView;
     }

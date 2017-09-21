@@ -149,6 +149,7 @@
                     android:textColor="@color/black_99"
                     android:textSize="@dimen/textsize_18"
                     android:maxLines="1"
+                    android:maxLength="20"
                     android:hint="请选择"/>
                 <ImageView
                     android:layout_width="@dimen/margin_15"

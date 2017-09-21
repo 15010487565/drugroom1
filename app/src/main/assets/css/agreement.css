@@ -1,0 +1,46 @@
+*{margin: 0;padding: 0}
+body{
+    font-size:12px;
+}
+h4{
+
+    font-size: 40px;
+    font-weight: bold;
+    text-indent: 2px;
+    margin-top:10px;
+}
+p{
+    font-size: 40px;
+    text-indent: 2px;
+    margin-top:10px;
+}
+a{
+     font-size: 35px;
+     line-height: 50px;
+     padding-left: 15%;
+     text-indent: 2px;
+ }
+ b{
+     font-size: 35px;
+     line-height: 50px;
+     padding-left: 15%;
+     text-indent: 4px;
+ }
+
+.left{
+    height: 800px;
+    width: 10%;
+    float: left;
+}
+.middle{
+    height: 800px;
+    width: 80%;
+    float: left;
+}
+.right{
+    height: 800px;
+    width: 10%;
+    float: left;
+}
+
+

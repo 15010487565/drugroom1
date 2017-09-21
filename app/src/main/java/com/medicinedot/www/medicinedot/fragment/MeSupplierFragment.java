@@ -2,6 +2,7 @@ package com.medicinedot.www.medicinedot.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,8 +30,6 @@ import www.xcd.com.mylibrary.func.BaseFunc;
 import www.xcd.com.mylibrary.utils.GlideCircleTransform;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
-
-import static www.xcd.com.mylibrary.utils.XCDSharePreference.getInstantiation;
 
 /**
  * 我
@@ -152,7 +151,9 @@ public class MeSupplierFragment extends BaseFragment implements OnClickListener 
         initCustomFunc();
         // 初始化系统功能
         initSystemFunc();
-        initData();
+        String headimg = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("headimg");
+        String name = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("name");
+        initData(name,GlobalParam.IP+headimg);
         //加载城市列表
         initCityList();
     }
@@ -167,19 +168,14 @@ public class MeSupplierFragment extends BaseFragment implements OnClickListener 
         } else {
             func.getMeVIPTime(endtime.substring(0, 10) + "到期");
         }
-//        String uid = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("uid");
-//        Map<String, Object> params = new HashMap<String, Object>();
-//        params.put("uid", uid);
-//        okHttpGet(100, GlobalParam.MEVIPCITYLIST, params);
     }
 
-    private void initData() {
-        String name = getInstantiation(getActivity()).getSharedPreferences("name");
+    private void initData(String name,String headimg) {
         mefragment_name.setText(name);
         //加载圆形头像
-        String headimg = getInstantiation(getActivity()).getSharedPreferences("headimg");
+        Log.e("TAG_我的", "headimg="+headimg);
         Glide.with(getActivity())
-                .load(GlobalParam.IP+headimg)
+                .load(headimg)
                 .centerCrop()
                 .crossFade()
                 .transform(new GlideCircleTransform(getActivity()))
@@ -187,7 +183,7 @@ public class MeSupplierFragment extends BaseFragment implements OnClickListener 
                 .placeholder(R.mipmap.defaulthead)
                 .error(R.mipmap.defaulthead)
                 .into(mefragment_head);
-        if (headimg == null || "".equals(headimg)) {
+        if (headimg == null || (GlobalParam.IP).equals(headimg)) {
             Glide.with(getActivity())
                     .load(GlobalParam.headurl)
                     .placeholder(R.mipmap.upload_image_side)
@@ -197,7 +193,7 @@ public class MeSupplierFragment extends BaseFragment implements OnClickListener 
                     .into(mefragment_headbg);
         } else {
             Glide.with(getActivity())
-                    .load(GlobalParam.IP+headimg)
+                    .load(headimg)
                     .placeholder(R.mipmap.defaulthead)
                     .error(R.mipmap.defaulthead)
                     .crossFade(1000)
@@ -300,7 +296,9 @@ public class MeSupplierFragment extends BaseFragment implements OnClickListener 
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case 0:
-                   initData();
+                    String headimg = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("headimg");
+                    String name = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("name");
+                    initData(name,GlobalParam.IP+headimg);
                     break;
             }
         }

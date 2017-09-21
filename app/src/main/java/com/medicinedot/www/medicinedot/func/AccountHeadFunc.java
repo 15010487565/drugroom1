@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.activity.MeSupplierInfoActivity;
+import com.medicinedot.www.medicinedot.entity.GlobalParam;
 
 import www.xcd.com.mylibrary.func.BaseFunc;
 import www.xcd.com.mylibrary.utils.GlideCircleTransform;
@@ -64,7 +65,7 @@ public class AccountHeadFunc extends BaseFunc{
 		customView.setGravity(Gravity.RIGHT);
 		customView.addView(imageView);
 		String headimg = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("headimg");
-		refreshHead(headimg);
+		refreshHead(GlobalParam.IP+headimg);
 	}
 	public void refreshHead(String headurl){
 		Glide.with(getActivity())

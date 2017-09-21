@@ -20,6 +20,7 @@ import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
+import com.medicinedot.www.medicinedot.activity.LocalityWebView;
 import com.medicinedot.www.medicinedot.adapter.MeGridViewAdapter;
 import com.medicinedot.www.medicinedot.adapter.MeVipSupplierNLoaclityAdapter;
 import com.medicinedot.www.medicinedot.bean.MeVipCityListInfo;
@@ -46,7 +47,7 @@ import static www.xcd.com.mylibrary.utils.XCDSharePreference.getInstantiation;
 
 public class MeYVipSupplierAction extends SimpleTopbarActivity implements AdapterView.OnItemClickListener {
 
-    private TextView mefragment_name, meyvip_expiretime, meyvip_expiremoney,vipcity_coun;
+    private TextView mefragment_name, meyvip_expiretime, meyvip_expiremoney,vipcity_coun,vipuser_agreement;
     private ImageView mefragment_head;
     private ImageView mefragment_headbg;
     private ImageView mefragment_headalpha;
@@ -60,7 +61,7 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
     private int[] ItemTextbottom = {R.string.moredrugstore, R.string.getrugstorenumber, R.string.morelook};
     private String endtime = "";
     private String city = "";
-    private  String uid = "" ;
+    private String uid = "" ;
     /**
      * 客服电话
      */
@@ -95,8 +96,8 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
         initData();
         //加载城市列表
         initCityList();
-    }
 
+    }
     private void initCityList() {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("uid", uid);
@@ -115,6 +116,12 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
         endtime = XCDSharePreference.getInstantiation(this).getSharedPreferences("endtime");
         city = XCDSharePreference.getInstantiation(this).getSharedPreferences("region");
         if (endtime ==null ||"".equals(endtime)) {
+            if (city.indexOf("-") != -1) {
+                String[] split = city.split("-");
+                if (split.length>1){
+                    city = split[1];
+                }
+            }
             meyvip_expiretime.setText("您还不是" + city + "会员");
             meyvip_expiremoney.setText("立即购买");
         } else {
@@ -141,6 +148,9 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
         gridview.setAdapter(gridadapter);
         //添加消息处理
         gridview.setOnItemClickListener(this);
+        //开通会员用户协议
+        vipuser_agreement = (TextView) findViewById(R.id.vipuser_agreement);
+        vipuser_agreement.setOnClickListener(this);
         //获取客服手机号
         uid = XCDSharePreference.getInstantiation(this).getSharedPreferences("uid");
         createDialogshow();
@@ -188,6 +198,11 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
             case R.id.meyvip_expiremoney:
                 getBuyVip(city,endtime);
                 break;
+            case R.id.vipuser_agreement:
+                Intent intent = new Intent(this, LocalityWebView.class);
+                intent.putExtra("url", "file:///android_asset/vipuseragreement.html");
+                startActivity(intent);
+                break;
         }
     }
 
@@ -231,6 +246,7 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
         Intent intent =new Intent(this,MeNVipSupplierAction.class);
         intent.putExtra("city",city);
         intent.putExtra("endtime",time);
+        intent.putExtra("ordertype","2");
         startActivity(intent);
     }
     @Override
@@ -289,7 +305,6 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         gridadapter.setSeclection(i);
         gridadapter.notifyDataSetChanged();
-        ToastUtil.showToast("点击了第" + i + "页面");
         Message msg = null;
         if (i == 0) {
 //            Intent intent = new Intent(this, MeInfoActivity.class);
@@ -322,4 +337,5 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
+
 }

@@ -343,6 +343,7 @@
                     android:textSize="@dimen/textsize_16"
                     />
                 <TextView
+                    android:id="@+id/vipuser_agreement"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="@dimen/height_45"

@@ -11,7 +11,7 @@
         android:id="@+id/titleimage"
         android:layout_width="60dp"
         android:layout_height="90dp"
-        android:background="@mipmap/upload_image_side"/>
+        android:src="@mipmap/upload_image_side"/>
     <LinearLayout
         android:layout_marginLeft="@dimen/margin_15"
         android:orientation="vertical"

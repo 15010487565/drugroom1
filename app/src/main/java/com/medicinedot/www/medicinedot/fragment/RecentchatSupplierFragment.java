@@ -28,7 +28,7 @@ public class RecentchatSupplierFragment extends BaseFragment implements View.OnC
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_me;
+        return R.layout.fragment_chat;
     }
 
     @Override

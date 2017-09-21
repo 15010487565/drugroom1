@@ -87,7 +87,7 @@ public class RegisterSupplierInfoActivity extends BaseThreeActivity implements V
                 break;
             case R.id.btn_confirm:
                 address_select.setVisibility(View.GONE);
-                address.setText(mCurrentProviceName + mCurrentCityName);
+                address.setText(mCurrentProviceName + "-" +mCurrentCityName);
                 break;
             case R.id.btn_off:
                 address_select.setVisibility(View.GONE);
@@ -120,8 +120,9 @@ public class RegisterSupplierInfoActivity extends BaseThreeActivity implements V
                 break;
             case R.id.individual_resume:
                 Intent intent = new Intent(this,MultUpInfoActivity.class);
-                intent.putExtra("title","药品需求");
-                intent.putExtra("hintcontent","药品需求");
+                intent.putExtra("title","个人简介");
+                intent.putExtra("hintcontent","个人简介");
+                intent.putExtra("hintshowcontent","填写您的个人简介，可以增加药店主动联系您的机会呦！");
                 startActivityForResult(intent,0);
                 break;
         }

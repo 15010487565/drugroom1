@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -209,7 +210,6 @@ public class HomeSupplierFragment extends BaseThreeFragment implements
     }
     private String titleregion;
     private void initData(String titleregion) {
-        Log.e("TAG_首页开始", "titleregion=" + titleregion);
         if (titleregion == null || "".equals(titleregion)) {
             titleregion = "北京市";
         } else {
@@ -241,10 +241,13 @@ public class HomeSupplierFragment extends BaseThreeFragment implements
                 case HOMECHATIMAGE:
                     Bundle bundle_car = msg.getData();
                     int position_chat = bundle_car.getInt("position");
-                    String uid = bundle_car.getString("uid");
-                    ToastUtil.showToast("点击的是第" + position_chat + "item" + ",他的uid=" + uid);
-                    if (RongIM.getInstance() != null) {
-                        RongIM.getInstance().startPrivateChat(getActivity(), uid,data.get(position_chat).getName());
+                    HomeSupplierinfo.DataBean dataBean = data.get(position_chat);
+//                    String uid = bundle_car.getString("uid");
+                    String ronguserId = dataBean.getRonguserId();
+                    String name = dataBean.getName();
+                    Log.e("TAG_","容云id="+ronguserId+";昵稱"+name);
+                        if (RongIM.getInstance() != null&& !TextUtils.isEmpty(ronguserId)&&!TextUtils.isEmpty(name)) {
+                        RongIM.getInstance().startPrivateChat(getActivity(),ronguserId,name);
                     }
                     break;
             }

@@ -66,6 +66,7 @@
             <EditText
                 android:id="@+id/login_phone"
                 android:hint="请输入手机号"
+                android:maxLength="20"
                 style="@style/login_textview" />
         </LinearLayout>
 
@@ -107,5 +108,4 @@
             android:textSize="@dimen/textsize_16"
             android:text="@string/forgetpassword"/>
     </RelativeLayout>
-
 </LinearLayout>
