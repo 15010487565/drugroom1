@@ -4,7 +4,7 @@ package com.medicinedot.www.medicinedot.entity;
  * Created by dell on 2015-11-23.
  */
 public class GlobalParam {
-    public final static String TEXTPHOME ="15010487565";
+    public final static boolean DEBUG = false;
     public final static String headurl = "http://img2.3lian.com/2014/f2/37/d/39.jpg";
 
     public final static String APPLICATIONID = "com.medicinedot.www.medicinedot";
@@ -12,6 +12,8 @@ public class GlobalParam {
     public final static String IP = "http://101.201.235.27:8084";
     //登陆
     public final static String LOGIN = IP + "/Index/User/login";
+    //登陆
+    public final static String FORGETPASSWORD = IP + "/Index/User/ForgetPassword";
     //药店注册邀请码
     public final static String INVITECODE = IP + "/Index/User/checkinvitecode";
     //获取验证码
@@ -34,6 +36,8 @@ public class GlobalParam {
     public final static String MEVIPCITYLIST = IP + "/Index/Index/insider";
     //城市列表
     public final static String ALLCITYLIST = IP + "/Index/Index/citylist";
+    //允许开通会员城市列表
+    public final static String CITYLISTFORMEMBER = IP + "/Index/Index/citylistForMember";
     //会员订单信息
     public final static String CREATEORDER = IP + "/Index/Members/createorder";
     //获取个人信息

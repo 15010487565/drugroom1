@@ -64,7 +64,7 @@ public class AccountGenderFunc extends BaseFunc {
         }
         textview.setTextSize(18);
         textview.setGravity(Gravity.RIGHT);
-        textview.setTextColor(getActivity().getColor(R.color.black_66));
+        textview.setTextColor(getActivity().getResources().getColor(R.color.black_66));
         customView.addView(textview);
     }
     public void resetRightGender(String Gender){

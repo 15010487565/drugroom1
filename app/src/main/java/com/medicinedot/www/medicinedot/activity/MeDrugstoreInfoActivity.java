@@ -108,10 +108,14 @@ public class MeDrugstoreInfoActivity extends BaseThreeActivity implements View.O
                 selectRegion();
                 break;
             case R.id.detailedness_address:
+                String addresshint = detailedness_address.getText().toString().trim();
                 intent = new Intent(this, MultUpInfoActivity.class);
                 intent.putExtra("title", "详细地址");
-                intent.putExtra("hintcontent", "详细地址");
-                intent.putExtra("hintshowcontent", "请输入您的详细地址");
+                if (addresshint ==null||"".equals(addresshint)){
+                    intent.putExtra("hintcontent", "请输入详细地址");
+                }else {
+                    intent.putExtra("hintcontent", addresshint);
+                }
                 startActivityForResult(intent, 1);
                 break;
             case R.id.btn_confirm:
@@ -122,9 +126,14 @@ public class MeDrugstoreInfoActivity extends BaseThreeActivity implements View.O
                 address_select.setVisibility(View.GONE);
                 break;
             case R.id.briefintroduction_text:
+                String name = briefintroduction_text.getText().toString().trim();
                 intent = new Intent(this, SingleUpInfoActivity.class);
                 intent.putExtra("title", "店铺名称");
-                intent.putExtra("hintcontent", "店铺名称");
+                if (name ==null||"".equals(name)){
+                    intent.putExtra("hintcontent", "请输入店铺名称");
+                }else {
+                    intent.putExtra("hintcontent", name);
+                }
                 startActivityForResult(intent, 0);
                 break;
         }
@@ -160,22 +169,33 @@ public class MeDrugstoreInfoActivity extends BaseThreeActivity implements View.O
     }
 
     private void uploadHead(String imageurl) {
-        Glide.with(this)
-                .load(imageurl)
-                .centerCrop()
-                .crossFade()
-                .transform(new GlideCircleTransform(this))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.mipmap.defaulthead)
-                .error(R.mipmap.defaulthead)
-                .into(head);
+        try {
+            Glide.with(this)
+                    .load(imageurl)
+                    .centerCrop()
+                    .crossFade()
+                    .transform(new GlideCircleTransform(this))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.mipmap.defaulthead)
+                    .error(R.mipmap.defaulthead)
+                    .into(head);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //选择地区
     public void selectRegion() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(address.getWindowToken(), 0); //强制隐藏键盘
-        address_select.setVisibility(View.VISIBLE);
+        if (mProvinceDatas ==null){
+            boolean permissions = checkupPermissions(WRITEREADPERMISSIONS);
+            if (permissions){
+                setUpData();
+            }
+        }else {
+            address_select.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setUpViews() {
@@ -200,8 +220,10 @@ public class MeDrugstoreInfoActivity extends BaseThreeActivity implements View.O
         mViewProvince.setVisibleItems(7);
         mViewCity.setVisibleItems(7);
         mViewDistrict.setVisibleItems(7);
-        updateCities();
-        updateAreas();
+        if (mProvinceDatas !=null){
+            updateCities();
+            updateAreas();
+        }
     }
 
     /**

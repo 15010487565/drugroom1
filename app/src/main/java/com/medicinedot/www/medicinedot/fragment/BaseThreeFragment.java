@@ -1,16 +1,28 @@
 package com.medicinedot.www.medicinedot.fragment;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
+import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.alibaba.fastjson.JSON;
+import com.medicinedot.www.medicinedot.bean.CityListAllInfo;
+import com.medicinedot.www.medicinedot.entity.GlobalParam;
 import com.medicinedot.www.medicinedot.threelevelganged.CityModel;
 import com.medicinedot.www.medicinedot.threelevelganged.DistrictModel;
 import com.medicinedot.www.medicinedot.threelevelganged.ProvinceModel;
 import com.medicinedot.www.medicinedot.threelevelganged.XmlParserHandler;
 
+import org.xmlpull.v1.XmlSerializer;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +31,11 @@ import java.util.Map;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import www.xcd.com.mylibrary.activity.PermissionsActivity;
 import www.xcd.com.mylibrary.base.fragment.BaseFragment;
+import www.xcd.com.mylibrary.utils.ToastUtil;
+
+import static www.xcd.com.mylibrary.activity.PermissionsActivity.PERMISSIONS_GRANTED;
 
 
 public class BaseThreeFragment extends BaseFragment {
@@ -60,6 +76,28 @@ public class BaseThreeFragment extends BaseFragment {
      */
     protected String mCurrentZipCode = "";
 
+    public boolean checkupPermissions(String... permissions) {
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED
+                &&ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            PermissionsActivity.startActivityForResult(getActivity()
+                    , PERMISSIONS_GRANTED, permissions);
+        return false;
+        }else {
+            Log.e("TAG_获取列表","已执行");
+
+            Map<String, Object> params = new HashMap<String, Object>();
+            //获取城市雷列表
+            params.put("uid", "1");
+            okHttpGet(101, GlobalParam.ALLCITYLIST, params);
+            return true;
+        }
+    }
+
     /**
      * 解析省市区的XML数据
      */
@@ -82,13 +120,13 @@ public class BaseThreeFragment extends BaseFragment {
             // 获取解析出来的数据
             provinceList = handler.getDataList();
             //*/ 初始化默认选中的省、市、区
-            if (provinceList != null && provinceList.size()>0) {
+            if (provinceList != null && provinceList.size() > 0) {
                 mCurrentProviceName = provinceList.get(0).getName();
                 List<CityModel> cityList = provinceList.get(0).getCityList();
                 if (cityList != null && !cityList.isEmpty()) {
                     mCurrentCityName = cityList.get(0).getName();
                     List<DistrictModel> districtList = cityList.get(0).getDistrictList();
-                    if  (districtList != null && !districtList.isEmpty()){
+                    if (districtList != null && !districtList.isEmpty()) {
                         mCurrentDistrictName = districtList.get(0).getName();
                         mCurrentZipCode = districtList.get(0).getZipcode();
                     }
@@ -105,7 +143,7 @@ public class BaseThreeFragment extends BaseFragment {
                     // 遍历省下面的所有市的数据
                     cityNames[j] = cityList.get(j).getName();
                     List<DistrictModel> districtList = cityList.get(j).getDistrictList();
-                    if (districtList !=null&&districtList.size()>0){
+                    if (districtList != null && districtList.size() > 0) {
                         String[] distrinctNameArray = new String[districtList.size()];
                         DistrictModel[] distrinctArray = new DistrictModel[districtList.size()];
                         for (int k = 0; k < districtList.size(); k++) {
@@ -132,7 +170,29 @@ public class BaseThreeFragment extends BaseFragment {
 
     @Override
     public void onSuccessResult(int requestCode, int returnCode, String returnMsg, String returnData, Map<String, Object> paramsMaps) {
+        if (returnCode == 200) {
+            switch (requestCode) {
 
+                case 101:
+                    CityListAllInfo cityallinfo = JSON.parseObject(returnData, CityListAllInfo.class);
+                    creatCityList(cityallinfo);
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        int REQUEST_CODE_CONTACT = 101;
+                        String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        //验证是否许可权限
+                        for (String str : permissions) {
+                            if (getActivity().checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
+                                //申请权限
+                                this.requestPermissions(permissions, REQUEST_CODE_CONTACT);
+                                return;
+                            }
+                        }
+                    }
+                    break;
+            }
+        } else {
+            ToastUtil.showToast(returnMsg);
+        }
     }
 
     @Override
@@ -163,5 +223,91 @@ public class BaseThreeFragment extends BaseFragment {
     @Override
     protected void initView(LayoutInflater inflater, View view) {
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        Log.e("TAG_读写权限", "requestCode=" + requestCode );
+        switch (requestCode) {
+            case PERMISSIONS_GRANTED:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Map<String, Object> params = new HashMap<String, Object>();
+                    //获取城市雷列表
+                    params.put("uid", "1");
+                    okHttpGet(101, GlobalParam.ALLCITYLIST, params);
+                } else {
+                    // Permission Denied
+                    ToastUtil.showToast("请允许相关权限再进行下一步操作！");
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    public void creatCityList(CityListAllInfo cityallinfo) {
+        try {
+
+            File file = new File(Environment.getExternalStorageDirectory(),
+                    "province_data.xml");
+            if (file.exists()) {
+                file.delete();
+            } else {
+                file.mkdir(); //如果不存在则创建
+            }
+            FileOutputStream fos = new FileOutputStream(file);
+            // 获得一个序列化工具
+            XmlSerializer serializer = Xml.newSerializer();
+            serializer.setOutput(fos, "utf-8");
+            // 设置文件头
+            serializer.startDocument("utf-8", true);
+            serializer.startTag(null, "root");
+
+            //省集合
+            List<CityListAllInfo.DataBean> provincedata = cityallinfo.getData();
+            if (provincedata != null && provincedata.size() > 0) {
+                for (int i = 0, j = provincedata.size(); i < j; i++) {
+                    CityListAllInfo.DataBean provincedataBean = provincedata.get(i);
+                    //省名字
+                    String proviceName = provincedataBean.getProviceName();
+                    serializer.startTag(null, "province");
+                    serializer.attribute(null, "name", proviceName);
+                    //市集合
+                    List<CityListAllInfo.DataBean.CityBean> citydata = provincedataBean.getCity();
+                    if (citydata != null && citydata.size() > 0) {
+                        for (int k = 0, l = citydata.size(); k < l; k++) {
+                            CityListAllInfo.DataBean.CityBean cityBean = citydata.get(k);
+                            //市名字
+                            String cityName = cityBean.getCityName();
+                            serializer.startTag(null, "city");
+                            serializer.attribute(null, "name", cityName);
+                            //区集合
+                            List<CityListAllInfo.DataBean.CityBean.AreaBean> area = cityBean.getArea();
+                            if (area != null && area.size() > 0) {
+                                for (int m = 0, n = area.size(); m < n; m++) {
+                                    //区名字
+                                    CityListAllInfo.DataBean.CityBean.AreaBean areaBean = area.get(m);
+                                    String areaName = areaBean.getAreaName();
+                                    serializer.startTag(null, "district");
+                                    serializer.attribute(null, "name", areaName);
+                                    serializer.attribute(null, "zipcode",
+                                            String.valueOf(i) + String.valueOf(k) + "000");
+                                    serializer.endTag(null, "district");
+                                }
+                            }
+                            serializer.endTag(null, "city");
+                        }
+                    }
+                    serializer.endTag(null, "province");
+                }
+            }
+            serializer.endTag(null, "root");
+            serializer.endDocument();
+            fos.close();
+            Log.e("TAG_城市列表", "写入成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("TAG_城市列表", "写入失败");
+        }
     }
 }

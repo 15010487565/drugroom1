@@ -36,7 +36,7 @@
                 android:background="@color/top_bar_background"
                 android:gravity="center_vertical|left"
                 android:paddingLeft="@dimen/margin_15"
-                android:text="XX市共入住***位供应商"
+                android:text="XX市共入驻***位供应商"
                 android:textColor="@color/white"
                 android:textSize="@dimen/textsize_16" />
 

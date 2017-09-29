@@ -32,7 +32,7 @@ public class SingleUpInfoActivity extends SimpleTopbarActivity {
         hintcontent = getIntent().getStringExtra("hintcontent");
         updata_edit = (EditText) findViewById(R.id.updata_edit);
         updata_edit.setOnFocusChangeListener(this);
-        updata_edit.setHint("请输入"+hintcontent);
+        updata_edit.setHint(hintcontent);
     }
     public void getSave(){
         String trim = updata_edit.getText().toString().trim();

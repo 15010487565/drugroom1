@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.fragment.HomeSupplierFragment;
+import com.medicinedot.www.medicinedot.fragment.InformationFragment;
 import com.medicinedot.www.medicinedot.fragment.MeSupplierFragment;
 import com.medicinedot.www.medicinedot.fragment.RecentchatSupplierFragment;
 import com.medicinedot.www.medicinedot.view.NoScrollViewPager;
@@ -39,19 +40,34 @@ public class MainSupplierActivity extends SimpleTopbarActivity {
     private static Class<?> fragmentArray[] = {
             HomeSupplierFragment.class,
             RecentchatSupplierFragment.class,
-            MeSupplierFragment.class};
+            InformationFragment.class,
+            MeSupplierFragment.class
+    };
     /**
      * tabs text
      */
-    private static int[] MAIN_TAB_TEXT = new int[]{R.string.home, R.string.recentchat, R.string.me};
+    private static int[] MAIN_TAB_TEXT = new int[]{
+            R.string.home,
+            R.string.recentchat,
+            R.string.information,
+            R.string.me
+    };
     /**
      * tabs image normal
      */
-    private static int[] MAIN_TAB_IMAGE = new int[]{R.mipmap.icon_tab_home, R.mipmap.icon_tab_chat, R.mipmap.icon_tab_me};
+    private static int[] MAIN_TAB_IMAGE = new int[]{R.mipmap.icon_tab_home,
+            R.mipmap.icon_tab_chat,
+            R.mipmap.icon_tab_chat,
+            R.mipmap.icon_tab_me
+    };
     /**
      * tabs image selected
      */
-    private static int[] MAIN_TAB_IMAGEHL = new int[]{R.mipmap.icon_tab_home_press,R.mipmap.icon_tab_chat_press,  R.mipmap.icon_tab_me_press};
+    private static int[] MAIN_TAB_IMAGEHL = new int[]{R.mipmap.icon_tab_home_press,
+            R.mipmap.icon_tab_chat_press,
+            R.mipmap.icon_tab_chat_press,
+            R.mipmap.icon_tab_me_press
+    };
 
 //    /**
 //     * Topbar功能列表

@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -47,7 +48,9 @@ import static www.xcd.com.mylibrary.utils.XCDSharePreference.getInstantiation;
 
 public class MeYVipSupplierAction extends SimpleTopbarActivity implements AdapterView.OnItemClickListener {
 
-    private TextView mefragment_name, meyvip_expiretime, meyvip_expiremoney,vipcity_coun,vipuser_agreement;
+    private TextView mefragment_name, meyvip_expiretime, meyvip_expiremoney
+            ,vipcity_coun,vipuser_agreement;
+    private LinearLayout mevip_regionparent;
     private ImageView mefragment_head;
     private ImageView mefragment_headbg;
     private ImageView mefragment_headalpha;
@@ -148,6 +151,9 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
         gridview.setAdapter(gridadapter);
         //添加消息处理
         gridview.setOnItemClickListener(this);
+        //开通其他城市
+        mevip_regionparent = (LinearLayout) findViewById(R.id.mevip_regionparent);
+        mevip_regionparent.setOnClickListener(this);
         //开通会员用户协议
         vipuser_agreement = (TextView) findViewById(R.id.vipuser_agreement);
         vipuser_agreement.setOnClickListener(this);
@@ -162,31 +168,35 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
     private void initData() {
         //加载圆形头像
         String headimg = getInstantiation(this).getSharedPreferences("headimg");
-        Glide.with(this)
-                .load(GlobalParam.IP+headimg)
-                .centerCrop()
-                .crossFade()
-                .transform(new GlideCircleTransform(this))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.mipmap.defaulthead)
-                .error(R.mipmap.defaulthead)
-                .into(mefragment_head);
-        if (headimg == null || "".equals(headimg)) {
-            Glide.with(this)
-                    .load(GlobalParam.headurl)
-                    .placeholder(R.mipmap.upload_image_side)
-                    .error(R.mipmap.upload_image_side)
-                    .crossFade(1000)
-                    .bitmapTransform(new BlurTransformation(this, 23, 4))  // “23”：设置模糊度(在0.0到25.0之间)，默认”25";"4":图片缩放比例,默认“1”。
-                    .into(mefragment_headbg);
-        } else {
+        try {
             Glide.with(this)
                     .load(GlobalParam.IP+headimg)
+                    .centerCrop()
+                    .crossFade()
+                    .transform(new GlideCircleTransform(this))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.mipmap.defaulthead)
                     .error(R.mipmap.defaulthead)
-                    .crossFade(1000)
-                    .bitmapTransform(new BlurTransformation(this, 23, 4))  // “23”：设置模糊度(在0.0到25.0之间)，默认”25";"4":图片缩放比例,默认“1”。
-                    .into(mefragment_headbg);
+                    .into(mefragment_head);
+            if (headimg == null || "".equals(headimg)) {
+                Glide.with(this)
+                        .load(GlobalParam.headurl)
+                        .placeholder(R.mipmap.upload_image_side)
+                        .error(R.mipmap.upload_image_side)
+                        .crossFade(1000)
+                        .bitmapTransform(new BlurTransformation(this, 23, 4))  // “23”：设置模糊度(在0.0到25.0之间)，默认”25";"4":图片缩放比例,默认“1”。
+                        .into(mefragment_headbg);
+            } else {
+                Glide.with(this)
+                        .load(GlobalParam.IP+headimg)
+                        .placeholder(R.mipmap.defaulthead)
+                        .error(R.mipmap.defaulthead)
+                        .crossFade(1000)
+                        .bitmapTransform(new BlurTransformation(this, 23, 4))  // “23”：设置模糊度(在0.0到25.0之间)，默认”25";"4":图片缩放比例,默认“1”。
+                        .into(mefragment_headbg);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
@@ -202,6 +212,9 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
                 Intent intent = new Intent(this, LocalityWebView.class);
                 intent.putExtra("url", "file:///android_asset/vipuseragreement.html");
                 startActivity(intent);
+                break;
+            case R.id.mevip_regionparent:
+                getBuyVip(city,endtime);
                 break;
         }
     }
@@ -251,34 +264,38 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
     }
     @Override
     public void onSuccessResult(int requestCode, int returnCode, String returnMsg, String returnData, Map<String, Object> paramsMaps) {
-        if (returnCode == 200) {
+
             switch (requestCode) {
                 case 100:
-                    MeVipCityListInfo info = JSON.parseObject(returnData, MeVipCityListInfo.class);
-                    data = info.getData();
-                    if (data != null || data.size() > 0) {
-                        adapter.setData(data);
-                        listview.setAdapter(adapter);
-                        setListViewHeightBasedOnChildren(listview);
+                    if (returnCode == 200) {
+                        MeVipCityListInfo info = JSON.parseObject(returnData, MeVipCityListInfo.class);
+                        data = info.getData();
+                        if (data != null || data.size() > 0) {
+                            adapter.setData(data);
+                            listview.setAdapter(adapter);
+                            setListViewHeightBasedOnChildren(listview);
+                        }
+                        vipcity_coun.setText("我的会员城市("+data.size()+")");
                     }
-                    vipcity_coun.setText("我的会员城市("+data.size()+")");
                     break;
                 case 101:
-                    try {
-                        SettingAboutInfo phoneinfo = JSON.parseObject(returnData,SettingAboutInfo.class);
-                        List<SettingAboutInfo.DataBean> data = phoneinfo.getData();
-                        if (data!=null&&data.size()>0){
-                            for (int i = 0; i < data.size(); i++) {
-                                SettingAboutInfo.DataBean dataBean = data.get(i);
-                                phoneservice = dataBean.getPhone();
+                    if (returnCode == 200) {
+                        try {
+                            SettingAboutInfo phoneinfo = JSON.parseObject(returnData,SettingAboutInfo.class);
+                            List<SettingAboutInfo.DataBean> data = phoneinfo.getData();
+                            if (data!=null&&data.size()>0){
+                                for (int i = 0; i < data.size(); i++) {
+                                    SettingAboutInfo.DataBean dataBean = data.get(i);
+                                    phoneservice = dataBean.getPhone();
+                                }
                             }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                     break;
             }
-        }
+
     }
 
     @Override

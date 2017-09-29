@@ -44,6 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_5"
                     android:textSize="@dimen/textsize_16"
+                    android:textStyle="bold"
                     android:textColor="@color/black_66"
                     android:text="手机："
                     />
@@ -68,6 +69,7 @@
                     android:layout_marginTop="@dimen/margin_5"
                     android:textSize="@dimen/textsize_16"
                     android:textColor="@color/black_66"
+                    android:textStyle="bold"
                     android:text="所在地区："
                     />
                 <TextView

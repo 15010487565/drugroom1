@@ -222,6 +222,7 @@ public class RegisterSupplierActivity extends SimpleTopbarActivity {
                         connect(rongtoken);//连接融云
                     }
                     String utype = data.getUtype();
+                    XCDSharePreference.getInstantiation(this).setSharedPreferences("utype", utype);
                     if ("2".equals(utype)){
                         Intent intent = new Intent(this, RegisterDrugstoreInfoActivity.class);
                         String uid = data.getUid();

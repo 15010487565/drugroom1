@@ -51,15 +51,19 @@ public class SettingBindingmobileActivity extends SimpleTopbarActivity {
         updatamobile.setOnClickListener(this);
         //加载圆形头像
         String headimg = getInstantiation(this).getSharedPreferences("headimg");
-        Glide.with(this)
-                .load(GlobalParam.IP+headimg)
-                .centerCrop()
-                .crossFade()
-                .transform(new GlideCircleTransform(this))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.mipmap.upload_image_side)
-                .error(R.mipmap.upload_image_side)
-                .into(settingbindinghead_head);
+        try {
+            Glide.with(this)
+                    .load(GlobalParam.IP+headimg)
+                    .centerCrop()
+                    .crossFade()
+                    .transform(new GlideCircleTransform(this))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.mipmap.upload_image_side)
+                    .error(R.mipmap.upload_image_side)
+                    .into(settingbindinghead_head);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

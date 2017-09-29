@@ -1,12 +1,16 @@
 package com.medicinedot.www.medicinedot.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Xml;
 import android.view.LayoutInflater;
@@ -145,6 +149,7 @@ public class LoginActivity extends SimpleTopbarActivity {
                         connect(rongtoken);//连接融云
                     }
                     String utype = data.getUtype();
+                    XCDSharePreference.getInstantiation(this).setSharedPreferences("utype", utype);
                     String uid = data.getUid();
                     Log.e("TAG_uid","uid");
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("uid", uid);
@@ -168,18 +173,42 @@ public class LoginActivity extends SimpleTopbarActivity {
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("is_member", is_member);
                     String endtime = data.getEndtime();
                     XCDSharePreference.getInstantiation(this).setSharedPreferences("endtime", endtime);
-                    if ("1".equals(utype)) {
-                        //供应商Main
-                        startActivity(new Intent(LoginActivity.this, MainSupplierActivity.class));
-                    } else if ("2".equals(utype)) {
-                        //药店Main
-                        startActivity(new Intent(LoginActivity.this, MainDrugstoreActivity.class));
+                    if (TextUtils.isEmpty(strname)||TextUtils.isEmpty(straddress)||"-".equals(straddress)){
+                        if ("2".equals(utype)){
+                            Intent intent = new Intent(this, RegisterDrugstoreInfoActivity.class);
+                            intent.putExtra("uid",uid);
+                            startActivity(intent);
+                        }else if ("1".equals(utype)){
+                            Intent intent = new Intent(this, RegisterSupplierInfoActivity.class);
+                            intent.putExtra("uid",uid);
+                            startActivity(intent);
+                        }
+                    }else {
+                        if ("1".equals(utype)) {
+                            //供应商Main
+                            startActivity(new Intent(LoginActivity.this, MainSupplierActivity.class));
+                        } else if ("2".equals(utype)) {
+                            //药店Main
+                            startActivity(new Intent(LoginActivity.this, MainDrugstoreActivity.class));
+                        }
                     }
 
                     break;
                 case 101:
                     CityListAllInfo cityallinfo = JSON.parseObject(returnData, CityListAllInfo.class);
                     creatCityList(cityallinfo);
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        int REQUEST_CODE_CONTACT = 101;
+                        String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        //验证是否许可权限
+                        for (String str : permissions) {
+                            if (this.checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
+                                //申请权限
+                                this.requestPermissions(permissions, REQUEST_CODE_CONTACT);
+                                return;
+                            }
+                        }
+                    }
                     break;
                 case 102:
                     RongYunUserInfo result = JSON.parseObject(returnData, RongYunUserInfo.class);
@@ -221,71 +250,7 @@ public class LoginActivity extends SimpleTopbarActivity {
     public void onFinishResult() {
 
     }
-    public void creatCityList(CityListAllInfo cityallinfo){
-        try {
 
-            File file = new File(Environment.getExternalStorageDirectory(),
-                    "province_data.xml");
-            if(file.exists()){
-                file.delete();
-            }else {
-                file.mkdir(); //如果不存在则创建
-            }
-            FileOutputStream fos = new FileOutputStream(file);
-            // 获得一个序列化工具
-            XmlSerializer serializer = Xml.newSerializer();
-            serializer.setOutput(fos, "utf-8");
-            // 设置文件头
-            serializer.startDocument("utf-8", true);
-            serializer.startTag(null, "root");
-
-            //省集合
-            List<CityListAllInfo.DataBean> provincedata = cityallinfo.getData();
-            if (provincedata !=null&&provincedata.size()>0){
-                for (int i = 0,j = provincedata.size(); i < j; i++) {
-                    CityListAllInfo.DataBean  provincedataBean = provincedata.get(i);
-                    //省名字
-                    String proviceName =  provincedataBean.getProviceName();
-                    serializer.startTag(null, "province");
-                    serializer.attribute(null, "name", proviceName);
-                    //市集合
-                    List<CityListAllInfo.DataBean.CityBean> citydata = provincedataBean.getCity();
-                    if (citydata !=null&&citydata.size()>0){
-                        for (int k = 0,l = citydata.size(); k < l ; k++) {
-                            CityListAllInfo.DataBean.CityBean cityBean = citydata.get(k);
-                            //市名字
-                            String cityName = cityBean.getCityName();
-                            serializer.startTag(null, "city");
-                            serializer.attribute(null, "name", cityName);
-                            //区集合
-                            List<CityListAllInfo.DataBean.CityBean.AreaBean> area = cityBean.getArea();
-                            if (area !=null&&area.size()>0){
-                                for (int m = 0,n =area.size(); m < n; m++) {
-                                    //区名字
-                                    CityListAllInfo.DataBean.CityBean.AreaBean areaBean = area.get(m);
-                                    String areaName = areaBean.getAreaName();
-                                    serializer.startTag(null, "district");
-                                    serializer.attribute(null, "name", areaName);
-                                    serializer.attribute(null, "zipcode",
-                                            String.valueOf(i)+String.valueOf(k)+"000");
-                                    serializer.endTag(null, "district");
-                                }
-                            }
-                            serializer.endTag(null, "city");
-                        }
-                    }
-                    serializer.endTag(null, "province");
-                }
-            }
-            serializer.endTag(null, "root");
-            serializer.endDocument();
-            fos.close();
-            Log.e("TAG_城市列表", "写入成功");
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("TAG_城市列表", "写入失败");
-        }
-    }
     protected AlertDialog registerNotifyDialog;
     private TextView dialog_register, dialog_cancel;
 
@@ -316,6 +281,7 @@ public class LoginActivity extends SimpleTopbarActivity {
      * 连接融云服务器
      */
     private void connect(String token) {
+        Log.e(TAG,"融云_TOKEN="+token);
         RongIM.connect(token, new RongIMClient.ConnectCallback() {
 
             /**
@@ -347,5 +313,70 @@ public class LoginActivity extends SimpleTopbarActivity {
                 isRongYunConnect = false;
             }
         });
+    }
+    public void creatCityList(CityListAllInfo cityallinfo) {
+        try {
+
+            File file = new File(Environment.getExternalStorageDirectory(),
+                    "province_data.xml");
+            if (file.exists()) {
+                file.delete();
+            } else {
+                file.mkdir(); //如果不存在则创建
+            }
+            FileOutputStream fos = new FileOutputStream(file);
+            // 获得一个序列化工具
+            XmlSerializer serializer = Xml.newSerializer();
+            serializer.setOutput(fos, "utf-8");
+            // 设置文件头
+            serializer.startDocument("utf-8", true);
+            serializer.startTag(null, "root");
+
+            //省集合
+            List<CityListAllInfo.DataBean> provincedata = cityallinfo.getData();
+            if (provincedata != null && provincedata.size() > 0) {
+                for (int i = 0, j = provincedata.size(); i < j; i++) {
+                    CityListAllInfo.DataBean provincedataBean = provincedata.get(i);
+                    //省名字
+                    String proviceName = provincedataBean.getProviceName();
+                    serializer.startTag(null, "province");
+                    serializer.attribute(null, "name", proviceName);
+                    //市集合
+                    List<CityListAllInfo.DataBean.CityBean> citydata = provincedataBean.getCity();
+                    if (citydata != null && citydata.size() > 0) {
+                        for (int k = 0, l = citydata.size(); k < l; k++) {
+                            CityListAllInfo.DataBean.CityBean cityBean = citydata.get(k);
+                            //市名字
+                            String cityName = cityBean.getCityName();
+                            serializer.startTag(null, "city");
+                            serializer.attribute(null, "name", cityName);
+                            //区集合
+                            List<CityListAllInfo.DataBean.CityBean.AreaBean> area = cityBean.getArea();
+                            if (area != null && area.size() > 0) {
+                                for (int m = 0, n = area.size(); m < n; m++) {
+                                    //区名字
+                                    CityListAllInfo.DataBean.CityBean.AreaBean areaBean = area.get(m);
+                                    String areaName = areaBean.getAreaName();
+                                    serializer.startTag(null, "district");
+                                    serializer.attribute(null, "name", areaName);
+                                    serializer.attribute(null, "zipcode",
+                                            String.valueOf(i) + String.valueOf(k) + "000");
+                                    serializer.endTag(null, "district");
+                                }
+                            }
+                            serializer.endTag(null, "city");
+                        }
+                    }
+                    serializer.endTag(null, "province");
+                }
+            }
+            serializer.endTag(null, "root");
+            serializer.endDocument();
+            fos.close();
+            Log.e("TAG_城市列表", "写入成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("TAG_城市列表", "写入失败");
+        }
     }
 }

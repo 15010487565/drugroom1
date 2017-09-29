@@ -1,6 +1,8 @@
 package com.medicinedot.www.medicinedot.application;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,10 +13,12 @@ import android.util.Log;
 import android.view.View;
 
 import com.alibaba.fastjson.JSON;
+import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.bean.RongYunUserInfo;
 import com.medicinedot.www.medicinedot.entity.GlobalParam;
 import com.medicinedot.www.medicinedot.rong.RongReceiveMessageListener;
 import com.medicinedot.www.medicinedot.rong.SendMessageListener;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.yonyou.sns.im.core.YYIMChat;
 
 import java.io.IOException;
@@ -29,6 +33,7 @@ import www.xcd.com.mylibrary.base.application.BaseApplication;
 import www.xcd.com.mylibrary.config.HttpConfig;
 import www.xcd.com.mylibrary.help.OkHttpHelper;
 import www.xcd.com.mylibrary.http.HttpInterface;
+import www.xcd.com.mylibrary.utils.CrashHandler;
 import www.xcd.com.mylibrary.utils.NetUtil;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
@@ -41,10 +46,20 @@ import static www.xcd.com.mylibrary.utils.ToastUtil.showToast;
 
 public class YDApplication extends BaseApplication implements RongIM.UserInfoProvider
         , HttpInterface, RongIM.ConversationListBehaviorListener {
+
+    private void initAppCrashHandler() {
+            CrashHandler crashHandler = CrashHandler.getInstance();
+            crashHandler.init(getApplicationContext());
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         try {
+            if (GlobalParam.DEBUG){
+                initAppCrashHandler();
+            }
+            MultiDex.install(this);
             //初始化头像jar
             YYIMChat.getInstance().init(getApplicationContext());
             YYIMChat.getInstance().configLogger(Log.VERBOSE, true, true, false);
@@ -56,7 +71,6 @@ public class YDApplication extends BaseApplication implements RongIM.UserInfoPro
              * 初始化融云
              */
             RongIM.init(this);
-            MultiDex.install(this);
             RongIM.setOnReceiveMessageListener(new RongReceiveMessageListener());
             RongIM.getInstance().setSendMessageListener(new SendMessageListener());
             RongIM.setUserInfoProvider(this, true);
@@ -68,7 +82,29 @@ public class YDApplication extends BaseApplication implements RongIM.UserInfoPro
         } catch (Exception e) {
             e.printStackTrace();
         }
+        String versionName = null;
+        try {
+            versionName = getVersionName();
+            Context appContext = getApplicationContext();
+            CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(appContext);
+            strategy.setAppVersion("测试" + versionName);
+            CrashReport.initCrashReport
+                    (appContext, getResources().getString(R.string.tengbugly_appID)
+                            , false, strategy);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
+    private String getVersionName() throws Exception {
+        // 获取packagemanager的实例
+        PackageManager packageManager = getPackageManager();
+        // getPackageName()是你当前类的包名，0代表是获取版本信息
+        PackageInfo packInfo = packageManager.getPackageInfo(getPackageName(), 0);
+        String version = packInfo.versionName;
+        return version;
+    }
+
 
     @Override
     public UserInfo getUserInfo(String userid) {
@@ -147,7 +183,13 @@ public class YDApplication extends BaseApplication implements RongIM.UserInfoPro
                     if (returnCode == 200) {
                         RongIM.getInstance().startPrivateChat(this, conversationTargetId, uiConversationTitle);
                     } else {
-                        ToastUtil.showToast(returnMsg);
+                        String utype = XCDSharePreference.getInstantiation(this).getSharedPreferences("utype");
+                        if ("1".equals(utype)) {
+                            ToastUtil.showToast("您还不是会员！");
+                        } else if ("2".equals(utype)) {
+                            ToastUtil.showToast(returnMsg);
+                        }
+
                     }
                 }
                 break;
@@ -208,7 +250,8 @@ public class YDApplication extends BaseApplication implements RongIM.UserInfoPro
      */
     @Override
     public boolean onConversationPortraitClick(Context context, Conversation.ConversationType conversationType, String targetId) {
-        return false;
+        Log.e("TAG_会话列表头像", "targetId=" + targetId);
+        return true;
     }
 
     /**
@@ -221,6 +264,7 @@ public class YDApplication extends BaseApplication implements RongIM.UserInfoPro
      */
     @Override
     public boolean onConversationPortraitLongClick(Context context, Conversation.ConversationType conversationType, String targetId) {
+
         return false;
     }
 
@@ -251,13 +295,21 @@ public class YDApplication extends BaseApplication implements RongIM.UserInfoPro
 
     @Override
     public boolean onConversationClick(Context context, View view, UIConversation uiConversation) {
-        conversationTargetId = uiConversation.getConversationTargetId();
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("id", conversationTargetId);
-        okHttpGet(104, GlobalParam.GETUSERINFOFORID, params);
-
-        uiConversationTitle = uiConversation.getUIConversationTitle();
-
-        return true;
+        Conversation.ConversationType conversationType = uiConversation.getConversationType();
+        if (Conversation.ConversationType.PRIVATE.equals(conversationType)) {
+            if (uiConversation != null) {
+                conversationTargetId = uiConversation.getConversationTargetId();
+                Log.e("TAG_会话列表id", "conversationTargetId=" + conversationTargetId);
+                if (conversationTargetId != null && !"".equals(conversationTargetId)) {
+                    Map<String, Object> params = new HashMap<String, Object>();
+                    params.put("id", conversationTargetId);
+                    okHttpGet(104, GlobalParam.GETUSERINFOFORID, params);
+                    uiConversationTitle = uiConversation.getUIConversationTitle();
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 }

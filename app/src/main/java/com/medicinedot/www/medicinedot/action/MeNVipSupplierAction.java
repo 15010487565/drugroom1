@@ -1,6 +1,7 @@
 package com.medicinedot.www.medicinedot.action;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
@@ -23,8 +25,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.activity.LocalityWebView;
+import com.medicinedot.www.medicinedot.activity.MainSupplierActivity;
 import com.medicinedot.www.medicinedot.adapter.MeGridViewAdapter;
 import com.medicinedot.www.medicinedot.bean.AilPayOrderMoney;
+import com.medicinedot.www.medicinedot.bean.CityListAllInfo;
+import com.medicinedot.www.medicinedot.bean.HomeSupplierinfo;
 import com.medicinedot.www.medicinedot.bean.SettingAboutInfo;
 import com.medicinedot.www.medicinedot.bean.VipLevelMoney;
 import com.medicinedot.www.medicinedot.entity.GlobalParam;
@@ -32,6 +37,10 @@ import com.medicinedot.www.medicinedot.func.MeYServiceTextTopBtnFunc;
 import com.medicinedot.www.medicinedot.pay.PayResult;
 import com.medicinedot.www.medicinedot.pay.PrePayIdAsyncTask;
 import com.medicinedot.www.medicinedot.pay.ZFBPay;
+import com.medicinedot.www.medicinedot.threelevelganged.ArrayWheelAdapter;
+import com.medicinedot.www.medicinedot.threelevelganged.BaseThreeActivity;
+import com.medicinedot.www.medicinedot.threelevelganged.OnWheelChangedListener;
+import com.medicinedot.www.medicinedot.threelevelganged.WheelView;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -39,7 +48,6 @@ import java.util.List;
 import java.util.Map;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
-import www.xcd.com.mylibrary.base.activity.SimpleTopbarActivity;
 import www.xcd.com.mylibrary.utils.ClassUtils;
 import www.xcd.com.mylibrary.utils.GlideCircleTransform;
 import www.xcd.com.mylibrary.utils.ToastUtil;
@@ -48,7 +56,7 @@ import www.xcd.com.mylibrary.utils.XCDSharePreference;
 import static www.xcd.com.mylibrary.utils.ClassUtils.REQUEST_CODE_ASK_CALL_PHONE;
 import static www.xcd.com.mylibrary.utils.XCDSharePreference.getInstantiation;
 
-public class MeNVipSupplierAction extends SimpleTopbarActivity implements AdapterView.OnItemClickListener {
+public class MeNVipSupplierAction extends BaseThreeActivity implements AdapterView.OnItemClickListener, OnWheelChangedListener {
 
     public static final String[] PERMISSIONS = new String[]{
             Manifest.permission.CALL_PHONE
@@ -57,8 +65,7 @@ public class MeNVipSupplierAction extends SimpleTopbarActivity implements Adapte
     /**
      * 昵称
      */
-    private TextView mevipfragment_name, mevipfragment_expiretime
-            , mevip_region,vipuser_agreement;
+    private TextView mevipfragment_name, mevipfragment_expiretime, vipuser_agreement, mevip_region;
     /**
      * 头像
      */
@@ -98,10 +105,18 @@ public class MeNVipSupplierAction extends SimpleTopbarActivity implements Adapte
     /**
      * 支付方式标志
      */
-    private String selectpayway = "-1";
+    private String selectpayway = "2";
 
-    public  static final int SDK_PAY_FLAG = 1000;
+    public static final int SDK_PAY_FLAG = 1000;
     private String ordertype = "1";
+
+    private WheelView mViewProvince;
+    private WheelView mViewCity;
+    private WheelView mViewDistrict;
+
+    private LinearLayout address_select;
+    private TextView btn_confirm, btn_off, mevip_allmoney;
+
     @Override
     protected String[] getPermissions() {
         return PERMISSIONS;
@@ -118,6 +133,11 @@ public class MeNVipSupplierAction extends SimpleTopbarActivity implements Adapte
     }
 
     @Override
+    public boolean getIsShowChoiceDialog() {
+        return false;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menvipsupplier);
@@ -126,6 +146,13 @@ public class MeNVipSupplierAction extends SimpleTopbarActivity implements Adapte
     @Override
     protected void afterSetContentView() {
         super.afterSetContentView();
+        address_select = (LinearLayout) findViewById(R.id.address_select);
+        //
+        btn_confirm = (TextView) findViewById(R.id.btn_confirm);
+        btn_off = (TextView) findViewById(R.id.btn_off);
+        btn_confirm.setOnClickListener(this);
+        btn_off.setOnClickListener(this);
+
         uid = XCDSharePreference.getInstantiation(this).getSharedPreferences("uid");
         endtime = XCDSharePreference.getInstantiation(this).getSharedPreferences("endtime");
         city = XCDSharePreference.getInstantiation(this).getSharedPreferences("region");
@@ -134,12 +161,13 @@ public class MeNVipSupplierAction extends SimpleTopbarActivity implements Adapte
         mevipfragment_expiretime = (TextView) findViewById(R.id.mevipfragment_expiretime);
         //所在地区
         mevip_region = (TextView) findViewById(R.id.mevip_region);
+        mevip_region.setOnClickListener(this);
         String stringExtra = getIntent().getStringExtra("city");
         ordertype = getIntent().getStringExtra("ordertype");
         if (stringExtra == null || "".equals(stringExtra)) {
             if (city.indexOf("-") != -1) {
                 String[] split = city.split("-");
-                if (split.length>1){
+                if (split.length > 1) {
                     city = split[1];
                 }
             }
@@ -188,6 +216,8 @@ public class MeNVipSupplierAction extends SimpleTopbarActivity implements Adapte
         //开通会员用户协议
         vipuser_agreement = (TextView) findViewById(R.id.vipuser_agreement);
         vipuser_agreement.setOnClickListener(this);
+        //支付总金额
+        mevip_allmoney = (TextView) findViewById(R.id.mevip_allmoney);
         //添加消息处理
         gridview.setOnItemClickListener(this);
         //临时数据
@@ -198,12 +228,108 @@ public class MeNVipSupplierAction extends SimpleTopbarActivity implements Adapte
         getServicePhone();
         //加载会员套餐价格
         getMoneyForLevel();
-    }
-    public void getMoneyForLevel() {
+
+        setUpViews();
+        setUpListener();
+        //获取允许开头的列表
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("uid", uid);
+        okHttpGet(100, GlobalParam.CITYLISTFORMEMBER, params);
+    }
+
+    private void setUpViews() {
+        mViewProvince = (WheelView) findViewById(R.id.id_province);
+        mViewCity = (WheelView) findViewById(R.id.id_city);
+        mViewDistrict = (WheelView) findViewById(R.id.id_district);
+    }
+
+    private void setUpListener() {
+        // 添加change事件
+        mViewProvince.addChangingListener(this);
+        // 添加change事件
+        mViewCity.addChangingListener(this);
+        // 添加change事件
+        mViewDistrict.addChangingListener(this);
+    }
+
+    private void setUpData(List<CityListAllInfo.DataBean> provinceList) {
+        initProvinceDatas(provinceList);
+        mViewProvince.setViewAdapter(new ArrayWheelAdapter<String>(this, mProvinceDatas));
+        // 设置可见条目数量
+        mViewProvince.setVisibleItems(7);
+        mViewCity.setVisibleItems(7);
+        mViewDistrict.setVisibleItems(7);
+        if (mProvinceDatas != null) {
+            updateCities();
+            updateAreas();
+        }
+    }
+
+    /**
+     * 根据当前的市，更新区WheelView的信息
+     */
+    private void updateAreas() {
+        int pCurrent = mViewCity.getCurrentItem();
+//        Log.e("TAG_","pCurrent="+pCurrent);
+        mCurrentCityName = mCitisDatasMap.get(mCurrentProviceName)[pCurrent];
+        mViewDistrict.setVisibility(View.VISIBLE);
+        String[] areas = mDistrictDatasMap.get(mCurrentCityName);
+
+        if (areas == null) {
+            areas = new String[]{""};
+        }
+        mViewDistrict.setViewAdapter(new ArrayWheelAdapter<String>(this, areas));
+        mViewDistrict.setCurrentItem(0);
+
+        if (mDistrictDatasMap == null || mDistrictDatasMap.size() == 0) {
+            mViewDistrict.setVisibility(View.GONE);
+        } else {
+            mCurrentDistrictName = mDistrictDatasMap.get(mCurrentCityName)[0];
+            mCurrentZipCode = mZipcodeDatasMap.get(mCurrentDistrictName);
+        }
+    }
+
+    /**
+     * 根据当前的省，更新市WheelView的信息
+     */
+    private void updateCities() {
+        String[] cities = null;
+        int pCurrent = mViewProvince.getCurrentItem();
+        mCurrentProviceName = mProvinceDatas[pCurrent];
+        if (mCitisDatasMap == null) {
+            cities = new String[]{""};
+        } else {
+            cities = mCitisDatasMap.get(mCurrentProviceName);
+            if (cities == null) {
+                cities = new String[]{""};
+            }
+        }
+        mViewCity.setViewAdapter(new ArrayWheelAdapter<String>(this, cities));
+        mViewCity.setCurrentItem(0);
+        updateAreas();
+    }
+
+
+    public void getMoneyForLevel() {
+        String levelcity = mevip_region.getText().toString().trim();
+        if (levelcity == null) {
+            ToastUtil.showToast("获取开通地址错误！");
+            return;
+        }
+        //初始化会员套餐金额
+        mevip_monthmoney.setText("****");
+        mevip_quartermoney.setText("****");
+        mevip_halfyear.setText("****");
+        mevip_yearmonay.setText("****");
+        //支付总金额
+        mevip_allmoney.setText("****");
+        //重新获取套餐金额
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("uid", uid);
+        params.put("city", levelcity);
         okHttpGet(103, GlobalParam.GETMONEYFORLEVEL, params);
     }
+
     private void getServicePhone() {
         createDialogshow();
         Map<String, Object> params = new HashMap<String, Object>();
@@ -212,102 +338,106 @@ public class MeNVipSupplierAction extends SimpleTopbarActivity implements Adapte
     }
 
     private void initData() {
-        //加载圆形头像
-        String headimg = getInstantiation(this).getSharedPreferences("headimg");
-        Glide.with(this)
-                .load(GlobalParam.IP + headimg)
-                .centerCrop()
-                .crossFade()
-                .transform(new GlideCircleTransform(this))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.mipmap.defaulthead)
-                .error(R.mipmap.defaulthead)
-                .into(mevipfragment_head);
-        if (headimg == null || "".equals(headimg)) {
-            Glide.with(this)
-                    .load(GlobalParam.headurl)
-                    .placeholder(R.mipmap.upload_image_side)
-                    .error(R.mipmap.upload_image_side)
-                    .crossFade(1000)
-                    .bitmapTransform(new BlurTransformation(this, 23, 4))  // “23”：设置模糊度(在0.0到25.0之间)，默认”25";"4":图片缩放比例,默认“1”。
-                    .into(mevipfragment_headbg);
-        } else {
+        try {
+            //加载圆形头像
+            String headimg = getInstantiation(this).getSharedPreferences("headimg");
             Glide.with(this)
                     .load(GlobalParam.IP + headimg)
+                    .centerCrop()
+                    .crossFade()
+                    .transform(new GlideCircleTransform(this))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.mipmap.defaulthead)
                     .error(R.mipmap.defaulthead)
-                    .crossFade(1000)
-                    .bitmapTransform(new BlurTransformation(this, 23, 4))  // “23”：设置模糊度(在0.0到25.0之间)，默认”25";"4":图片缩放比例,默认“1”。
-                    .into(mevipfragment_headbg);
+                    .into(mevipfragment_head);
+            if (headimg == null || "".equals(headimg)) {
+                Glide.with(this)
+                        .load(GlobalParam.headurl)
+                        .placeholder(R.mipmap.upload_image_side)
+                        .error(R.mipmap.upload_image_side)
+                        .crossFade(1000)
+                        .bitmapTransform(new BlurTransformation(this, 23, 4))  // “23”：设置模糊度(在0.0到25.0之间)，默认”25";"4":图片缩放比例,默认“1”。
+                        .into(mevipfragment_headbg);
+            } else {
+                Glide.with(this)
+                        .load(GlobalParam.IP + headimg)
+                        .placeholder(R.mipmap.defaulthead)
+                        .error(R.mipmap.defaulthead)
+                        .crossFade(1000)
+                        .bitmapTransform(new BlurTransformation(this, 23, 4))  // “23”：设置模糊度(在0.0到25.0之间)，默认”25";"4":图片缩放比例,默认“1”。
+                        .into(mevipfragment_headbg);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
+    private VipLevelMoney.DataBean dataBean;
+//    private String money = null;
 
     @Override
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {
             case R.id.okalipay:
-                if (TextUtils.isEmpty(level)){
+                if (TextUtils.isEmpty(level)) {
                     ToastUtil.showToast("请选择开通的会员套餐");
                     return;
                 }
-                Log.e("TAG_ordertype","ordertype = "+ordertype);
-                if (ordertype == null){
+                Log.e("TAG_ordertype", "ordertype = " + ordertype);
+                if (ordertype == null) {
                     ordertype = "1";
                 }
-                if (vipmoneydata == null ||vipmoneydata.size()==0){
-                    ToastUtil.showToast("未获取到套餐金额！");
-                    return;
-                }
-                VipLevelMoney.DataBean dataBean = vipmoneydata.get(Integer.parseInt(level)-1);
-                String money = dataBean.getMoney();
-                if (money == null ||"".equals(money)){
+                String payallmoney = mevip_allmoney.getText().toString().trim();
+                if (TextUtils.isEmpty(payallmoney) || "****".equals(payallmoney)) {
                     ToastUtil.showToast("未获取到套餐金额！");
                     return;
                 }
                 createDialogshow();
                 Map<String, Object> params = new HashMap<String, Object>();
                 params.put("uid", uid);
-                params.put("city", city);
+                params.put("city", mevip_region.getText().toString().trim());
                 params.put("level", level);//1 月度会员 2 季度会员 3 半年会员 4 年费会员
-                params.put("summoney", money);
+                params.put("summoney", payallmoney);
                 params.put("ordertype", ordertype);//订单类型 1 开通会员 2 续费会员
                 okHttpPost(102, GlobalParam.CREATEORDER, params);
                 break;
             case R.id.mevip_wexin:
-                mevip_wexin.setBackgroundColor(getColor(R.color.line_c3));
+                mevip_wexin.setBackgroundColor(getColor(R.color.background_eaeaea));
                 mevip_alipay.setBackgroundColor(getColor(R.color.white));
                 selectpayway = "1";
                 break;
             case R.id.mevip_alipay:
                 mevip_wexin.setBackgroundColor(getColor(R.color.white));
-                mevip_alipay.setBackgroundColor(getColor(R.color.line_c3));
+                mevip_alipay.setBackgroundColor(getColor(R.color.background_eaeaea));
                 selectpayway = "2";
                 break;
             case R.id.mevip_monthparent://月度会员
                 Log.e("TAG_点击", "月度会员");
                 level = "1";
-                mevip_monthparent.setBackgroundResource(R.color.line_c3);
+                mevip_monthparent.setBackgroundResource(R.color.background_eaeaea);
                 mevip_quarterparent.setBackgroundResource(R.color.white);
                 mevip_halfyearparent.setBackgroundResource(R.color.white);
                 mevip_yearparent.setBackgroundResource(R.color.white);
-
+                payAllMoney(mevip_monthmoney.getText().toString().trim());
                 break;
             case R.id.mevip_quarterparent://季度会员
                 Log.e("TAG_点击", "季度会员");
                 level = "2";
                 mevip_monthparent.setBackgroundResource(R.color.white);
-                mevip_quarterparent.setBackgroundResource(R.color.line_c3);
+                mevip_quarterparent.setBackgroundResource(R.color.background_eaeaea);
                 mevip_halfyearparent.setBackgroundResource(R.color.white);
                 mevip_yearparent.setBackgroundResource(R.color.white);
+                payAllMoney(mevip_quartermoney.getText().toString().trim());
                 break;
             case R.id.mevip_halfyearparent://半年会员
                 Log.e("TAG_点击", "半年会员");
                 level = "3";
                 mevip_monthparent.setBackgroundResource(R.color.white);
                 mevip_quarterparent.setBackgroundResource(R.color.white);
-                mevip_halfyearparent.setBackgroundResource(R.color.line_c3);
+                mevip_halfyearparent.setBackgroundResource(R.color.background_eaeaea);
                 mevip_yearparent.setBackgroundResource(R.color.white);
+                payAllMoney(mevip_halfyear.getText().toString().trim());
                 break;
             case R.id.mevip_yearparent://年费会员
                 Log.e("TAG_点击", "年费会员");
@@ -315,16 +445,46 @@ public class MeNVipSupplierAction extends SimpleTopbarActivity implements Adapte
                 mevip_monthparent.setBackgroundResource(R.color.white);
                 mevip_quarterparent.setBackgroundResource(R.color.white);
                 mevip_halfyearparent.setBackgroundResource(R.color.white);
-                mevip_yearparent.setBackgroundResource(R.color.line_c3);
+                mevip_yearparent.setBackgroundResource(R.color.background_eaeaea);
+                payAllMoney(mevip_monthmoney.getText().toString().trim());
                 break;
             case R.id.vipuser_agreement:
                 Intent intent = new Intent(this, LocalityWebView.class);
                 intent.putExtra("url", "file:///android_asset/vipuseragreement.html");
                 startActivity(intent);
                 break;
+            case R.id.mevip_region:
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mevip_region.getWindowToken(), 0); //强制隐藏键盘
+                if (mProvinceDatas == null) {
+                    boolean permissions = checkupPermissions(WRITEREADPERMISSIONS);
+                    if (permissions&&citylistForMember.size()>0&&citylistForMember !=null) {
+                        setUpData(citylistForMember);
+                    }
+                } else {
+                    address_select.setVisibility(View.VISIBLE);
+                }
+                break;
+            case R.id.btn_confirm:
+                address_select.setVisibility(View.GONE);
+                mevip_region.setText(mCurrentCityName);
+                getMoneyForLevel();
+                break;
+            case R.id.btn_off:
+                address_select.setVisibility(View.GONE);
+                break;
         }
     }
+    private void payAllMoney(String payallmoney){
 
+        if (TextUtils.isEmpty(payallmoney) || "****".equals(payallmoney)) {
+            ToastUtil.showToast("未获取到套餐金额！");
+            mevip_allmoney.setText("****");
+            return;
+        } else {
+            mevip_allmoney.setText(payallmoney);
+        }
+    }
     public void getRelationService() {
         if (phoneservice == null || "".equals(phoneservice)) {
             ToastUtil.showToast("未获取到客服电话!");
@@ -342,12 +502,24 @@ public class MeNVipSupplierAction extends SimpleTopbarActivity implements Adapte
         }
 
     }
+
     List<VipLevelMoney.DataBean> vipmoneydata;
+    List<CityListAllInfo.DataBean> citylistForMember;
     @Override
     public void onSuccessResult(int requestCode, int returnCode, String returnMsg, String returnData, Map<String, Object> paramsMaps) {
-        if (returnCode == 200) {
-            switch (requestCode) {
-                case 101:
+
+        switch (requestCode) {
+            case 100:
+                if (returnCode == 200){
+                    CityListAllInfo cityallinfo = JSON.parseObject(returnData, CityListAllInfo.class);
+                    citylistForMember = cityallinfo.getData();
+                    setUpData(citylistForMember);
+                }else {
+                    ToastUtil.showToast(returnMsg);
+                }
+                break;
+            case 101:
+                if (returnCode == 200) {
                     try {
                         SettingAboutInfo phoneinfo = JSON.parseObject(returnData, SettingAboutInfo.class);
                         List<SettingAboutInfo.DataBean> data = phoneinfo.getData();
@@ -360,39 +532,68 @@ public class MeNVipSupplierAction extends SimpleTopbarActivity implements Adapte
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    break;
-                case 102:
+                }
+
+                break;
+            case 102:
+                if (returnCode == 200) {
                     if ("1".equals(selectpayway)) {//微信
 //                        wexinlpay(ordernum,summoney);
+                        ToastUtil.showToast("暂不支持微信支付");
                     } else if ("2".equals(selectpayway)) {//支付宝
                         AilPayOrderMoney payorder = JSON.parseObject(returnData, AilPayOrderMoney.class);
                         String data = payorder.getData();
-                        Log.e("TAG_支付宝","data="+data);
-                        new ZFBPay(handler).buttonAlipay(this,data);
+                        Log.e("TAG_支付宝", "data=" + data);
+                        new ZFBPay(handler).buttonAlipay(this, data);
                     }
-                    break;
-                case 103:
-                    VipLevelMoney vipmoney = JSON.parseObject(returnData,VipLevelMoney.class);
+                }
+
+                break;
+            case 103:
+                if (returnCode == 200) {
+                    VipLevelMoney vipmoney = JSON.parseObject(returnData, VipLevelMoney.class);
                     vipmoneydata = vipmoney.getData();
-                    for (int i = 0,j = vipmoneydata.size(); i < j; i++) {
+                    for (int i = 0, j = vipmoneydata.size(); i < j; i++) {
                         VipLevelMoney.DataBean dataBean = vipmoneydata.get(i);
                         String level = dataBean.getLevel();
                         String money = dataBean.getMoney();
-                        if ("1".equals(level)){
+                        if ("1".equals(level)) {
                             mevip_monthmoney.setText(money);
-                        }else  if ("2".equals(level)){
+//                            mevip_allmoney.setText(money);
+                        } else if ("2".equals(level)) {
                             mevip_quartermoney.setText(money);
-                        }else  if ("3".equals(level)){
+//                            mevip_allmoney.setText(money);
+                        } else if ("3".equals(level)) {
                             mevip_halfyear.setText(money);
-                        }else  if ("4".equals(level)){
+//                            mevip_allmoney.setText(money);
+                        } else if ("4".equals(level)) {
                             mevip_yearmonay.setText(money);
+//                            mevip_allmoney.setText(money);
                         }
                     }
-                    break;
-            }
+                }else {
+                    mevip_allmoney.setText("");
+                }
+
+                break;
+            case 104:
+                if (returnCode == 200) {
+                    if (returnData != null) {
+                        HomeSupplierinfo info = JSON.parseObject(returnData, HomeSupplierinfo.class);
+                        String is_member = info.getIs_member();
+                        if ("1".equals(is_member)) {
+                            XCDSharePreference.getInstantiation(this).setSharedPreferences("is_member", "1");
+                        } else {
+                            XCDSharePreference.getInstantiation(this).setSharedPreferences("is_member", "2");
+                        }
+                    }
+                }
+
+                break;
         }
     }
-    private void wexinlpay(String ordernum,String summoney) {
+
+    private void wexinlpay(String ordernum, String summoney) {
         summoney = String.valueOf((int) (Double.valueOf(summoney) * 100));
         String urlString = "https://api.mch.weixin.qq.com/pay/unifiedorder";
         PrePayIdAsyncTask prePayIdAsyncTask = new PrePayIdAsyncTask(this, summoney, ordernum);
@@ -439,12 +640,11 @@ public class MeNVipSupplierAction extends SimpleTopbarActivity implements Adapte
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        Log.e("TAG_电话权限", "requestCode=" + requestCode);
         switch (requestCode) {
             case REQUEST_CODE_ASK_CALL_PHONE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission Granted
-                    ClassUtils.call(this, GlobalParam.TEXTPHOME, false);
+                    ClassUtils.call(this, phoneservice, false);
                 } else {
                     // Permission Denied
                     ToastUtil.showToast("无电话拨打权限");
@@ -454,6 +654,7 @@ public class MeNVipSupplierAction extends SimpleTopbarActivity implements Adapte
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -474,7 +675,11 @@ public class MeNVipSupplierAction extends SimpleTopbarActivity implements Adapte
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
                         ToastUtil.showToast("支付成功");
-                        finish();
+                        Map<String, Object> params = new HashMap<String, Object>();
+                        params.put("uid", uid);
+                        params.put("city", mevip_region.getText().toString().trim());
+                        okHttpGet(104, GlobalParam.HOMEDATA, params);
+                        startActivity(new Intent(MeNVipSupplierAction.this, MainSupplierActivity.class));
                     } else {
                         // 判断resultStatus 为非"9000"则代表可能支付失败
                         // "8000"代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
@@ -484,7 +689,6 @@ public class MeNVipSupplierAction extends SimpleTopbarActivity implements Adapte
                         } else {
                             // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
                             ToastUtil.showToast("支付失败");
-                            finish();
                         }
                     }
                     break;
@@ -493,4 +697,16 @@ public class MeNVipSupplierAction extends SimpleTopbarActivity implements Adapte
             }
         }
     };
+
+    @Override
+    public void onChanged(WheelView wheel, int oldValue, int newValue) {
+        if (wheel == mViewProvince) {
+            updateCities();
+        } else if (wheel == mViewCity) {
+            updateAreas();
+        } else if (wheel == mViewDistrict) {
+            mCurrentDistrictName = mDistrictDatasMap.get(mCurrentCityName)[newValue];
+            mCurrentZipCode = mZipcodeDatasMap.get(mCurrentDistrictName);
+        }
+    }
 }

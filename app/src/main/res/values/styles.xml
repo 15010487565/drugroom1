@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+
     <style name="login_button">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_below">@id/linear_phone</item>
@@ -79,6 +80,7 @@
     <style name="style_textcolor_black_66">
         <item name="android:textSize">16dp</item>
         <item name="android:textColor">@color/black_66</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="style_textcolor_black_99">

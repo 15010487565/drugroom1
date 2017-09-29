@@ -129,20 +129,21 @@ public class OkHttpHelper {
 
                     String result = response.body().string();
                     Log.e("TAG_","result="+result);
-                    JSONObject jsonObject = new JSONObject(result);
-                    String returnCode = jsonObject.optString("errorcode");
-                    String returnMsg = jsonObject.optString("msg");
-                    String returnData = result;
-                    Message message = new Message();
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("requestCode", requestCode);
-                    bundle.putInt("returnCode", Integer.valueOf(returnCode));
-                    bundle.putString("returnMsg", returnMsg);
-                    bundle.putString("returnData", result);
-                    message.setData(bundle);
-                    message.what = HttpConfig.SUCCESSCODE;
-                    message.obj = paramsMaps;
-                    mHandler.sendMessage(message);
+                    getJsonData(result,requestCode,paramsMaps,mHandler);
+//                    JSONObject jsonObject = new JSONObject(result);
+//                    String returnCode = jsonObject.optString("errorcode");
+//                    String returnMsg = jsonObject.optString("msg");
+//                    String returnData = result;
+//                    Message message = new Message();
+//                    Bundle bundle = new Bundle();
+//                    bundle.putInt("requestCode", requestCode);
+//                    bundle.putInt("returnCode", Integer.valueOf(returnCode));
+//                    bundle.putString("returnMsg", returnMsg);
+//                    bundle.putString("returnData", result);
+//                    message.setData(bundle);
+//                    message.what = HttpConfig.SUCCESSCODE;
+//                    message.obj = paramsMaps;
+//                    mHandler.sendMessage(message);
                 } catch (Exception e) {
                     e.printStackTrace();
                     mHandler.sendEmptyMessage(HttpConfig.PARSEERROR);
@@ -203,25 +204,26 @@ public class OkHttpHelper {
 //                            result = response.networkResponse().toString();
                         }
                         Log.e("TAG_","result="+result);
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            String returnCode = jsonObject.optString("errorcode");
-                            String returnMsg = jsonObject.optString("msg");
-                            String returnData = result;
-                            Message message = new Message();
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("requestCode", requestCode);
-                            bundle.putInt("returnCode", Integer.valueOf(returnCode));
-                            bundle.putString("returnMsg", returnMsg);
-                            bundle.putString("returnData", returnData);
-                            message.setData(bundle);
-                            message.what = HttpConfig.SUCCESSCODE;
-                            message.obj = paramsMaps;
-                            mHandler.sendMessage(message);
-                        } catch (Exception e) {
-                            mHandler.sendEmptyMessage(HttpConfig.PARSEERROR);
-                            Log.e("TAG_","CODE = "+response.code());
-                        }
+                        getJsonData(result,requestCode,paramsMaps,mHandler);
+//                        try {
+//                            JSONObject jsonObject = new JSONObject(result);
+//                            String returnCode = jsonObject.optString("errorcode");
+//                            String returnMsg = jsonObject.optString("msg");
+//                            String returnData = result;
+//                            Message message = new Message();
+//                            Bundle bundle = new Bundle();
+//                            bundle.putInt("requestCode", requestCode);
+//                            bundle.putInt("returnCode", Integer.valueOf(returnCode));
+//                            bundle.putString("returnMsg", returnMsg);
+//                            bundle.putString("returnData", returnData);
+//                            message.setData(bundle);
+//                            message.what = HttpConfig.SUCCESSCODE;
+//                            message.obj = paramsMaps;
+//                            mHandler.sendMessage(message);
+//                        } catch (Exception e) {
+//                            mHandler.sendEmptyMessage(HttpConfig.PARSEERROR);
+//                            Log.e("TAG_","CODE = "+response.code());
+//                        }
                     }
                 });
             }
@@ -282,24 +284,25 @@ public class OkHttpHelper {
 //                            result = response.networkResponse().toString();
                         }
                         Log.e("TAG_","result="+result);
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            String returnCode = jsonObject.optString("errorcode");
-                            String returnMsg = jsonObject.optString("msg");
-                            String returnData = result;
-                            Message message = new Message();
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("requestCode", requestCode);
-                            bundle.putInt("returnCode", Integer.valueOf(returnCode));
-                            bundle.putString("returnMsg", returnMsg);
-                            bundle.putString("returnData", returnData);
-                            message.setData(bundle);
-                            message.what = HttpConfig.SUCCESSCODE;
-                            message.obj = paramsMaps;
-                            mHandler.sendMessage(message);
-                        } catch (JSONException e) {
-                            mHandler.sendEmptyMessage(HttpConfig.PARSEERROR);
-                        }
+                        getJsonData(result,requestCode,paramsMaps,mHandler);
+//                        try {
+//                            JSONObject jsonObject = new JSONObject(result);
+//                            String returnCode = jsonObject.optString("errorcode");
+//                            String returnMsg = jsonObject.optString("msg");
+//                            String returnData = result;
+//                            Message message = new Message();
+//                            Bundle bundle = new Bundle();
+//                            bundle.putInt("requestCode", requestCode);
+//                            bundle.putInt("returnCode", Integer.valueOf(returnCode));
+//                            bundle.putString("returnMsg", returnMsg);
+//                            bundle.putString("returnData", returnData);
+//                            message.setData(bundle);
+//                            message.what = HttpConfig.SUCCESSCODE;
+//                            message.obj = paramsMaps;
+//                            mHandler.sendMessage(message);
+//                        } catch (JSONException e) {
+//                            mHandler.sendEmptyMessage(HttpConfig.PARSEERROR);
+//                        }
                     }
                 });
             }
@@ -307,5 +310,24 @@ public class OkHttpHelper {
         Thread thread = new Thread(runnablePost);
         thread.start();
     }
-
+    public void getJsonData(String result,int requestCode,Map paramsMaps,Handler mHandler){
+        try {
+            JSONObject jsonObject = new JSONObject(result);
+            String returnCode = jsonObject.optString("errorcode");
+            String returnMsg = jsonObject.optString("msg");
+            String returnData = result;
+            Message message = new Message();
+            Bundle bundle = new Bundle();
+            bundle.putInt("requestCode", requestCode);
+            bundle.putInt("returnCode", Integer.valueOf(returnCode));
+            bundle.putString("returnMsg", returnMsg);
+            bundle.putString("returnData", returnData);
+            message.setData(bundle);
+            message.what = HttpConfig.SUCCESSCODE;
+            message.obj = paramsMaps;
+            mHandler.sendMessage(message);
+        } catch (JSONException e) {
+            mHandler.sendEmptyMessage(HttpConfig.PARSEERROR);
+        }
+    }
 }

@@ -61,14 +61,18 @@ public class MessageinforDetailsActivity extends SimpleTopbarActivity {
             }else {
                 messagecontent.setText(content ==null?"":"\t\t\t\t" +content);
                 messageimage.setVisibility(View.VISIBLE);
-                Glide.with(this)
-                        .load(GlobalParam.IP +image)
-                        .centerCrop()
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .placeholder(R.mipmap.upload_image_side)
-                        .error(R.mipmap.upload_image_side)
-                        .into(messageimage);
+                try {
+                    Glide.with(this)
+                            .load(GlobalParam.IP +image)
+                            .centerCrop()
+                            .crossFade()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .placeholder(R.mipmap.upload_image_side)
+                            .error(R.mipmap.upload_image_side)
+                            .into(messageimage);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }else {
             ToastUtil.showToast("未获取到详细信息!");

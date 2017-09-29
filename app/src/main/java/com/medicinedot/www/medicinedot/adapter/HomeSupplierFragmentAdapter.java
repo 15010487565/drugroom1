@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -24,7 +25,6 @@ import com.medicinedot.www.medicinedot.fragment.HomeSupplierFragment;
 import java.util.List;
 
 import www.xcd.com.mylibrary.utils.GlideCircleTransform;
-import www.xcd.com.mylibrary.utils.XCDSharePreference;
 
 
 /**
@@ -40,14 +40,33 @@ public class HomeSupplierFragmentAdapter extends BaseAdapter{
         this.context = context;
         this.handler = handler;
     }
-    public void  setData( List<HomeSupplierinfo.DataBean> list){
-        is_member = XCDSharePreference.getInstantiation(context).getSharedPreferences("is_member");
+    public void  setData( List<HomeSupplierinfo.DataBean> list,String is_member){
+        this.is_member = is_member;
         this.list = list;
         notifyDataSetChanged();
     }
     @Override
     public int getCount() {
-        return list==null?0:list.size();
+
+        if ("1".equals(is_member)){
+            return list==null?0:list.size();
+        }else {
+            if (list == null){
+                return 0;
+            }else {
+                if (list.size()>3){
+                    return 3;
+                }else {
+                    return list.size();
+                }
+
+            }
+        }
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        return false;
     }
 
     @Override
@@ -67,6 +86,7 @@ public class HomeSupplierFragmentAdapter extends BaseAdapter{
         if (convertView == null) {
             hodler = new ViewHodler();
             convertView = LayoutInflater.from(context).inflate(R.layout.fragment_homesupplierlistitem, null);
+            hodler.home_locationparent = (LinearLayout) convertView.findViewById(R.id.home_locationparent);
             hodler.home_title = (TextView) convertView.findViewById(R.id.home_title);
             hodler.home_location = (TextView) convertView.findViewById(R.id.home_location);
             hodler.home_context = (TextView) convertView.findViewById(R.id.home_context);
@@ -79,19 +99,27 @@ public class HomeSupplierFragmentAdapter extends BaseAdapter{
         HomeSupplierinfo.DataBean dataBean = list.get(position);
         String title = dataBean.getName();
         hodler.home_title.setText(title==null?"未知":title);
-        String date = dataBean.getRegion();
-        hodler.home_location.setText(date==null?"未知":date);
+        String region = dataBean.getRegion();
+        hodler.home_location.setText(region==null?"未知":region);
         String drugcontent = dataBean.getContent();
-        String homecontext = "药品需求："+drugcontent;
+        String homecontext ="";
+        if (drugcontent == null||"".equals(drugcontent)){
+            homecontext = "药品需求：暂无";
+        }else {
+           homecontext = "药品需求："+drugcontent;
+        }
         SpannableString styledText = new SpannableString(homecontext);
         styledText.setSpan(new TextAppearanceSpan(context, R.style.style_textcolor_black_66), 0, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styledText.setSpan(new TextAppearanceSpan(context, R.style.style_textcolor_black_99), 6, homecontext.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         hodler.home_context.setText(styledText, TextView.BufferType.SPANNABLE);
+
         if ("1".equals(is_member)){
-            hodler.home_location.setVisibility(View.VISIBLE);
+            hodler.home_locationparent.setVisibility(View.VISIBLE);
+            hodler.home_locationparent.setVisibility(View.VISIBLE);
             hodler.homechatimage.setVisibility(View.VISIBLE);
         }else{
-            hodler.home_location.setVisibility(View.GONE);
+            hodler.home_locationparent.setVisibility(View.GONE);
+            hodler.home_locationparent.setVisibility(View.GONE);
             hodler.homechatimage.setVisibility(View.GONE);
         }
         String headimg = dataBean.getHeadimg();
@@ -124,5 +152,6 @@ public class HomeSupplierFragmentAdapter extends BaseAdapter{
         private TextView home_title;
         private TextView home_location,home_context;
         private ImageView titleimage,homechatimage;
+        private LinearLayout home_locationparent;
     }
 }

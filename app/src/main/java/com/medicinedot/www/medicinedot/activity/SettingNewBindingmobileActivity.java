@@ -91,7 +91,7 @@ public class SettingNewBindingmobileActivity extends SimpleTopbarActivity {
                 intent.putExtra("MOBILE",forgetphone);
                 this.setResult(Activity.RESULT_OK,intent);
                 finish();
-                //createDialogshow();
+//                createDialogshow();
 //                Map<String, Object> params = new HashMap<String, Object>();
 //                params.put("phone", loginphone);
 //                params.put("password", loginpassword);

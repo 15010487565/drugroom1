@@ -139,7 +139,14 @@ public class RegisterDrugstoreInfoActivity extends BaseThreeActivity implements 
     public void selectRegion(){
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(detailedness_address.getWindowToken(), 0); //强制隐藏键盘
-        address_select.setVisibility(View.VISIBLE);
+        if (mProvinceDatas ==null){
+            boolean permissions = checkupPermissions(WRITEREADPERMISSIONS);
+            if (permissions){
+                setUpData();
+            }
+        }else {
+            address_select.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setUpViews() {
@@ -164,8 +171,10 @@ public class RegisterDrugstoreInfoActivity extends BaseThreeActivity implements 
         mViewProvince.setVisibleItems(7);
         mViewCity.setVisibleItems(7);
         mViewDistrict.setVisibleItems(7);
-        updateCities();
-        updateAreas();
+        if (mProvinceDatas !=null){
+            updateCities();
+            updateAreas();
+        }
     }
     /**
      * 根据当前的市，更新区WheelView的信息

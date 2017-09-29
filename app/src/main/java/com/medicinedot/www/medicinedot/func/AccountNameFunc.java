@@ -39,9 +39,13 @@ public class AccountNameFunc extends BaseFunc {
     public void onclick() {
         Intent intent = new Intent(getActivity(),SingleUpInfoActivity.class);
         intent.putExtra("title","姓名");
-        intent.putExtra("hintcontent","姓名");
+        String namefunc = "";
+        if (textview!=null&&(namefunc= textview.getText().toString().trim())!=null){
+            intent.putExtra("hintcontent",namefunc);
+        }else {
+            intent.putExtra("hintcontent","请输入您的姓名");
+        }
         getActivity().startActivityForResult(intent,1);
-//        ToastUtil.showToast("姓名");
     }
 
     @Override
@@ -63,7 +67,7 @@ public class AccountNameFunc extends BaseFunc {
         resetRightName(name);
         textview.setTextSize(18);
         textview.setGravity(Gravity.RIGHT);
-        textview.setTextColor(getActivity().getColor(R.color.black_66));
+        textview.setTextColor(getActivity().getResources().getColor(R.color.black_66));
         customView.addView(textview);
     }
     public void resetRightName(String name){

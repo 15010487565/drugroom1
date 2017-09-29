@@ -39,6 +39,14 @@ public abstract class BaseActivity  extends FragmentActivity {
             ,Manifest.permission.CALL_PHONE
 
     };
+    /**
+     * 本地文件读写权限
+     */
+    public static final String[] WRITEREADPERMISSIONS = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ,Manifest.permission.READ_EXTERNAL_STORAGE
+    };
+
     private SystemBarTintManager tintManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,4 +159,5 @@ public abstract class BaseActivity  extends FragmentActivity {
     }
     protected void onDestroyDeatchView() {
     }
+
 }

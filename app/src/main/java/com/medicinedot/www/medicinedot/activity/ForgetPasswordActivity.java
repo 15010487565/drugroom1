@@ -7,9 +7,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.medicinedot.www.medicinedot.R;
+import com.medicinedot.www.medicinedot.bean.RegisterSuppliercodeinfo;
+import com.medicinedot.www.medicinedot.entity.GlobalParam;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import www.xcd.com.mylibrary.base.activity.SimpleTopbarActivity;
@@ -51,7 +55,23 @@ public class ForgetPasswordActivity extends SimpleTopbarActivity {
         super.onClick(v);
         switch (v.getId()){
             case R.id.authcode_button:
+                String forgetphone1  = forget_phone.getText().toString().trim();
+                if ("".equals(forgetphone1)||forgetphone1==null){
+                    ToastUtil.showToast("手机号不能为空");
+                    return;
+                }
+                boolean mobileNO1 = ClassUtils.isMobileNO(forgetphone1);
+                if (!mobileNO1){
+                    ToastUtil.showToast("请输入正确的手机号");
+                    return;
+                }
                 time.start();
+                createDialogshow();
+                String deviceIdcode = ClassUtils.getDeviceId(this);
+                Map<String, Object> paramscode = new HashMap<String, Object>();
+                paramscode.put("vkey", deviceIdcode);
+                paramscode.put("phone", forgetphone1);
+                okHttpGet(101, GlobalParam.GETVERIFICATIONCODE, paramscode);
                 break;
             case R.id.ok:
                 String forgetphone  = forget_phone.getText().toString().trim();
@@ -83,11 +103,14 @@ public class ForgetPasswordActivity extends SimpleTopbarActivity {
                     ToastUtil.showToast("两次密码不相同");
                     return;
                 }
-                //                createDialogshow();
-//                Map<String, Object> params = new HashMap<String, Object>();
-//                params.put("phone", loginphone);
-//                params.put("password", loginpassword);
-//                okHttpPost(100, GlobalParam.ISLOGIN, params);
+                String deviceId = ClassUtils.getDeviceId(this);
+                createDialogshow();
+                Map<String, Object> params = new HashMap<String, Object>();
+                params.put("phone", forgetphone);
+                params.put("pwd", forgetpoasswod);
+                params.put("vkey", deviceId);
+                params.put("vcode", authcodeedit);
+                okHttpPost(100, GlobalParam.FORGETPASSWORD, params);
                 break;
         }
     }
@@ -117,9 +140,16 @@ public class ForgetPasswordActivity extends SimpleTopbarActivity {
         if (returnCode == 200){
             switch (requestCode){
                 case 100:
-
+                    ToastUtil.showToast(returnMsg);
+                    finish();
+                    break;
+                case 101:
+                    RegisterSuppliercodeinfo codeinfo = JSON.parseObject(returnData, RegisterSuppliercodeinfo.class);
+                    String code = codeinfo.getData();
                     break;
             }
+        }else {
+            ToastUtil.showToast(returnMsg);
         }
     }
 

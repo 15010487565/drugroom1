@@ -558,4 +558,5 @@ public abstract class SimpleTopbarActivity extends BaseActivity implements OnCli
 			}
 		});
 	}
+
 }

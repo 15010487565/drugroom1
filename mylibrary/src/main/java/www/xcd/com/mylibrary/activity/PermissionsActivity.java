@@ -118,7 +118,7 @@ public class PermissionsActivity extends FragmentActivity {
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.e("Tag_",hasAllPermissionsGranted(grantResults)+"");
+        Log.e("TAG_权限", "requestCode=" + requestCode );
         if (requestCode == PERMISSION_REQUEST_CODE && hasAllPermissionsGranted(grantResults)) {
             isRequireCheck = true;
             allPermissionsGranted();

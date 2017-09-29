@@ -1,6 +1,7 @@
 <resources>
     <string name="home">首页</string>
     <string name="recentchat">消息</string>
+    <string name="information">资讯</string>
     <string name="me">我的</string>
     <string name="mevip">我的会员</string>
 

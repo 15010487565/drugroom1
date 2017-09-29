@@ -39,10 +39,11 @@ public class RegisterDrugstoreActivity extends SimpleTopbarActivity {
             case R.id.next://登陆
                 invitation_code = invitationcode.getText().toString().trim();
                 if ("".equals(invitation_code)||invitation_code==null){
-                    Intent intent = new Intent(this, RegisterSupplierActivity.class);
-                    intent.putExtra("SELECTTYPE",SELECTTYPE);
-                    intent.putExtra("invitecode",invitation_code);
-                    startActivity(intent);
+//                    Intent intent = new Intent(this, RegisterSupplierActivity.class);
+//                    intent.putExtra("SELECTTYPE",SELECTTYPE);
+//                    intent.putExtra("invitecode",invitation_code);
+//                    startActivity(intent);
+                    ToastUtil.showToast("邀请码不能为空！");
                     return;
                 }
                 createDialogshow();

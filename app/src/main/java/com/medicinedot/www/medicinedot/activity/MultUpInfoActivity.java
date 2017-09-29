@@ -36,15 +36,14 @@ public class MultUpInfoActivity extends SimpleTopbarActivity implements TextWatc
         String title = getIntent().getStringExtra("title");
         resetTopbarTitle(title);
         hintcontent = getIntent().getStringExtra("hintcontent");
-        String hintshowcontent = getIntent().getStringExtra("hintshowcontent");
         updata_edit = (EditText) findViewById(R.id.updata_edit);
         updata_edit.setOnFocusChangeListener(this);
         updata_edit.addTextChangedListener(this);
         contentcun = (TextView) findViewById(R.id.contentcun);
         contentcun.setOnFocusChangeListener(this);
-        if (hintshowcontent!=null&&!"".equals(hintshowcontent)){
-            updata_edit.setHint(hintshowcontent);
-        }
+
+        updata_edit.setHint(hintcontent);
+
     }
     public void getSave(){
         String trim = updata_edit.getText().toString().trim();

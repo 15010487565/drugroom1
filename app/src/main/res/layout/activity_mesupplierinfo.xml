@@ -141,7 +141,7 @@
                     android:textColor="@color/top_bar_background" />
             </LinearLayout>
             <LinearLayout
-                android:layout_marginBottom="80dp"
+                android:layout_marginBottom="@dimen/cityselect"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">

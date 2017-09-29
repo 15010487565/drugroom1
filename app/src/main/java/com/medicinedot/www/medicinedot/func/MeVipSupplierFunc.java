@@ -64,7 +64,7 @@ public class MeVipSupplierFunc extends BaseFunc {
         textview.setLayoutParams(params);//设置布局参数
         textview.setTextSize(16);
         textview.setGravity(Gravity.RIGHT);
-        textview.setTextColor(getActivity().getColor(R.color.top_bar_background));
+        textview.setTextColor(getActivity().getResources().getColor(R.color.top_bar_background));
         customView.addView(textview);
     }
     public void getMeVIPTime(String time){

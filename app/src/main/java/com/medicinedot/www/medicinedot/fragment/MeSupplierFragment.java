@@ -2,7 +2,6 @@ package com.medicinedot.www.medicinedot.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,6 +29,8 @@ import www.xcd.com.mylibrary.func.BaseFunc;
 import www.xcd.com.mylibrary.utils.GlideCircleTransform;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
+
+import static www.xcd.com.mylibrary.utils.XCDSharePreference.getInstantiation;
 
 /**
  * 我
@@ -132,7 +133,7 @@ public class MeSupplierFragment extends BaseFragment implements OnClickListener 
 
     @Override
     protected void initView(LayoutInflater inflater, View view) {
-        selectcity = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("region");
+        selectcity = getInstantiation(getActivity()).getSharedPreferences("region");
         mefragment_info = (LinearLayout) view.findViewById(R.id.mefragment_info);
         mefragment_info.setOnClickListener(this);
         systemFuncList = (LinearLayout) view.findViewById(R.id.me_system_func_list);
@@ -151,29 +152,29 @@ public class MeSupplierFragment extends BaseFragment implements OnClickListener 
         initCustomFunc();
         // 初始化系统功能
         initSystemFunc();
-        String headimg = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("headimg");
-        String name = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("name");
+        String headimg = getInstantiation(getActivity()).getSharedPreferences("headimg");
+        String name = getInstantiation(getActivity()).getSharedPreferences("name");
         initData(name,GlobalParam.IP+headimg);
         //加载城市列表
         initCityList();
     }
 
     private void initCityList() {
-        String endtime = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("endtime");
+        String endtime = getInstantiation(getActivity()).getSharedPreferences("endtime");
 
         MeVipSupplierFunc func = (MeVipSupplierFunc) htFunc.get(R.id.me_func_vipsupplier);
-
-        if (endtime == null || "".equals(endtime)) {
-            func.getMeVIPTime("去开通");
-        } else {
-            func.getMeVIPTime(endtime.substring(0, 10) + "到期");
+        String is_member = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("is_member");
+        if (endtime == null || "".equals(endtime)||!"1".equals(is_member)) {
+            func.getMeVIPTime("未开通");
         }
+//        else {
+//            func.getMeVIPTime(endtime.substring(0, 10) + "到期");
+//        }
     }
 
     private void initData(String name,String headimg) {
         mefragment_name.setText(name);
         //加载圆形头像
-        Log.e("TAG_我的", "headimg="+headimg);
         Glide.with(getActivity())
                 .load(headimg)
                 .centerCrop()
@@ -296,8 +297,8 @@ public class MeSupplierFragment extends BaseFragment implements OnClickListener 
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case 0:
-                    String headimg = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("headimg");
-                    String name = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("name");
+                    String headimg = getInstantiation(getActivity()).getSharedPreferences("headimg");
+                    String name = getInstantiation(getActivity()).getSharedPreferences("name");
                     initData(name,GlobalParam.IP+headimg);
                     break;
             }
@@ -329,7 +330,7 @@ public class MeSupplierFragment extends BaseFragment implements OnClickListener 
             }
         } else {
             MeVipSupplierFunc func = (MeVipSupplierFunc) htFunc.get(R.id.me_func_vipsupplier);
-            func.getMeVIPTime("去开通");
+            func.getMeVIPTime("未开通");
             ToastUtil.showToast(returnMsg);
         }
     }

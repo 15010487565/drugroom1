@@ -22,7 +22,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.adapter.HomeDrugstoreFragmentAdapter;
-import com.medicinedot.www.medicinedot.bean.ErroeInfo;
 import com.medicinedot.www.medicinedot.bean.HomeDrugstoreinfo;
 import com.medicinedot.www.medicinedot.bean.HomeViewPagerImageinfo;
 import com.medicinedot.www.medicinedot.entity.GlobalParam;
@@ -35,6 +34,7 @@ import java.util.Map;
 import io.rong.imkit.RongIM;
 import www.xcd.com.mylibrary.base.fragment.BaseFragment;
 import www.xcd.com.mylibrary.base.view.XListViewHome;
+import www.xcd.com.mylibrary.utils.ClassUtils;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
 
@@ -54,9 +54,11 @@ public class HomeDrugstoreFragment extends BaseFragment implements
     private List<HomeDrugstoreinfo.DataBean> data;
     private Handler mHandler;
     private LinearLayout nulllinear;
-    public static final int HOMECHATIMAGE = 100;
+    public static final int HOMEDRUGSTORECHATIMAGE = 100;
+    public static final int HOMEDRUGSTOREMOILE = 101;
     private String uid;
     private TextView count;
+    private String is_member;
 
     @Override
     protected Object getTopbarTitle() {
@@ -94,19 +96,20 @@ public class HomeDrugstoreFragment extends BaseFragment implements
         params.put("uid", uid);
         okHttpGet(101, GlobalParam.BANNERIMG, params);
     }
+
     private String titleregion;
+
     private void initData(String titleregion) {
         if (titleregion == null || "".equals(titleregion)) {
             titleregion = "北京市";
         } else {
             if (titleregion.indexOf("-") != -1) {
                 String[] split = titleregion.split("-");
-                if (split.length>1){
+                if (split.length > 1) {
                     titleregion = split[1];
-                }else {
+                } else {
                     titleregion = "北京市";
                 }
-                Log.e("TAG_首页城市选择", "titleregion=" + titleregion);
             } else {
                 titleregion = "北京市";
             }
@@ -114,7 +117,7 @@ public class HomeDrugstoreFragment extends BaseFragment implements
         this.titleregion = titleregion;
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("uid", uid);
-        params.put("city",titleregion);
+        params.put("city", titleregion);
         okHttpGet(100, GlobalParam.HOMEDATA, params);
     }
 
@@ -123,21 +126,41 @@ public class HomeDrugstoreFragment extends BaseFragment implements
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case HOMECHATIMAGE:
+                case HOMEDRUGSTORECHATIMAGE:
                     Bundle bundle_car = msg.getData();
                     int position_chat = bundle_car.getInt("position");
-//                    String uid = bundle_car.getString("uid");
-                    HomeDrugstoreinfo.DataBean dataBean = data.get(position_chat);
-                    String ronguserId = dataBean.getRonguserId();
-                    String name = dataBean.getName();
-                    Log.e("TAG_","容云id="+ronguserId+";昵稱"+name);
-                    if (RongIM.getInstance() != null&& !TextUtils.isEmpty(ronguserId)&&!TextUtils.isEmpty(name)) {
-                        RongIM.getInstance().startPrivateChat(getActivity(),ronguserId,name);
+                    chatListviewItem(position_chat);
+                    break;
+                case HOMEDRUGSTOREMOILE:
+                    Bundle bundle_moblie = msg.getData();
+                    int position_moblie = bundle_moblie.getInt("position");
+                    HomeDrugstoreinfo.DataBean dataBean = data.get(position_moblie);
+                    String phone = dataBean.getPhone();
+                    if (!TextUtils.isEmpty(phone)){
+                        ClassUtils.call(getActivity(),phone,true);
                     }
                     break;
             }
         }
     };
+    private String ronguserIdChatObjext;
+    private String rongusernameChatObjext;
+
+    private void chatListviewItem(int position) {
+        HomeDrugstoreinfo.DataBean dataBean = data.get(position);
+        ronguserIdChatObjext = dataBean.getRonguserId();
+        rongusernameChatObjext = dataBean.getName();
+        Log.e("TAG_融云","id="+ronguserIdChatObjext+";name="+rongusernameChatObjext);
+        String supplierid = dataBean.getUid();
+        if (TextUtils.isEmpty(supplierid)){
+            ToastUtil.showToast("获取信息错误！");
+        }else {
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("uid", supplierid);//用户类型 1 供应商 2 药店
+            params.put("pharmacyid", uid);    //药店id
+            okHttpGet(102, GlobalParam.ISMEMBERFORUSER, params);
+        }
+    }
 
     @Override
     public void onClick(View v) {
@@ -161,12 +184,13 @@ public class HomeDrugstoreFragment extends BaseFragment implements
 
     @Override
     public void onSuccessResult(int requestCode, int returnCode, String returnMsg, String returnData, Map<String, Object> paramsMaps) {
-        if (returnCode == 200) {
-            switch (requestCode) {
-                case 100:
+
+        switch (requestCode) {
+            case 100:
+                if (returnCode == 200) {
                     if (returnData == null) {
                         nulllinear.setVisibility(View.VISIBLE);
-//                    home_viphint.setVisibility(View.VISIBLE);
+                        count.setVisibility(View.GONE);
                         listview.setVisibility(View.GONE);
                     } else {
                         listview.setVisibility(View.VISIBLE);
@@ -174,14 +198,17 @@ public class HomeDrugstoreFragment extends BaseFragment implements
                         HomeDrugstoreinfo info = JSON.parseObject(returnData, HomeDrugstoreinfo.class);
                         String infoCount = info.getCount();
                         String infocount_ = ((infoCount == null) || ("".equals(infoCount)) ? "0" : infoCount);
-                        count.setText(titleregion+"共入住" + infocount_ + "位供应商");
+                        count.setVisibility(View.VISIBLE);
+                        count.setText(titleregion + "共入驻" + infocount_ + "位供应商");
                         data = info.getData();
                         adapter.setData(data);
                         listview.setAdapter(adapter);
                         setListViewHeightBasedOnChildren(listview);
                     }
-                    break;
-                case 101:
+                }
+                break;
+            case 101:
+                if (returnCode == 200) {
                     HomeViewPagerImageinfo info = JSON.parseObject(returnData, HomeViewPagerImageinfo.class);
                     imagedata = info.getData();
                     if (imagedata != null && imagedata.size() > 0) {
@@ -203,17 +230,19 @@ public class HomeDrugstoreFragment extends BaseFragment implements
                         //设置点击监听事件
                         ;
                     }
-                    break;
-            }
-        } else {
-            ErroeInfo errorinfo = JSON.parseObject(returnData, ErroeInfo.class);
-            String errorinfoData = errorinfo.getData();
-            if (errorinfoData == null || "".equals(errorinfoData)) {
-                nulllinear.setVisibility(View.VISIBLE);
-                count.setVisibility(View.GONE);
-                listview.setVisibility(View.GONE);
-                ToastUtil.showToast(returnMsg);
-            }
+                }
+                break;
+            case 102:
+                if (returnCode == 200) {
+                    if (RongIM.getInstance() != null && !TextUtils.isEmpty(ronguserIdChatObjext) && !TextUtils.isEmpty(rongusernameChatObjext)) {
+                        RongIM.getInstance().startPrivateChat(getActivity(), ronguserIdChatObjext, rongusernameChatObjext);
+                    }else {
+                        ToastUtil.showToast("获取聊天信息异常！");
+                    }
+                }else {
+                    ToastUtil.showToast(returnMsg);
+                }
+                break;
         }
 
     }
@@ -245,8 +274,8 @@ public class HomeDrugstoreFragment extends BaseFragment implements
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        chatListviewItem(position);
     }
 
     @Override

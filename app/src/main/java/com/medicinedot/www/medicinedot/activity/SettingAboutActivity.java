@@ -80,15 +80,19 @@ public class SettingAboutActivity extends SimpleTopbarActivity {
                                 versions.setText(getVersionName());
                                 about.setText(dataBean.getContent());
                                 phone.setText(dataBean.getPhone());
-                                Glide.with(this)
-                                        .load(GlobalParam.IP+dataBean.getImage())
-                                        .centerCrop()
-                                        .crossFade()
-                                        .transform(new GlideCircleTransform(this))
-                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                        .placeholder(R.mipmap.defaulthead)
-                                        .error(R.mipmap.defaulthead)
-                                        .into(head);
+                                try {
+                                    Glide.with(this)
+                                            .load(GlobalParam.IP+dataBean.getImage())
+                                            .centerCrop()
+                                            .crossFade()
+                                            .transform(new GlideCircleTransform(this))
+                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                            .placeholder(R.mipmap.defaulthead)
+                                            .error(R.mipmap.defaulthead)
+                                            .into(head);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     } catch (Exception e) {

@@ -43,7 +43,8 @@ public class RongChatActivity  extends SimpleTopbarActivity {
 
     private ImageView titleimage;
     private TextView chatname,chatnumber,chatlocation,chatcontext;
-    private LinearLayout allchatinfo,linear_number,linear_location;
+    private LinearLayout allchatinfo,linear_location;
+//    private LinearLayout linear_number;
     @Override
     protected Object getTopbarTitle() {
         return "消息";
@@ -63,7 +64,13 @@ public class RongChatActivity  extends SimpleTopbarActivity {
         String targetId = getIntent().getData().getQueryParameter("targetId");
         Log.e("TAG_单聊","targetId="+targetId);
         allchatinfo = (LinearLayout) findViewById(R.id.allchatinfo);
-        linear_number = (LinearLayout) findViewById(R.id.linear_number);
+//        linear_number = (LinearLayout) findViewById(R.id.linear_number);
+//        String utype = XCDSharePreference.getInstantiation(this).getSharedPreferences("utype");
+//        if ("2".equals(utype)){
+//            linear_number.setVisibility(View.GONE);
+//        }else {
+//            linear_number.setVisibility(View.VISIBLE);
+//        }
         linear_location = (LinearLayout) findViewById(R.id.linear_location);
         titleimage = (ImageView) findViewById(R.id.titleimage);
         chatname = (TextView) findViewById(R.id.chat_name);
@@ -107,15 +114,15 @@ public class RongChatActivity  extends SimpleTopbarActivity {
                     String nickname = userdata.getName();
                     chatname.setText(nickname ==null?"":nickname);
                     String phone = userdata.getPhone().trim();
-                    if (TextUtils.isEmpty(phone)){
-                        chatnumber.setText("");
-                        linear_number.setVisibility(View.GONE);
-                    }else {
+//                    if ("2".equals(utype)){
+//                        chatnumber.setText("");
+//                        linear_number.setVisibility(View.GONE);
+//                    }else {
                         chatnumber.setText(phone);
                         chatnumber.getPaint().setFlags(Paint. UNDERLINE_TEXT_FLAG ); //下划线
                         chatnumber.getPaint().setAntiAlias(true);//抗锯齿
-                        linear_number.setVisibility(View.VISIBLE);
-                    }
+//                        linear_number.setVisibility(View.VISIBLE);
+//                    }
                     String region = userdata.getRegion().trim();
                     if (TextUtils.isEmpty(region)){
                         chatlocation.setText("");
@@ -125,32 +132,39 @@ public class RongChatActivity  extends SimpleTopbarActivity {
                         linear_location.setVisibility(View.VISIBLE);
                     }
                     String content = userdata.getContent().trim();
+                    String homecontext = "";
                     if (TextUtils.isEmpty(content)){
-                        chatcontext.setText("");
-                        linear_location.setVisibility(View.GONE);
+                        if ("1".equals(utype)){
+                            homecontext = "个人简介：暂无";
+                        }else {
+                            homecontext = "药品需求：暂无";
+                        }
                     }else {
-                        String homecontext = "";
                         if ("1".equals(utype)){
                             homecontext = "个人简介："+content;
                         }else {
                             homecontext = "药品需求："+content;
                         }
-                        SpannableString styledText = new SpannableString(homecontext);
-                        styledText.setSpan(new TextAppearanceSpan(context, R.style.style_textcolor_black_66), 0, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        styledText.setSpan(new TextAppearanceSpan(context, R.style.style_textcolor_black_99), 6, homecontext.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        chatcontext.setText(styledText, TextView.BufferType.SPANNABLE);
-                        linear_location.setVisibility(View.VISIBLE);
                     }
+                    SpannableString styledText = new SpannableString(homecontext);
+                    styledText.setSpan(new TextAppearanceSpan(context, R.style.style_textcolor_black_66), 0, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    styledText.setSpan(new TextAppearanceSpan(context, R.style.style_textcolor_black_99), 6, homecontext.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    chatcontext.setText(styledText, TextView.BufferType.SPANNABLE);
+
                     String image_head = userdata.getHeadimg();
-                    Glide.with(this)
-                            .load(GlobalParam.IP+image_head)
-                            .centerCrop()
-                            .crossFade()
-                            .transform(new GlideCircleTransform(this))
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .placeholder(R.mipmap.upload_image_side)
-                            .error(R.mipmap.upload_image_side)
-                            .into(titleimage);
+                    try {
+                        Glide.with(this)
+                                .load(GlobalParam.IP+image_head)
+                                .centerCrop()
+                                .crossFade()
+                                .transform(new GlideCircleTransform(this))
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .placeholder(R.mipmap.upload_image_side)
+                                .error(R.mipmap.upload_image_side)
+                                .into(titleimage);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     break;
             }
 

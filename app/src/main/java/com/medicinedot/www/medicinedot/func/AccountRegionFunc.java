@@ -58,7 +58,7 @@ public class AccountRegionFunc extends BaseFunc {
         textview.setLayoutParams(params);//设置布局参数
         textview.setTextSize(18);
         textview.setGravity(Gravity.RIGHT);
-        textview.setTextColor(getActivity().getColor(R.color.black_66));
+        textview.setTextColor(getActivity().getResources().getColor(R.color.black_66));
         textview.setLines(1);
         customView.addView(textview);
         String region = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("region");

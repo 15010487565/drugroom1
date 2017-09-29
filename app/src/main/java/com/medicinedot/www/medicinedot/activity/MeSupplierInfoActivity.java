@@ -127,10 +127,14 @@ public class MeSupplierInfoActivity extends BaseThreeActivity
         Intent intent = null;
         switch (v.getId()){
             case R.id.briefintroduction://个人简介
+                String briefintroductionstr = briefintroduction.getText().toString().trim();
                 intent = new Intent(this,MultUpInfoActivity.class);
                 intent.putExtra("title","个人简介");
-                intent.putExtra("hintcontent","个人简介");
-                intent.putExtra("hintshowcontent","填写您的个人简介，可以增加药店主动联系您的机会呦！");
+                if (briefintroductionstr==null||"".equals(briefintroductionstr)){
+                    intent.putExtra("hintcontent","填写您的个人简介，可以增加药店主动联系您的机会呦！");
+                }else {
+                    intent.putExtra("hintcontent",briefintroductionstr);
+                }
                 startActivityForResult(intent,3);
                 break;
             case R.id.btn_confirm:
@@ -162,7 +166,14 @@ public class MeSupplierInfoActivity extends BaseThreeActivity
     public void selectRegion(){
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(meinfomain_linear.getWindowToken(), 0); //强制隐藏键盘
-        address_select.setVisibility(View.VISIBLE);
+        if (mProvinceDatas ==null){
+            boolean permissions = checkupPermissions(WRITEREADPERMISSIONS);
+            if (permissions){
+                setUpData();
+            }
+        }else {
+            address_select.setVisibility(View.VISIBLE);
+        }
     }
     private String image_head ="";
     @Override
@@ -203,8 +214,10 @@ public class MeSupplierInfoActivity extends BaseThreeActivity
         mViewProvince.setVisibleItems(7);
         mViewCity.setVisibleItems(7);
         mViewDistrict.setVisibleItems(7);
-        updateCities();
-        updateAreas();
+        if (mProvinceDatas !=null){
+            updateCities();
+            updateAreas();
+        }
     }
     /**
      * 根据当前的市，更新区WheelView的信息

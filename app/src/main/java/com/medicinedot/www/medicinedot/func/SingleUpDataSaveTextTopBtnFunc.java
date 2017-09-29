@@ -25,11 +25,11 @@ public class SingleUpDataSaveTextTopBtnFunc extends BaseTopTextViewFunc {
     }
     /** 功能文本 */
     protected String getFuncText() {
-        return "保存";
+        return "确定";
     }
 
     protected int getFuncTextRes() {
-        return R.string.save;
+        return R.string.ok;
     }
 
     @Override

@@ -41,6 +41,7 @@
     <dimen name="margin_2">2dp</dimen>
     <dimen name="margin_1.5">1.5dp</dimen>
     <dimen name="margin_1">1px</dimen>
+    <dimen name="cityselect">1px</dimen>
     <dimen name="textsize_26">26sp</dimen>
     <dimen name="textsize_24">24sp</dimen>
     <dimen name="textsize_22">22sp</dimen>

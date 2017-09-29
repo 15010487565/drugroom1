@@ -264,7 +264,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="80dp"
+                android:layout_marginBottom="@dimen/cityselect"
                 android:orientation="horizontal">
 
                 <com.medicinedot.www.medicinedot.threelevelganged.WheelView
