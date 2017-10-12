@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.medicinedot.www.medicinedot.R;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 import com.medicinedot.www.medicinedot.threelevelganged.ArrayWheelAdapter;
 import com.medicinedot.www.medicinedot.threelevelganged.BaseThreeActivity;
 import com.medicinedot.www.medicinedot.threelevelganged.OnWheelChangedListener;
@@ -22,6 +21,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
 
@@ -70,7 +70,6 @@ public class RegisterSupplierInfoActivity extends BaseThreeActivity implements V
         address.setOnClickListener(this);
         individual_resume = (TextView) findViewById(R.id.individual_resume);
         individual_resume.setOnClickListener(this);
-        individual_resume.setText("请填写个人简介！");
         setUpViews();
         setUpListener();
         setUpData();
@@ -121,8 +120,8 @@ public class RegisterSupplierInfoActivity extends BaseThreeActivity implements V
             case R.id.individual_resume:
                 Intent intent = new Intent(this,MultUpInfoActivity.class);
                 intent.putExtra("title","个人简介");
-                intent.putExtra("hintcontent","个人简介");
-                intent.putExtra("hintshowcontent","填写您的个人简介，可以增加药店主动联系您的机会呦！");
+                intent.putExtra("hint",true);
+                intent.putExtra("hintcontent","请输入您的个人简介（可以填写您主营的药品种类）");
                 startActivityForResult(intent,0);
                 break;
         }

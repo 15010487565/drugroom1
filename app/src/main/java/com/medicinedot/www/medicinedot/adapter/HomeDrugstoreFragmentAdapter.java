@@ -20,11 +20,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.bean.HomeDrugstoreinfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 import com.medicinedot.www.medicinedot.fragment.HomeDrugstoreFragment;
 
 import java.util.List;
 
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.GlideCircleTransform;
 
 
@@ -46,7 +46,12 @@ public class HomeDrugstoreFragmentAdapter extends BaseAdapter {
         this.list = list;
         notifyDataSetChanged();
     }
-
+    public void addData(List<HomeDrugstoreinfo.DataBean> list) {
+        if (this.list!=null){
+            this.list.addAll(list);
+            notifyDataSetChanged();
+        }
+    }
     @Override
     public int getCount() {
         return list == null ? 0 : list.size();
@@ -107,7 +112,7 @@ public class HomeDrugstoreFragmentAdapter extends BaseAdapter {
         }
         SpannableString styledText = new SpannableString(homecontext);
         styledText.setSpan(new TextAppearanceSpan(context, R.style.style_textcolor_black_66), 0, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styledText.setSpan(new TextAppearanceSpan(context, R.style.style_textcolor_black_99), 6, homecontext.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styledText.setSpan(new TextAppearanceSpan(context, R.style.style_textcolor_black_66_), 5, homecontext.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         hodler.home_context.setText(styledText, TextView.BufferType.SPANNABLE);
 
         String headimg = dataBean.getHeadimg();

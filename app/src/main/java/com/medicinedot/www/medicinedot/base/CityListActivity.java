@@ -9,7 +9,7 @@ import android.util.Xml;
 
 import com.alibaba.fastjson.JSON;
 import com.medicinedot.www.medicinedot.bean.CityListAllInfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 
 import org.xmlpull.v1.XmlSerializer;
 

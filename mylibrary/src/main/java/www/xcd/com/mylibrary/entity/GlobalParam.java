@@ -1,4 +1,4 @@
-package com.medicinedot.www.medicinedot.entity;
+package www.xcd.com.mylibrary.entity;
 
 /**
  * Created by dell on 2015-11-23.
@@ -50,4 +50,8 @@ public class GlobalParam {
     public final static String GETMONEYFORLEVEL = IP + "/Index/Members/getMoneyForLevel";
     //消息通知
     public final static String GETMESSAGEINFORM = IP + "/Index/Index/message";
+    //咨询
+    public final static String INFORMATION = IP + "/Index/News/newslist";
+    //咨询
+    public final static String UPPHONE = IP + "/Index/User/upPhone";
 }

@@ -159,7 +159,7 @@
             android:id="@+id/login"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="老用户登陆"
+            android:text="老用户登录"
             android:gravity="center"
             android:textColor="@color/top_bar_background"
             android:textSize="@dimen/textsize_16" />

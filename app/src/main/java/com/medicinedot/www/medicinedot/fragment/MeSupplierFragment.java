@@ -13,7 +13,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.activity.MeSupplierInfoActivity;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 import com.medicinedot.www.medicinedot.func.MainAddTopBtnFunc;
 import com.medicinedot.www.medicinedot.func.MeChatSupplierFunc;
 import com.medicinedot.www.medicinedot.func.MeSettingSupplierFunc;
@@ -25,6 +24,7 @@ import java.util.Map;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import www.xcd.com.mylibrary.base.fragment.BaseFragment;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.func.BaseFunc;
 import www.xcd.com.mylibrary.utils.GlideCircleTransform;
 import www.xcd.com.mylibrary.utils.ToastUtil;

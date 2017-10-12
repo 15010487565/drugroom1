@@ -32,7 +32,7 @@
     <!--<color name="topbar_create_multi_chat_background">#00b26d</color>&lt;!&ndash;右上角弹出框底色&ndash;&gt;-->
     <color name="topbar_create_multi_chat_press_background">#14212b</color>
     <color name="topbar_create_multi_chat_divide">#ff7d767d</color>
-
+    <color name="gray_aa">#aaaaaa</color>
     <color name="gray_bg">#cccccc</color>
     <color name="gray_dark_bg">#666666</color>
 
@@ -58,4 +58,6 @@
     <color name="blue_normal">#ff00b26d</color>
     <color name="main_tabwidget_separator">#eae5e5</color>
     <color name="main_tabwidget_background">#F8F7F7</color>
+    <color name="light_blue">#6593cb</color>
+
 </resources>

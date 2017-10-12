@@ -12,7 +12,7 @@ public class MeVipCityListInfo implements Serializable{
     /**
      * errorcode : 200
      * msg : 查询成功
-     * data : [{"city":"北京","endtime":"2017-10-11 10:47:25"},{"city":"上海","endtime":"2017-10-11 10:47:25"}]
+     * data : [{"city":"北京市","endtime":"2017-10-10 11:12:05","isMember":3},{"city":"天津市","endtime":"2017-10-29 18:19:40","isMember":1}]
      */
 
     private String errorcode;
@@ -45,12 +45,14 @@ public class MeVipCityListInfo implements Serializable{
 
     public static class DataBean {
         /**
-         * city : 北京
-         * endtime : 2017-10-11 10:47:25
+         * city : 北京市
+         * endtime : 2017-10-10 11:12:05
+         * isMember : 3
          */
 
         private String city;
         private String endtime;
+        private String isMember;
 
         public String getCity() {
             return city;
@@ -66,6 +68,14 @@ public class MeVipCityListInfo implements Serializable{
 
         public void setEndtime(String endtime) {
             this.endtime = endtime;
+        }
+
+        public String getIsMember() {
+            return isMember;
+        }
+
+        public void setIsMember(String isMember) {
+            this.isMember = isMember;
         }
     }
 }

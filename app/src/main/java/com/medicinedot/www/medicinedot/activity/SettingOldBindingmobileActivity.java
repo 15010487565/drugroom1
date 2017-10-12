@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.bean.RegisterSuppliercodeinfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 
 import java.io.IOException;
 import java.util.HashMap;

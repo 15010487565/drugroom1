@@ -12,7 +12,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.bean.SettingAboutInfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import www.xcd.com.mylibrary.base.activity.SimpleTopbarActivity;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.ClassUtils;
 import www.xcd.com.mylibrary.utils.GlideCircleTransform;
 import www.xcd.com.mylibrary.utils.ToastUtil;

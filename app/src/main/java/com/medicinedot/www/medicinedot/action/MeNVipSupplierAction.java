@@ -32,7 +32,6 @@ import com.medicinedot.www.medicinedot.bean.CityListAllInfo;
 import com.medicinedot.www.medicinedot.bean.HomeSupplierinfo;
 import com.medicinedot.www.medicinedot.bean.SettingAboutInfo;
 import com.medicinedot.www.medicinedot.bean.VipLevelMoney;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 import com.medicinedot.www.medicinedot.func.MeYServiceTextTopBtnFunc;
 import com.medicinedot.www.medicinedot.pay.PayResult;
 import com.medicinedot.www.medicinedot.pay.PrePayIdAsyncTask;
@@ -48,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.ClassUtils;
 import www.xcd.com.mylibrary.utils.GlideCircleTransform;
 import www.xcd.com.mylibrary.utils.ToastUtil;
@@ -317,12 +317,12 @@ public class MeNVipSupplierAction extends BaseThreeActivity implements AdapterVi
             return;
         }
         //初始化会员套餐金额
-        mevip_monthmoney.setText("****");
-        mevip_quartermoney.setText("****");
-        mevip_halfyear.setText("****");
-        mevip_yearmonay.setText("****");
+        mevip_monthmoney.setText("00.00");
+        mevip_quartermoney.setText("00.00");
+        mevip_halfyear.setText("00.00");
+        mevip_yearmonay.setText("00.00");
         //支付总金额
-        mevip_allmoney.setText("****");
+        mevip_allmoney.setText("00.00");
         //重新获取套餐金额
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("uid", uid);
@@ -381,15 +381,15 @@ public class MeNVipSupplierAction extends BaseThreeActivity implements AdapterVi
         switch (v.getId()) {
             case R.id.okalipay:
                 if (TextUtils.isEmpty(level)) {
-                    ToastUtil.showToast("请选择开通的会员套餐");
-                    return;
+                    level = "1";
                 }
                 Log.e("TAG_ordertype", "ordertype = " + ordertype);
                 if (ordertype == null) {
                     ordertype = "1";
                 }
                 String payallmoney = mevip_allmoney.getText().toString().trim();
-                if (TextUtils.isEmpty(payallmoney) || "****".equals(payallmoney)) {
+                Log.e("TAG_payallmoney", "payallmoney = " + payallmoney);
+                if (TextUtils.isEmpty(payallmoney) || "00.00".equals(payallmoney)) {
                     ToastUtil.showToast("未获取到套餐金额！");
                     return;
                 }
@@ -446,10 +446,11 @@ public class MeNVipSupplierAction extends BaseThreeActivity implements AdapterVi
                 mevip_quarterparent.setBackgroundResource(R.color.white);
                 mevip_halfyearparent.setBackgroundResource(R.color.white);
                 mevip_yearparent.setBackgroundResource(R.color.background_eaeaea);
-                payAllMoney(mevip_monthmoney.getText().toString().trim());
+                payAllMoney(mevip_yearmonay.getText().toString().trim());
                 break;
             case R.id.vipuser_agreement:
                 Intent intent = new Intent(this, LocalityWebView.class);
+                intent.putExtra("urltitle","用户协议");
                 intent.putExtra("url", "file:///android_asset/vipuseragreement.html");
                 startActivity(intent);
                 break;
@@ -477,9 +478,9 @@ public class MeNVipSupplierAction extends BaseThreeActivity implements AdapterVi
     }
     private void payAllMoney(String payallmoney){
 
-        if (TextUtils.isEmpty(payallmoney) || "****".equals(payallmoney)) {
+        if (TextUtils.isEmpty(payallmoney) || "00.00".equals(payallmoney)) {
             ToastUtil.showToast("未获取到套餐金额！");
-            mevip_allmoney.setText("****");
+            mevip_allmoney.setText("00.00");
             return;
         } else {
             mevip_allmoney.setText(payallmoney);
@@ -497,7 +498,7 @@ public class MeNVipSupplierAction extends BaseThreeActivity implements AdapterVi
                         new String[]{Manifest.permission.CALL_PHONE},
                         REQUEST_CODE_ASK_CALL_PHONE);
             } else {
-                ClassUtils.callDirectly(this, phoneservice, false);
+                ClassUtils.callDirectly(this, phoneservice, true);
             }
         }
 
@@ -559,6 +560,7 @@ public class MeNVipSupplierAction extends BaseThreeActivity implements AdapterVi
                         String money = dataBean.getMoney();
                         if ("1".equals(level)) {
                             mevip_monthmoney.setText(money);
+                            mevip_allmoney.setText(money);
 //                            mevip_allmoney.setText(money);
                         } else if ("2".equals(level)) {
                             mevip_quartermoney.setText(money);
@@ -644,7 +646,7 @@ public class MeNVipSupplierAction extends BaseThreeActivity implements AdapterVi
             case REQUEST_CODE_ASK_CALL_PHONE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission Granted
-                    ClassUtils.call(this, phoneservice, false);
+                    ClassUtils.call(this, phoneservice, true);
                 } else {
                     // Permission Denied
                     ToastUtil.showToast("无电话拨打权限");

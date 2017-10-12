@@ -7,7 +7,7 @@ import android.util.Log;
 import android.util.Xml;
 
 import com.medicinedot.www.medicinedot.entity.Config;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;

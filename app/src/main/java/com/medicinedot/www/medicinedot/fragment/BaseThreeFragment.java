@@ -12,7 +12,6 @@ import android.view.View;
 
 import com.alibaba.fastjson.JSON;
 import com.medicinedot.www.medicinedot.bean.CityListAllInfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 import com.medicinedot.www.medicinedot.threelevelganged.CityModel;
 import com.medicinedot.www.medicinedot.threelevelganged.DistrictModel;
 import com.medicinedot.www.medicinedot.threelevelganged.ProvinceModel;
@@ -33,6 +32,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import www.xcd.com.mylibrary.activity.PermissionsActivity;
 import www.xcd.com.mylibrary.base.fragment.BaseFragment;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 
 import static www.xcd.com.mylibrary.activity.PermissionsActivity.PERMISSIONS_GRANTED;
@@ -160,6 +160,60 @@ public class BaseThreeFragment extends BaseFragment {
                 }
                 // 省-市的数据，保存到mCitisDatasMap
                 mCitisDatasMap.put(provinceList.get(i).getName(), cityNames);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+        }
+    }
+    protected void initProvinceDatas(List<CityListAllInfo.DataBean> provinceList) {
+
+        try {
+            //*/ 初始化默认选中的省、市、区
+            if (provinceList != null && provinceList.size() > 0) {
+                CityListAllInfo.DataBean provincedataBean = provinceList.get(0);
+                mCurrentProviceName = provincedataBean.getProviceName();
+                List<CityListAllInfo.DataBean.CityBean> cityList = provincedataBean.getCity();
+                if (cityList != null && !cityList.isEmpty()) {
+                    CityListAllInfo.DataBean.CityBean cityBean = cityList.get(0);
+                    mCurrentCityName = cityBean.getCityName();
+                    List<CityListAllInfo.DataBean.CityBean.AreaBean> districtList = cityBean.getArea();
+                    if (districtList != null && !districtList.isEmpty()) {
+                        CityListAllInfo.DataBean.CityBean.AreaBean districtModel = districtList.get(0);
+                        mCurrentDistrictName = districtModel.getAreaName();
+//                        mCurrentZipCode = districtModel.getZipcode();
+                    }
+                }
+            }
+            //*/
+            mProvinceDatas = new String[provinceList.size()];
+            for (int i = 0; i < provinceList.size(); i++) {
+                // 遍历所有省的数据
+                mProvinceDatas[i] = provinceList.get(i).getProviceName();
+                List<CityListAllInfo.DataBean.CityBean> cityList = provinceList.get(i).getCity();
+                String[] cityNames = new String[cityList.size()];
+                for (int j = 0; j < cityList.size(); j++) {
+                    // 遍历省下面的所有市的数据
+                    cityNames[j] = cityList.get(j).getCityName();
+                    List<CityListAllInfo.DataBean.CityBean.AreaBean> districtList = cityList.get(j).getArea();
+                    if (districtList != null && districtList.size() > 0) {
+                        String[] distrinctNameArray = new String[districtList.size()];
+                        DistrictModel[] distrinctArray = new DistrictModel[districtList.size()];
+//                        for (int k = 0; k < districtList.size(); k++) {
+//                            // 遍历市下面所有区/县的数据
+//                            DistrictModel districtModel = new DistrictModel(districtList.get(k).getAreaName(), districtList.get(k).getZipcode());
+//                            // 区/县对于的邮编，保存到mZipcodeDatasMap
+//                            mZipcodeDatasMap.put(districtList.get(k).getName(), districtList.get(k).getZipcode());
+//                            distrinctArray[k] = districtModel;
+//                            distrinctNameArray[k] = districtModel.getName();
+//                        }
+                        // 市-区/县的数据，保存到mDistrictDatasMap
+                        mDistrictDatasMap.put(cityNames[j], distrinctNameArray);
+                    }
+                }
+                // 省-市的数据，保存到mCitisDatasMap
+                mCitisDatasMap.put(provinceList.get(i).getProviceName(), cityNames);
             }
         } catch (Exception e) {
             e.printStackTrace();

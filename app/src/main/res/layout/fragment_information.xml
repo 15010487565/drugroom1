@@ -12,10 +12,19 @@
         android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/margin_15"
-        android:layout_marginRight="@dimen/margin_15"
-        android:divider="@color/background_f3f3f3"
-        android:dividerHeight="@dimen/margin_15">
+        android:layout_marginLeft="@dimen/height_15"
+        android:layout_marginRight="@dimen/height_15"
+        android:divider="@color/rc_divider_line"
+        android:dividerHeight="@dimen/margin_1">
 
     </www.xcd.com.mylibrary.base.view.XListView>
+    <TextView
+        android:id="@+id/hinttext"
+        android:gravity="center"
+        android:textSize="@dimen/textsize_18"
+        android:textColor="@color/black_99"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="暂无资讯"/>
 </LinearLayout>

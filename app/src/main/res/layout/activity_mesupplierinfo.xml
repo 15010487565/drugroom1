@@ -68,19 +68,19 @@
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal|right"
-                            android:textColor="@color/black_99"
+                            android:textColor="@color/black_66"
                             android:padding="@dimen/margin_10"
                             android:textSize="@dimen/textsize_18"/>
                         <ImageView
                             android:layout_width="@dimen/margin_15"
                             android:layout_height="@dimen/margin_15"
                             android:layout_marginLeft="@dimen/margin_15"
-                            android:layout_marginRight="@dimen/margin_15"
                             android:background="@mipmap/home_top_arrows"
                             android:contentDescription="@null"
                             android:duplicateParentState="true" />
                     </LinearLayout>
                     <TextView
+                        android:id="@+id/hintbuttom"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingLeft="@dimen/margin_15"

@@ -6,13 +6,13 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.medicinedot.www.medicinedot.R;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import www.xcd.com.mylibrary.base.activity.SimpleTopbarActivity;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
 

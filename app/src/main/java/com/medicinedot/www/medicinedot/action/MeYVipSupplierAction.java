@@ -26,7 +26,6 @@ import com.medicinedot.www.medicinedot.adapter.MeGridViewAdapter;
 import com.medicinedot.www.medicinedot.adapter.MeVipSupplierNLoaclityAdapter;
 import com.medicinedot.www.medicinedot.bean.MeVipCityListInfo;
 import com.medicinedot.www.medicinedot.bean.SettingAboutInfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 import com.medicinedot.www.medicinedot.func.MeNServiceTextTopBtnFunc;
 
 import java.io.IOException;
@@ -36,6 +35,7 @@ import java.util.Map;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import www.xcd.com.mylibrary.base.activity.SimpleTopbarActivity;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.ClassUtils;
 import www.xcd.com.mylibrary.utils.GlideCircleTransform;
 import www.xcd.com.mylibrary.utils.ToastUtil;
@@ -48,8 +48,7 @@ import static www.xcd.com.mylibrary.utils.XCDSharePreference.getInstantiation;
 
 public class MeYVipSupplierAction extends SimpleTopbarActivity implements AdapterView.OnItemClickListener {
 
-    private TextView mefragment_name, meyvip_expiretime, meyvip_expiremoney
-            ,vipcity_coun,vipuser_agreement;
+    private TextView mefragment_name, meyvip_expiretime, meyvip_expiremoney, vipcity_coun, vipuser_agreement;
     private LinearLayout mevip_regionparent;
     private ImageView mefragment_head;
     private ImageView mefragment_headbg;
@@ -64,7 +63,7 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
     private int[] ItemTextbottom = {R.string.moredrugstore, R.string.getrugstorenumber, R.string.morelook};
     private String endtime = "";
     private String city = "";
-    private String uid = "" ;
+    private String uid = "";
     /**
      * 客服电话
      */
@@ -101,6 +100,7 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
         initCityList();
 
     }
+
     private void initCityList() {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("uid", uid);
@@ -118,10 +118,10 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
         meyvip_expiremoney.setOnClickListener(this);
         endtime = XCDSharePreference.getInstantiation(this).getSharedPreferences("endtime");
         city = XCDSharePreference.getInstantiation(this).getSharedPreferences("region");
-        if (endtime ==null ||"".equals(endtime)) {
+        if (endtime == null || "".equals(endtime)) {
             if (city.indexOf("-") != -1) {
                 String[] split = city.split("-");
-                if (split.length>1){
+                if (split.length > 1) {
                     city = split[1];
                 }
             }
@@ -130,12 +130,18 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
         } else {
             if (city.indexOf("-") != -1) {
                 String[] split = city.split("-");
-                if (split.length>1){
+                if (split.length > 1) {
                     city = split[1];
                 }
-
             }
-            meyvip_expiretime.setText("您的" + city + "会员 " + endtime.substring(0,10) + " 到期");
+            String is_member = XCDSharePreference.getInstantiation(this).getSharedPreferences("is_member");
+            String data = XCDSharePreference.getInstantiation(this).getSharedPreferences("day");
+            int parseIntday = Integer.parseInt(data);
+            if ("1".equals(is_member) && Integer.parseInt(data) <= 7) {
+                meyvip_expiretime.setText("您的" + city + "会员还有 " + parseIntday + "天 到期");
+            } else {
+                meyvip_expiretime.setText("您的" + city + "会员 " + endtime.substring(0, 10) + " 到期");
+            }
             meyvip_expiremoney.setText("立即续费");
         }
         vipcity_coun = (TextView) findViewById(R.id.vipcity_coun);
@@ -170,7 +176,7 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
         String headimg = getInstantiation(this).getSharedPreferences("headimg");
         try {
             Glide.with(this)
-                    .load(GlobalParam.IP+headimg)
+                    .load(GlobalParam.IP + headimg)
                     .centerCrop()
                     .crossFade()
                     .transform(new GlideCircleTransform(this))
@@ -188,7 +194,7 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
                         .into(mefragment_headbg);
             } else {
                 Glide.with(this)
-                        .load(GlobalParam.IP+headimg)
+                        .load(GlobalParam.IP + headimg)
                         .placeholder(R.mipmap.defaulthead)
                         .error(R.mipmap.defaulthead)
                         .crossFade(1000)
@@ -206,23 +212,24 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
         super.onClick(v);
         switch (v.getId()) {
             case R.id.meyvip_expiremoney:
-                getBuyVip(city,endtime);
+                getBuyVip(city, endtime);
                 break;
             case R.id.vipuser_agreement:
                 Intent intent = new Intent(this, LocalityWebView.class);
+                intent.putExtra("urltitle","用户协议");
                 intent.putExtra("url", "file:///android_asset/vipuseragreement.html");
                 startActivity(intent);
                 break;
             case R.id.mevip_regionparent:
-                getBuyVip(city,endtime);
+                getBuyVip(city, endtime);
                 break;
         }
     }
 
     public void getRelationService() {
-        if (phoneservice==null||"".equals(phoneservice)){
+        if (phoneservice == null || "".equals(phoneservice)) {
             ToastUtil.showToast("未获取到客服电话!");
-        }else {
+        } else {
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.CALL_PHONE)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -231,7 +238,7 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
                         new String[]{Manifest.permission.CALL_PHONE},
                         REQUEST_CODE_ASK_CALL_PHONE);
             } else {
-                ClassUtils.callDirectly(this, phoneservice, false);
+                ClassUtils.callDirectly(this, phoneservice, true);
             }
         }
 
@@ -245,56 +252,58 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
                 case MEVIPNLOCALITYSUPPLIERRENEW:
                     Bundle bundle_car = msg.getData();
                     int position_chat = bundle_car.getInt("position");
-                    if (data!=null&&data.size()>0){
+                    if (data != null && data.size() > 0) {
                         MeVipCityListInfo.DataBean dataBean = data.get(position_chat);
-                        String city =dataBean.getCity();
+                        String city = dataBean.getCity();
                         String endtime = dataBean.getEndtime();
-                        getBuyVip(city,endtime);
+                        getBuyVip(city, endtime);
                     }
                     break;
             }
         }
     };
-    public void getBuyVip(String city,String time){
-        Intent intent =new Intent(this,MeNVipSupplierAction.class);
-        intent.putExtra("city",city);
-        intent.putExtra("endtime",time);
-        intent.putExtra("ordertype","2");
+
+    public void getBuyVip(String city, String time) {
+        Intent intent = new Intent(this, MeNVipSupplierAction.class);
+        intent.putExtra("city", city);
+        intent.putExtra("endtime", time);
+        intent.putExtra("ordertype", "2");
         startActivity(intent);
     }
+
     @Override
     public void onSuccessResult(int requestCode, int returnCode, String returnMsg, String returnData, Map<String, Object> paramsMaps) {
 
-            switch (requestCode) {
-                case 100:
-                    if (returnCode == 200) {
-                        MeVipCityListInfo info = JSON.parseObject(returnData, MeVipCityListInfo.class);
-                        data = info.getData();
-                        if (data != null || data.size() > 0) {
-                            adapter.setData(data);
-                            listview.setAdapter(adapter);
-                            setListViewHeightBasedOnChildren(listview);
-                        }
-                        vipcity_coun.setText("我的会员城市("+data.size()+")");
+        switch (requestCode) {
+            case 100:
+                if (returnCode == 200) {
+                    MeVipCityListInfo info = JSON.parseObject(returnData, MeVipCityListInfo.class);
+                    data = info.getData();
+                    if (data != null || data.size() > 0) {
+                        adapter.setData(data);
+                        listview.setAdapter(adapter);
+                        setListViewHeightBasedOnChildren(listview);
                     }
-                    break;
-                case 101:
-                    if (returnCode == 200) {
-                        try {
-                            SettingAboutInfo phoneinfo = JSON.parseObject(returnData,SettingAboutInfo.class);
-                            List<SettingAboutInfo.DataBean> data = phoneinfo.getData();
-                            if (data!=null&&data.size()>0){
-                                for (int i = 0; i < data.size(); i++) {
-                                    SettingAboutInfo.DataBean dataBean = data.get(i);
-                                    phoneservice = dataBean.getPhone();
-                                }
+                    vipcity_coun.setText("我的会员城市(" + data.size() + ")");
+                }
+                break;
+            case 101:
+                if (returnCode == 200) {
+                    try {
+                        SettingAboutInfo phoneinfo = JSON.parseObject(returnData, SettingAboutInfo.class);
+                        List<SettingAboutInfo.DataBean> data = phoneinfo.getData();
+                        if (data != null && data.size() > 0) {
+                            for (int i = 0; i < data.size(); i++) {
+                                SettingAboutInfo.DataBean dataBean = data.get(i);
+                                phoneservice = dataBean.getPhone();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    break;
-            }
+                }
+                break;
+        }
 
     }
 
@@ -344,7 +353,7 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
             case REQUEST_CODE_ASK_CALL_PHONE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission Granted
-                    ClassUtils.call(this, phoneservice, false);
+                    ClassUtils.call(this, phoneservice, true);
                 } else {
                     // Permission Denied
                     ToastUtil.showToast("无电话拨打权限");

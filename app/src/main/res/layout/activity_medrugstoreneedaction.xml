@@ -10,21 +10,39 @@
     android:layout_height="match_parent">
     <include
         layout="@layout/view_simple_topbar"/>
-    <EditText
-        android:id="@+id/drugstoreneed_content"
+    <RelativeLayout
+
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/height_200"
-        android:layout_marginTop="@dimen/margin_25"
-        android:layout_marginLeft="@dimen/height_45"
-        android:layout_marginRight="@dimen/height_45"
-        android:padding="@dimen/margin_15"
-        android:textCursorDrawable="@null"
-        android:hint="请填写您的药品需求，可以输入您最近急需的3-5种药品"
-        android:textColorHint="@color/black_99"
-        android:textSize="@dimen/textsize_18"
-        android:textColor="@color/black_66"
-        android:gravity="left|top"
-        android:maxLength="250"
-        android:background="@drawable/edit_text_white"/>
+        android:layout_height="@dimen/height_245">
+        <EditText
+            android:id="@+id/drugstoreneed_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/height_200"
+            android:layout_margin="@dimen/margin_15"
+            android:padding="@dimen/margin_15"
+            android:textCursorDrawable="@null"
+            android:hint="请填写您的药品需求，可以输入您最近急需的3-5种药品"
+            android:textColorHint="@color/black_99"
+            android:textSize="@dimen/textsize_16"
+            android:textColor="@color/black_66"
+            android:gravity="left|top"
+            android:maxLength="60"
+            android:background="@drawable/edit_text_white"/>
+
+        <TextView
+            android:id="@+id/contentcun"
+            android:layout_above="@id/drugstoreneed_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/textsize_14"
+            android:textColor="@color/black_99"
+            android:layout_alignParentBottom="true"
+            android:padding="@dimen/margin_10"
+            android:layout_margin="@dimen/margin_15"
+            android:background="@color/white"
+            android:gravity="right"
+            android:text="0/60"/>
+    </RelativeLayout>
+
 </LinearLayout>

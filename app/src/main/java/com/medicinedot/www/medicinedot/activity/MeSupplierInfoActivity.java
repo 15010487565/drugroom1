@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.bean.UpResumeInfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 import com.medicinedot.www.medicinedot.func.AccountGenderFunc;
 import com.medicinedot.www.medicinedot.func.AccountHeadFunc;
 import com.medicinedot.www.medicinedot.func.AccountNameFunc;
@@ -34,6 +33,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.func.BaseFunc;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
@@ -110,6 +110,12 @@ public class MeSupplierInfoActivity extends BaseThreeActivity
         briefintroduction.setOnClickListener(this);
         String content = XCDSharePreference.getInstantiation(this).getSharedPreferences("content");
         briefintroduction.setText(content);
+        TextView hint_buttom = (TextView) findViewById(R.id.hintbuttom);
+        if (content ==null||"".equals(content)){
+            hint_buttom.setVisibility(View.VISIBLE);
+        }else {
+            hint_buttom.setVisibility(View.GONE);
+        }
         mainFuncView = (LinearLayout) findViewById(R.id.account_main_view);
         mainFuncList = (LinearLayout) findViewById(R.id.account_main_list);
         subFuncView = (LinearLayout) findViewById(R.id.account_sub_view);
@@ -131,8 +137,10 @@ public class MeSupplierInfoActivity extends BaseThreeActivity
                 intent = new Intent(this,MultUpInfoActivity.class);
                 intent.putExtra("title","个人简介");
                 if (briefintroductionstr==null||"".equals(briefintroductionstr)){
+                    intent.putExtra("hint",true);
                     intent.putExtra("hintcontent","填写您的个人简介，可以增加药店主动联系您的机会呦！");
                 }else {
+                    intent.putExtra("hint",false);
                     intent.putExtra("hintcontent",briefintroductionstr);
                 }
                 startActivityForResult(intent,3);
@@ -328,8 +336,10 @@ public class MeSupplierInfoActivity extends BaseThreeActivity
             params.put("region", textString);//所在地区
         }
         String content = briefintroduction.getText().toString().trim();
-        if (!"".equals(content)){
-            params.put("content", content);//姓名
+        if ("".equals(content)){
+            params.put("content", "");
+        }else {
+            params.put("content", content);
         }
 
         if (image_head !=null&&!"".equals(image_head)){
@@ -393,7 +403,7 @@ public class MeSupplierInfoActivity extends BaseThreeActivity
                     String textString = regionfunc.getTextString();
                     if (!"".equals(textString)||textString!=null){
 
-                        XCDSharePreference.getInstantiation(this).setSharedPreferences("region", textString);
+                        XCDSharePreference.getInstantiation(this).setSharedPreferences("finalregion", textString);
                     }
                     String content = briefintroduction.getText().toString().trim();
                     if (!"".equals(content)){

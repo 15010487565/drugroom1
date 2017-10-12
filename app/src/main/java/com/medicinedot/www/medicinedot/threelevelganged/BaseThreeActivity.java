@@ -11,7 +11,6 @@ import android.util.Xml;
 import com.alibaba.fastjson.JSON;
 import com.medicinedot.www.medicinedot.activity.PhotoActivity;
 import com.medicinedot.www.medicinedot.bean.CityListAllInfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 
 import org.xmlpull.v1.XmlSerializer;
 
@@ -27,6 +26,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import www.xcd.com.mylibrary.activity.PermissionsActivity;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 
 import static www.xcd.com.mylibrary.activity.PermissionsActivity.PERMISSIONS_GRANTED;
@@ -74,13 +74,13 @@ public class BaseThreeActivity extends PhotoActivity {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED
-                &&ContextCompat.checkSelfPermission(this,
+                && ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             PermissionsActivity.startActivityForResult(this, PERMISSIONS_GRANTED, permissions);
             return false;
-        }else {
-            Log.e("TAG_获取列表","已执行");
+        } else {
+            Log.e("TAG_获取列表", "已执行");
             Map<String, Object> params = new HashMap<String, Object>();
             //获取城市雷列表
             params.put("uid", "1");
@@ -89,6 +89,7 @@ public class BaseThreeActivity extends PhotoActivity {
         }
 
     }
+
     /**
      * 解析省市区的XML数据
      */
@@ -111,13 +112,13 @@ public class BaseThreeActivity extends PhotoActivity {
             // 获取解析出来的数据
             provinceList = handler.getDataList();
             //*/ 初始化默认选中的省、市、区
-            if (provinceList != null && provinceList.size()>0) {
+            if (provinceList != null && provinceList.size() > 0) {
                 mCurrentProviceName = provinceList.get(0).getName();
                 List<CityModel> cityList = provinceList.get(0).getCityList();
                 if (cityList != null && !cityList.isEmpty()) {
                     mCurrentCityName = cityList.get(0).getName();
                     List<DistrictModel> districtList = cityList.get(0).getDistrictList();
-                    if  (districtList != null && !districtList.isEmpty()){
+                    if (districtList != null && !districtList.isEmpty()) {
                         mCurrentDistrictName = districtList.get(0).getName();
                         mCurrentZipCode = districtList.get(0).getZipcode();
                     }
@@ -134,7 +135,7 @@ public class BaseThreeActivity extends PhotoActivity {
                     // 遍历省下面的所有市的数据
                     cityNames[j] = cityList.get(j).getName();
                     List<DistrictModel> districtList = cityList.get(j).getDistrictList();
-                    if (districtList !=null&&districtList.size()>0){
+                    if (districtList != null && districtList.size() > 0) {
                         String[] distrinctNameArray = new String[districtList.size()];
                         DistrictModel[] distrinctArray = new DistrictModel[districtList.size()];
                         for (int k = 0; k < districtList.size(); k++) {
@@ -158,11 +159,12 @@ public class BaseThreeActivity extends PhotoActivity {
 
         }
     }
+
     protected void initProvinceDatas(List<CityListAllInfo.DataBean> provinceList) {
 
         try {
             //*/ 初始化默认选中的省、市、区
-            if (provinceList != null && provinceList.size()>0) {
+            if (provinceList != null && provinceList.size() > 0) {
                 CityListAllInfo.DataBean provincedataBean = provinceList.get(0);
                 mCurrentProviceName = provincedataBean.getProviceName();
                 List<CityListAllInfo.DataBean.CityBean> cityList = provincedataBean.getCity();
@@ -170,7 +172,7 @@ public class BaseThreeActivity extends PhotoActivity {
                     CityListAllInfo.DataBean.CityBean cityBean = cityList.get(0);
                     mCurrentCityName = cityBean.getCityName();
                     List<CityListAllInfo.DataBean.CityBean.AreaBean> districtList = cityBean.getArea();
-                    if  (districtList != null && !districtList.isEmpty()){
+                    if (districtList != null && !districtList.isEmpty()) {
                         CityListAllInfo.DataBean.CityBean.AreaBean districtModel = districtList.get(0);
                         mCurrentDistrictName = districtModel.getAreaName();
 //                        mCurrentZipCode = districtModel.getZipcode();
@@ -188,7 +190,7 @@ public class BaseThreeActivity extends PhotoActivity {
                     // 遍历省下面的所有市的数据
                     cityNames[j] = cityList.get(j).getCityName();
                     List<CityListAllInfo.DataBean.CityBean.AreaBean> districtList = cityList.get(j).getArea();
-                    if (districtList !=null&&districtList.size()>0){
+                    if (districtList != null && districtList.size() > 0) {
                         String[] distrinctNameArray = new String[districtList.size()];
                         DistrictModel[] distrinctArray = new DistrictModel[districtList.size()];
 //                        for (int k = 0; k < districtList.size(); k++) {
@@ -212,25 +214,30 @@ public class BaseThreeActivity extends PhotoActivity {
 
         }
     }
+
     @Override
     public void onSuccessResult(int requestCode, int returnCode, String returnMsg, String returnData, Map<String, Object> paramsMaps) {
         if (returnCode == 200) {
             switch (requestCode) {
 
                 case 101:
-                    CityListAllInfo cityallinfo = JSON.parseObject(returnData, CityListAllInfo.class);
-                    creatCityList(cityallinfo);
-                    if (Build.VERSION.SDK_INT >= 23) {
-                        int REQUEST_CODE_CONTACT = 101;
-                        String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                        //验证是否许可权限
-                        for (String str : permissions) {
-                            if (this.checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
-                                //申请权限
-                                this.requestPermissions(permissions, REQUEST_CODE_CONTACT);
-                                return;
+                    try {
+                        CityListAllInfo cityallinfo = JSON.parseObject(returnData, CityListAllInfo.class);
+                        creatCityList(cityallinfo);
+                        if (Build.VERSION.SDK_INT >= 23) {
+                            int REQUEST_CODE_CONTACT = 101;
+                            String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                            //验证是否许可权限
+                            for (String str : permissions) {
+                                if (this.checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
+                                    //申请权限
+                                    this.requestPermissions(permissions, REQUEST_CODE_CONTACT);
+                                    return;
+                                }
                             }
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                     break;
             }
@@ -258,9 +265,10 @@ public class BaseThreeActivity extends PhotoActivity {
     public void onFinishResult() {
 
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        Log.e("TAG_读写权限", "requestCode=" + requestCode );
+        Log.e("TAG_读写权限", "requestCode=" + requestCode);
         switch (requestCode) {
             case PERMISSIONS_GRANTED:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {

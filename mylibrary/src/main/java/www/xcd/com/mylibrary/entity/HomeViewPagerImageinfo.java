@@ -1,4 +1,4 @@
-package com.medicinedot.www.medicinedot.bean;
+package www.xcd.com.mylibrary.entity;
 
 import java.io.Serializable;
 import java.util.List;

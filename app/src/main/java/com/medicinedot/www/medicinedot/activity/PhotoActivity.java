@@ -2,7 +2,10 @@ package com.medicinedot.www.medicinedot.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -14,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 import com.yonyou.sns.im.entity.album.YYPhotoItem;
 import com.yonyou.sns.im.util.common.FileUtils;
 
@@ -29,6 +31,7 @@ import java.util.UUID;
 import www.xcd.com.mylibrary.R;
 import www.xcd.com.mylibrary.activity.AlbumPhotoActivity;
 import www.xcd.com.mylibrary.base.activity.SimpleTopbarActivity;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.YYStorageUtil;
 
 import static www.xcd.com.mylibrary.activity.AlbumPhotoActivity.IS_ORIGANL;
@@ -67,6 +70,9 @@ public class PhotoActivity extends SimpleTopbarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState!=null){
+            photoPath = savedInstanceState.getString("photoPath");
+        }
     }
 
     @Override
@@ -95,7 +101,7 @@ public class PhotoActivity extends SimpleTopbarActivity {
                 // 生成photoPath
                 photoFile = new File(YYStorageUtil.getImagePath(PhotoActivity.this), UUID.randomUUID().toString() + ".jpg");
                 photoPath = photoFile.getPath();
-
+                Log.e("TAG_相机路径", "照片photoPath=" + photoPath + "");
                 //判断是否是AndroidN以及更高的版本
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -107,6 +113,7 @@ public class PhotoActivity extends SimpleTopbarActivity {
                             Uri photoURI = FileProvider.getUriForFile(this,
                                     GlobalParam.APPLICATIONID,
                                     photoFile);
+//                            photoURI = geturi(takePictureIntent, this);
                             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                             startActivityForResult(takePictureIntent, REQUEST_CODE_HEAD_CAMERA);
                         }
@@ -116,16 +123,54 @@ public class PhotoActivity extends SimpleTopbarActivity {
                     Uri photoUri = Uri.fromFile(new File(photoPath));
                     // 调用系统相机
                     Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+//                   photoUri = geturi(cameraIntent, this);
+
                     cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                     cameraIntent.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
-                    // start
+                    // 调用剪切功能
                     PhotoActivity.this.startActivityForResult(cameraIntent, REQUEST_CODE_HEAD_CAMERA);
+                    // 直接返回图片
+//                    PhotoActivity.this.startActivityForResult(cameraIntent, REQUEST_CODE_HEAD_CROP);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
         }
+    }
+    public static Uri geturi(Intent intent,Context context) {
+        Uri uri = intent.getData();
+        String type = intent.getType();
+        if (uri.getScheme().equals("file") && (type.contains("image/"))) {
+            String path = uri.getEncodedPath();
+            if (path != null) {
+                path = Uri.decode(path);
+                ContentResolver cr = context.getContentResolver();
+                StringBuffer buff = new StringBuffer();
+                buff.append("(").append(MediaStore.Images.ImageColumns.DATA).append("=")
+                        .append("'" + path + "'").append(")");
+                Cursor cur = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        new String[] { MediaStore.Images.ImageColumns._ID },
+                        buff.toString(), null, null);
+                int index = 0;
+                for (cur.moveToFirst(); !cur.isAfterLast(); cur.moveToNext()) {
+                    index = cur.getColumnIndex(MediaStore.Images.ImageColumns._ID);
+
+                    index = cur.getInt(index);
+                }
+                if (index == 0) {
+                } else {
+                    Uri uri_temp = Uri
+                            .parse("content://media/external/images/media/"
+                                    + index);
+                    if (uri_temp != null) {
+                        uri = uri_temp;
+                    }
+                }
+            }
+        }
+        return uri;
     }
 
     /**
@@ -199,8 +244,13 @@ public class PhotoActivity extends SimpleTopbarActivity {
 
                     break;
                 case REQUEST_CODE_HEAD_CAMERA:
-                    startCrop(photoPath);
+                    //剪切功能
+                    Log.e("TAG_剪切","photoPath="+photoPath);
+                    if (photoPath!=null){
+                        startCrop(photoPath);
+                    }
                     break;
+                //直接返回图片
                 case REQUEST_CODE_HEAD_CROP:
                     try {
                         Bundle extras = data.getExtras();
@@ -300,5 +350,10 @@ public class PhotoActivity extends SimpleTopbarActivity {
 
     public String getTpye() {
         return AlbumPhotoActivity.TYPE_SINGLE;
+    }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        savedInstanceState.putString("photoPath", photoPath);
+        super.onSaveInstanceState(savedInstanceState); //实现父类方法 放在最后 防止拍照后无法返回当前activity
     }
 }

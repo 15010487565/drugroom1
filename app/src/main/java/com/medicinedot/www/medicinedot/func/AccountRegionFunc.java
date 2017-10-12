@@ -61,7 +61,7 @@ public class AccountRegionFunc extends BaseFunc {
         textview.setTextColor(getActivity().getResources().getColor(R.color.black_66));
         textview.setLines(1);
         customView.addView(textview);
-        String region = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("region");
+        String region = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("finalregion");
         refreshRigion(region);
     }
     public void refreshRigion(String refresh){

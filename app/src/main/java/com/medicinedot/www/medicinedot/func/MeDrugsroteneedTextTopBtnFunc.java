@@ -25,7 +25,7 @@ public class MeDrugsroteneedTextTopBtnFunc extends BaseTopTextViewFunc {
     }
     /** 功能文本 */
     protected String getFuncText() {
-        return "编辑";
+        return "保存";
     }
 
     protected int getFuncTextRes() {

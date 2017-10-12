@@ -1,5 +1,6 @@
 package com.medicinedot.www.medicinedot.application;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -15,7 +16,6 @@ import android.view.View;
 import com.alibaba.fastjson.JSON;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.bean.RongYunUserInfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 import com.medicinedot.www.medicinedot.rong.RongReceiveMessageListener;
 import com.medicinedot.www.medicinedot.rong.SendMessageListener;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -31,8 +31,10 @@ import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.UserInfo;
 import www.xcd.com.mylibrary.base.application.BaseApplication;
 import www.xcd.com.mylibrary.config.HttpConfig;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.help.OkHttpHelper;
 import www.xcd.com.mylibrary.http.HttpInterface;
+import www.xcd.com.mylibrary.utils.AppManager;
 import www.xcd.com.mylibrary.utils.CrashHandler;
 import www.xcd.com.mylibrary.utils.NetUtil;
 import www.xcd.com.mylibrary.utils.ToastUtil;
@@ -173,7 +175,8 @@ public class YDApplication extends BaseApplication implements RongIM.UserInfoPro
                     String nickname = userdata.getName();
                     String image_head = userdata.getHeadimg();
                     String userid = userdata.getRonguserId();
-                    if (nickname != null && !TextUtils.isEmpty(image_head) && !TextUtils.isEmpty(userid)) {
+                    Log.e("TAG_融云绘画列表","nickname="+nickname+"userid="+userid);
+                    if (nickname != null && !TextUtils.isEmpty(userid)) {
                         RongIM.getInstance().refreshUserInfoCache(new UserInfo(userid, nickname, Uri.parse(GlobalParam.IP + image_head)));
                     }
                 }
@@ -181,7 +184,8 @@ public class YDApplication extends BaseApplication implements RongIM.UserInfoPro
             case 103:
                 if (RongIM.getInstance() != null && !TextUtils.isEmpty(conversationTargetId) && !TextUtils.isEmpty(uiConversationTitle)) {
                     if (returnCode == 200) {
-                        RongIM.getInstance().startPrivateChat(this, conversationTargetId, uiConversationTitle);
+                        Activity activity = AppManager.getInstance().currentActivity();
+                        RongIM.getInstance().startPrivateChat(activity, conversationTargetId, uiConversationTitle);
                     } else {
                         String utype = XCDSharePreference.getInstantiation(this).getSharedPreferences("utype");
                         if ("1".equals(utype)) {

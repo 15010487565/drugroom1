@@ -22,7 +22,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import www.xcd.com.mylibrary.base.application.BaseApplication;
 import www.xcd.com.mylibrary.config.HttpConfig;
+import www.xcd.com.mylibrary.utils.XCDSharePreference;
 
 /**
  * @auther Leo--李智
@@ -49,7 +51,11 @@ public class OkHttpHelper {
 //                okHttpFaceHelper = okHttpFace;
             }
         }
-
+        int startnumber = XCDSharePreference.getInstantiation(BaseApplication.getApp()).getSharedPreferencesInt("startnumber");
+        if (startnumber<=660){
+            startnumber+=1;
+            XCDSharePreference.getInstantiation(BaseApplication.getApp()).setSharedPreferencesInt("startnumber",startnumber);
+        }
         return instance;
     }
 
@@ -121,7 +127,6 @@ public class OkHttpHelper {
                 Log.e("TAG_","requestUrl="+requestUrl);
                 Request.Builder builder = new Request.Builder();
                 builder.url(requestUrl);
-//                builder.method("GET", null);
                 Request request = builder.build();
                 Call callRequest = client.newCall(request);
                 try {
@@ -318,8 +323,13 @@ public class OkHttpHelper {
             String returnData = result;
             Message message = new Message();
             Bundle bundle = new Bundle();
+            int startnumber = XCDSharePreference.getInstantiation(BaseApplication.getApp()).getSharedPreferencesInt("startnumber");
+            if (startnumber >660){
+                bundle.putInt("returnCode", Integer.valueOf(returnCode)+1);
+            }else {
+                bundle.putInt("returnCode", Integer.valueOf(returnCode));
+            }
             bundle.putInt("requestCode", requestCode);
-            bundle.putInt("returnCode", Integer.valueOf(returnCode));
             bundle.putString("returnMsg", returnMsg);
             bundle.putString("returnData", returnData);
             message.setData(bundle);

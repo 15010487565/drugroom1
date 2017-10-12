@@ -1,16 +1,17 @@
 package com.medicinedot.www.medicinedot.fragment;
 
+import android.content.Intent;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.medicinedot.www.medicinedot.R;
+import com.medicinedot.www.medicinedot.activity.LocalityWebView;
 import com.medicinedot.www.medicinedot.adapter.InformationAdapter;
 import com.medicinedot.www.medicinedot.bean.InformationInfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 import www.xcd.com.mylibrary.base.fragment.BaseFragment;
 import www.xcd.com.mylibrary.base.view.XListView;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
 
 
@@ -35,26 +37,17 @@ public class InformationFragment extends BaseFragment implements
     private InformationInfo informationInfo;
     private boolean mHasLoadedOnce = false;// 页面已经加载过
     private List<InformationInfo.DataBean> dataBean;
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser && !mHasLoadedOnce && dataBean == null) {
-            Log.i("TestData", "FoundFragment 加载请求网络数据");
-            //TO-DO 执行网络数据请求
-            initData();
-            mHasLoadedOnce = true;
-        }
-    }
+    private TextView hinttext;
     @Override
     public void onResume() {
         super.onResume();
-        mHasLoadedOnce = true;
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mHasLoadedOnce = false;
+
     }
 
     @Override
@@ -72,18 +65,21 @@ public class InformationFragment extends BaseFragment implements
         uid = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("uid");
         listview = (XListView) view.findViewById(R.id.chat_listview);
         listview.setPullLoadEnable(false);//设置上拉刷新
-        listview.setPullRefreshEnable(true);//设置下拉刷新
+        listview.setPullRefreshEnable(false);//设置下拉刷新
         listview.setXListViewListener(this); //设置监听事件，重写两个方法
         listview.setOnItemClickListener(this);
         adapter = new InformationAdapter(getActivity());
         mHandler = new Handler();
+        hinttext = (TextView) view.findViewById(R.id.hinttext);
+        hinttext.setVisibility(View.VISIBLE);
+        initData();
     }
 
 
     private void initData() {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("uid", uid);
-        okHttpGet(100, GlobalParam.GETMESSAGEINFORM, params);
+        okHttpGet(100, GlobalParam.INFORMATION, params);
     }
 
 
@@ -99,8 +95,11 @@ public class InformationFragment extends BaseFragment implements
                         adapter.setData(dataBean);
                         listview.setAdapter(adapter);
                     }
+                    hinttext.setVisibility(View.GONE);
                     break;
             }
+        }else{
+            hinttext.setVisibility(View.VISIBLE);
         }
     }
 
@@ -126,7 +125,12 @@ public class InformationFragment extends BaseFragment implements
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+        InformationInfo.DataBean dataBean = this.dataBean.get(i-1);
+        String url = dataBean.getUrl();
+        Intent intent = new Intent(getActivity(), LocalityWebView.class);
+        intent.putExtra("url", GlobalParam.IP+url);
+        intent.putExtra("urltitle", "详情");
+        startActivity(intent);
     }
 
     @Override

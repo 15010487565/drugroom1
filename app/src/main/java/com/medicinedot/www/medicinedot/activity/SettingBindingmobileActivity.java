@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 
 import java.io.IOException;
 import java.util.Map;

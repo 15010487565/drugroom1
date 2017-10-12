@@ -9,21 +9,26 @@ import java.util.List;
 
 public class HomeSupplierinfo implements Serializable{
 
+
     /**
      * errorcode : 200
      * msg : 查询成功
+     * page : 1
      * is_member : 2
-     * endtime : 
-     * count : 1
-     * data : [{"uid":"19","utype":"1","name":"Qqqqq","phone":"15727393984","region":"北京市","content":"Qqqqqqq","address":"","sex":"1","headimg":"/uploads/headimg/20170916/30983428c1bcab5fc2051e0989fc7bb3."}]
+     * endtime :
+     * day : 0
+     * count : 7
+     * data : [{"uid":"153","utype":"1","name":"韩先生","phone":"18764820001","region":"北京市","content":"是个狗狗狗狗狗狗狗狗","address":"","sex":"1","headimg":"/uploads/headimg/20171012/302dfd87b34c3b1e43b1c404d8502084.","ronguserId":"59cdc7b778357","rongtoken":"QSS8oaF5rBUY2qFFFdOdiJ9TdHVM4Zx8SvtOB+e/datq7vJvLgDRmuM45HqYLAFenmt8C9o8EceB1xMfw93zAmzxhMoq0S4kPcgppDozWo8="},{"uid":"156","utype":"1","name":"梅子","phone":"18510286626","region":"北京市","content":"","address":"","sex":"","headimg":"","ronguserId":"59db0ef009ffd","rongtoken":"Oz0wukRa0xmUOZx9ABP8D59TdHVM4Zx8SvtOB+e/datENYlfpa0WqdrjCiz54gDd5bUR1ixNc3E1ldiHl3NC9YfZJpk9hbLyPcgppDozWo8="}]
      */
 
     private String errorcode;
     private String msg;
+    private String page;
     private String is_member;
     private String endtime;
+    private String day;
     private String count;
-    private List<HomeSupplierinfo.DataBean> data;
+    private List<DataBean> data;
 
     public String getErrorcode() {
         return errorcode;
@@ -39,6 +44,14 @@ public class HomeSupplierinfo implements Serializable{
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    public String getPage() {
+        return page;
+    }
+
+    public void setPage(String page) {
+        this.page = page;
     }
 
     public String getIs_member() {
@@ -57,6 +70,14 @@ public class HomeSupplierinfo implements Serializable{
         this.endtime = endtime;
     }
 
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
     public String getCount() {
         return count;
     }
@@ -65,28 +86,27 @@ public class HomeSupplierinfo implements Serializable{
         this.count = count;
     }
 
-    public List<HomeSupplierinfo.DataBean> getData() {
+    public List<DataBean> getData() {
         return data;
     }
 
-    public void setData(List<HomeSupplierinfo.DataBean> data) {
+    public void setData(List<DataBean> data) {
         this.data = data;
     }
 
     public static class DataBean {
-
         /**
-         * uid : 19
+         * uid : 153
          * utype : 1
-         * name : Qqqqq
-         * phone : 15727393984
+         * name : 韩先生
+         * phone : 18764820001
          * region : 北京市
-         * content : Qqqqqqq
+         * content : 是个狗狗狗狗狗狗狗狗
          * address :
          * sex : 1
-         * headimg : /uploads/headimg/20170916/30983428c1bcab5fc2051e0989fc7bb3.
-         * ronguserId :
-         * rongtoken :
+         * headimg : /uploads/headimg/20171012/302dfd87b34c3b1e43b1c404d8502084.
+         * ronguserId : 59cdc7b778357
+         * rongtoken : QSS8oaF5rBUY2qFFFdOdiJ9TdHVM4Zx8SvtOB+e/datq7vJvLgDRmuM45HqYLAFenmt8C9o8EceB1xMfw93zAmzxhMoq0S4kPcgppDozWo8=
          */
 
         private String uid;

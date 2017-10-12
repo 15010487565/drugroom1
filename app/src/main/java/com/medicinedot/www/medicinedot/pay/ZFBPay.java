@@ -28,7 +28,7 @@ public class ZFBPay {
 
         Log.e("TAG_", "PRIATE=" + Config.RSA_PRIVATE);
         if ("error".equals( Config.RSA_PRIVATE)){
-            ToastUtil.showToast("请登陆正式版app支付");
+            ToastUtil.showToast("请登录正式版app支付");
             return;
         }
         // 必须异步调用

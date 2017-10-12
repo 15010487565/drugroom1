@@ -63,10 +63,16 @@ public class MeVipSupplierNLoaclityAdapter extends BaseAdapter{
             hodler = (ViewHodler) convertView.getTag();
         }
         MeVipCityListInfo.DataBean dataBean = list.get(position);
+        String isMember = dataBean.getIsMember();
+        String endtime = dataBean.getEndtime();
+        if ("1".equals(isMember)){
+            String substring = endtime.substring(0, 10);
+            hodler.vip_time.setText(substring==null?"未知":(substring+"到期"));
+        }else if ("3".equals(isMember)){
+            hodler.vip_time.setText("已到期");
+        }
         String city = dataBean.getCity();
         hodler.loactlity.setText(city==null?"未知":city);
-        String endtime = dataBean.getEndtime();
-        hodler.vip_time.setText(endtime==null?"未知":endtime);
         hodler.homechatimage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

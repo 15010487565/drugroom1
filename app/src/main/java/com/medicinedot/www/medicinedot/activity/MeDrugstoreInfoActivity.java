@@ -15,7 +15,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.bean.UpResumeInfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 import com.medicinedot.www.medicinedot.func.MeDruginfoSaveTextTopBtnFunc;
 import com.medicinedot.www.medicinedot.threelevelganged.ArrayWheelAdapter;
 import com.medicinedot.www.medicinedot.threelevelganged.BaseThreeActivity;
@@ -28,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.GlideCircleTransform;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
@@ -55,7 +55,7 @@ public class MeDrugstoreInfoActivity extends BaseThreeActivity implements View.O
 
     @Override
     protected Object getTopbarTitle() {
-        return "请填写药店信息";
+        return "药店信息";
     }
 
     @Override
@@ -84,7 +84,8 @@ public class MeDrugstoreInfoActivity extends BaseThreeActivity implements View.O
         address = (TextView) findViewById(R.id.address);
         String strregion = getInstantiation(this).getSharedPreferences("region");
         address.setText(strregion);
-        address.setOnClickListener(this);
+        //禁止药店切换城市
+//        address.setOnClickListener(this);
         detailedness_address = (TextView) findViewById(R.id.detailedness_address);
         detailedness_address.setOnClickListener(this);
         String straddress = getInstantiation(this).getSharedPreferences("address");
@@ -112,8 +113,12 @@ public class MeDrugstoreInfoActivity extends BaseThreeActivity implements View.O
                 intent = new Intent(this, MultUpInfoActivity.class);
                 intent.putExtra("title", "详细地址");
                 if (addresshint ==null||"".equals(addresshint)){
+                    intent.putExtra("hintaddress",true);
+                    intent.putExtra("hint",true);
                     intent.putExtra("hintcontent", "请输入详细地址");
                 }else {
+                    intent.putExtra("hintaddress",true);
+                    intent.putExtra("hint",false);
                     intent.putExtra("hintcontent", addresshint);
                 }
                 startActivityForResult(intent, 1);

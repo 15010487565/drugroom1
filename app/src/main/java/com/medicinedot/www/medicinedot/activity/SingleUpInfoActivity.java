@@ -19,6 +19,7 @@ public class SingleUpInfoActivity extends SimpleTopbarActivity {
     private EditText updata_edit;
     private String hintcontent;
     private static Class<?> rightFuncArray[] = {SingleUpDataSaveTextTopBtnFunc.class};
+    private String title;
     @Override
     protected Class<?>[] getTopbarRightFuncArray() {
         return rightFuncArray;
@@ -27,17 +28,17 @@ public class SingleUpInfoActivity extends SimpleTopbarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_singupinfo);
-        String title = getIntent().getStringExtra("title");
+        title = getIntent().getStringExtra("title");
         resetTopbarTitle(title);
         hintcontent = getIntent().getStringExtra("hintcontent");
         updata_edit = (EditText) findViewById(R.id.updata_edit);
         updata_edit.setOnFocusChangeListener(this);
-        updata_edit.setHint(hintcontent);
+        updata_edit.setText(hintcontent);
     }
     public void getSave(){
         String trim = updata_edit.getText().toString().trim();
         if (trim == null||"".equals(trim)){
-            ToastUtil.showToast("您输入的"+hintcontent+"不能为空");
+            ToastUtil.showToast(title+"不能为空");
         }else {
             Intent intent = new Intent();
             intent.putExtra("hintcontent",trim);

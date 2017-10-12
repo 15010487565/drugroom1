@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import www.xcd.com.mylibrary.base.activity.SimpleTopbarActivity;
+import www.xcd.com.mylibrary.utils.ClassUtils;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 
 public class MultUpInfoActivity extends SimpleTopbarActivity implements TextWatcher{
@@ -22,7 +23,7 @@ public class MultUpInfoActivity extends SimpleTopbarActivity implements TextWatc
     private EditText updata_edit;
     private TextView contentcun;
     private String hintcontent;
-
+    private boolean hintaddress;
     private static Class<?> rightFuncArray[] = {UpDataSaveTextTopBtnFunc.class};
     @Override
     protected Class<?>[] getTopbarRightFuncArray() {
@@ -41,14 +42,28 @@ public class MultUpInfoActivity extends SimpleTopbarActivity implements TextWatc
         updata_edit.addTextChangedListener(this);
         contentcun = (TextView) findViewById(R.id.contentcun);
         contentcun.setOnFocusChangeListener(this);
-
-        updata_edit.setHint(hintcontent);
-
+        boolean hint = getIntent().getBooleanExtra("hint", false);
+        hintaddress = getIntent().getBooleanExtra("hintaddress", false);
+        if (hint){
+            updata_edit.setHint(hintcontent);
+            ClassUtils.setHintSize(hintcontent,updata_edit);
+        }else {
+            updata_edit.setText(hintcontent);
+        }
     }
     public void getSave(){
         String trim = updata_edit.getText().toString().trim();
+        if (hintaddress){
+            if (trim == null||"".equals(trim)){
+                ToastUtil.showToast("详细地址不能为空！");
+                return;
+            }
+        }
         if (trim == null||"".equals(trim)){
-            ToastUtil.showToast("您输入的"+hintcontent+"不能为空");
+            Intent intent = new Intent();
+            intent.putExtra("hintcontent","");
+            this.setResult(Activity.RESULT_OK,intent);
+            finish();
         }else {
             Intent intent = new Intent();
             intent.putExtra("hintcontent",trim);

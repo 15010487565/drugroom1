@@ -104,7 +104,8 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical|right"
                     android:paddingLeft="@dimen/margin_20"
-                    android:textColor="@color/black_99"
+                    android:textColor="@color/black_66"
+                    android:textColorHint="@color/black_99"
                     android:textSize="@dimen/textsize_18"
                     android:hint="XXX大药房"/>
                 <ImageView
@@ -146,7 +147,8 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical|right"
                     android:paddingLeft="@dimen/margin_20"
-                    android:textColor="@color/black_99"
+                    android:textColor="@color/black_66"
+                    android:textColorHint="@color/black_99"
                     android:textSize="@dimen/textsize_18"
                     android:maxLines="1"
                     android:maxLength="20"
@@ -156,6 +158,7 @@
                     android:layout_height="@dimen/margin_15"
                     android:layout_marginLeft="@dimen/margin_15"
                     android:layout_marginRight="@dimen/margin_15"
+                    android:visibility="invisible"
                     android:background="@mipmap/home_top_arrows"
                     android:contentDescription="@null"
                     android:duplicateParentState="true" />
@@ -190,9 +193,10 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical|right"
                     android:padding="@dimen/margin_10"
-                    android:textColor="@color/black_99"
+                    android:textColor="@color/black_66"
+                    android:textColorHint="@color/black_99"
                     android:textSize="@dimen/textsize_18"
-                    android:hint="xxx街道xx号"/>
+                    android:hint=""/>
                 <ImageView
                     android:layout_width="@dimen/margin_15"
                     android:layout_height="@dimen/margin_15"

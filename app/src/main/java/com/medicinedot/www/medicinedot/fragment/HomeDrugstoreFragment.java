@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,8 +22,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.adapter.HomeDrugstoreFragmentAdapter;
 import com.medicinedot.www.medicinedot.bean.HomeDrugstoreinfo;
-import com.medicinedot.www.medicinedot.bean.HomeViewPagerImageinfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -33,7 +30,10 @@ import java.util.Map;
 
 import io.rong.imkit.RongIM;
 import www.xcd.com.mylibrary.base.fragment.BaseFragment;
+import www.xcd.com.mylibrary.base.view.PullToRefreshLayout;
 import www.xcd.com.mylibrary.base.view.XListViewHome;
+import www.xcd.com.mylibrary.entity.GlobalParam;
+import www.xcd.com.mylibrary.entity.HomeViewPagerImageinfo;
 import www.xcd.com.mylibrary.utils.ClassUtils;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
@@ -45,7 +45,8 @@ import static com.medicinedot.www.medicinedot.R.id.homelookovernull;
  */
 public class HomeDrugstoreFragment extends BaseFragment implements
         View.OnClickListener, OnItemClickListener
-        , XListViewHome.IXListViewListener, AdapterView.OnItemClickListener {
+        , XListViewHome.IXListViewListener
+        , PullToRefreshLayout.OnRefreshListener{
 
     private List<HomeViewPagerImageinfo.DataBean> imagedata;
     ConvenientBanner homeConvenientBanner;
@@ -59,7 +60,7 @@ public class HomeDrugstoreFragment extends BaseFragment implements
     private String uid;
     private TextView count;
     private String is_member;
-
+    private String page = "1";//分页加载默认首页
     @Override
     protected Object getTopbarTitle() {
         return R.string.home;
@@ -79,7 +80,7 @@ public class HomeDrugstoreFragment extends BaseFragment implements
         listview.setPullLoadEnable(false);//设置上拉刷新
         listview.setPullRefreshEnable(false);//设置下拉刷新
         listview.setXListViewListener(this); //设置监听事件，重写两个方法
-        listview.setOnItemClickListener(this);
+//        listview.setOnItemClickListener(this);
         adapter = new HomeDrugstoreFragmentAdapter(getActivity(), handler);
         mHandler = new Handler();
         nulllinear = (LinearLayout) view.findViewById(R.id.nulllinear);
@@ -88,7 +89,10 @@ public class HomeDrugstoreFragment extends BaseFragment implements
         initViewPagerImage();
         //首页数据
         String region = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("region");
-        initData(region);
+        initData(region,"1");
+        //
+        ((PullToRefreshLayout) view.findViewById(R.id.refresh_view))
+                .setOnRefreshListener(this);
     }
 
     private void initViewPagerImage() {
@@ -99,7 +103,7 @@ public class HomeDrugstoreFragment extends BaseFragment implements
 
     private String titleregion;
 
-    private void initData(String titleregion) {
+    private void initData(String titleregion,String page) {
         if (titleregion == null || "".equals(titleregion)) {
             titleregion = "北京市";
         } else {
@@ -110,14 +114,13 @@ public class HomeDrugstoreFragment extends BaseFragment implements
                 } else {
                     titleregion = "北京市";
                 }
-            } else {
-                titleregion = "北京市";
             }
         }
         this.titleregion = titleregion;
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("uid", uid);
         params.put("city", titleregion);
+        params.put("page", page);
         okHttpGet(100, GlobalParam.HOMEDATA, params);
     }
 
@@ -201,10 +204,32 @@ public class HomeDrugstoreFragment extends BaseFragment implements
                         count.setVisibility(View.VISIBLE);
                         count.setText(titleregion + "共入驻" + infocount_ + "位供应商");
                         data = info.getData();
-                        adapter.setData(data);
-                        listview.setAdapter(adapter);
-                        setListViewHeightBasedOnChildren(listview);
+                        String countcoun = info.getCount();
+                        if ("0".equals(countcoun)){
+                            nulllinear.setVisibility(View.VISIBLE);
+                            count.setVisibility(View.GONE);
+                            listview.setVisibility(View.GONE);
+                            data.clear();
+                        }else {
+                            if (data == null ||"".equals(data)||data.size()==0){
+                                ToastUtil.showToast("没有更多数据了");
+                            }else {
+                                if (LOADMORE.equals(PullToRefreshstate)){
+                                    adapter.addData(data);
+                                }else {
+                                    adapter.setData(data);
+                                }
+                                listview.setAdapter(adapter);
+                                setListViewHeightBasedOnChildren(listview);
+                            }
+
+                        }
                     }
+                }
+                if (REFRESH.equals(PullToRefreshstate)) {
+                    pullToRefreshLayoutRefresh.refreshFinish(PullToRefreshLayout.SUCCEED);
+                } else if (LOADMORE.equals(PullToRefreshstate)) {
+                    pullToRefreshLayoutLoadMore.loadmoreFinish(PullToRefreshLayout.SUCCEED);
                 }
                 break;
             case 101:
@@ -273,10 +298,10 @@ public class HomeDrugstoreFragment extends BaseFragment implements
 
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        chatListviewItem(position);
-    }
+//    @Override
+//    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+//        chatListviewItem(position-1);
+//    }
 
     @Override
     public void onRefresh() {
@@ -307,6 +332,28 @@ public class HomeDrugstoreFragment extends BaseFragment implements
         listview.stopRefresh();
         listview.stopLoadMore();
         listview.setRefreshTime("刚刚");
+    }
+
+    private String PullToRefreshstate = "";
+    private final String REFRESH = "Refresh";
+    private final String LOADMORE = "LOADMORE";
+    private PullToRefreshLayout pullToRefreshLayoutRefresh;
+    private PullToRefreshLayout pullToRefreshLayoutLoadMore;
+
+    @Override
+    public void onRefresh(final PullToRefreshLayout pullToRefreshLayoutRefresh) {
+        PullToRefreshstate = REFRESH;
+        this.pullToRefreshLayoutRefresh = pullToRefreshLayoutRefresh;
+        // 下拉刷新操作
+        initData(titleregion,"1");
+
+    }
+
+    @Override
+    public void onLoadMore(final PullToRefreshLayout pullToRefreshLayoutLoadMore) {
+        PullToRefreshstate = LOADMORE;
+        this.pullToRefreshLayoutLoadMore = pullToRefreshLayoutLoadMore;
+        initData(titleregion,String.valueOf(Integer.parseInt(page)+1));
     }
 
     public class LocalImageHolderView implements Holder<HomeViewPagerImageinfo.DataBean> {

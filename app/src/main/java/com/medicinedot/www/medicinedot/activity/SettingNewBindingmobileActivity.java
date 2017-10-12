@@ -12,15 +12,16 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.bean.RegisterSuppliercodeinfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import www.xcd.com.mylibrary.base.activity.SimpleTopbarActivity;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.ClassUtils;
 import www.xcd.com.mylibrary.utils.ToastUtil;
+import www.xcd.com.mylibrary.utils.XCDSharePreference;
 
 
 public class SettingNewBindingmobileActivity extends SimpleTopbarActivity {
@@ -66,10 +67,10 @@ public class SettingNewBindingmobileActivity extends SimpleTopbarActivity {
             ToastUtil.showToast("请输入正确的手机号");
             return;
         }
+        String deviceIdcode = ClassUtils.getDeviceId(this);
         switch (v.getId()){
             case R.id.authcode_button:
                 createDialogshow();
-                String deviceIdcode = ClassUtils.getDeviceId(this);
                 Map<String, Object> paramscode = new HashMap<String, Object>();
                 paramscode.put("vkey", deviceIdcode);
                 paramscode.put("phone", forgetphone);
@@ -91,11 +92,15 @@ public class SettingNewBindingmobileActivity extends SimpleTopbarActivity {
                 intent.putExtra("MOBILE",forgetphone);
                 this.setResult(Activity.RESULT_OK,intent);
                 finish();
-//                createDialogshow();
-//                Map<String, Object> params = new HashMap<String, Object>();
-//                params.put("phone", loginphone);
-//                params.put("password", loginpassword);
-//                okHttpPost(100, GlobalParam.ISLOGIN, params);
+
+               String uid= XCDSharePreference.getInstantiation(this).getSharedPreferences("uid");
+                createDialogshow();
+                Map<String, Object> params = new HashMap<String, Object>();
+                params.put("phone", forgetphone);
+                params.put("uid", uid);
+                params.put("vcode", authcodeedit);
+                params.put("vkey", deviceIdcode);
+                okHttpPost(100, GlobalParam.UPPHONE, params);
                 break;
         }
     }
@@ -124,6 +129,12 @@ public class SettingNewBindingmobileActivity extends SimpleTopbarActivity {
     public void onSuccessResult(int requestCode, int returnCode, String returnMsg, String returnData, Map<String, Object> paramsMaps) {
         if (returnCode == 200){
             switch (requestCode){
+                case 100:
+                    Intent in = new Intent("android.intent.action.LOGIN");
+                    in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(in);
+                    finish();
+                    break;
                 case 101:
                     RegisterSuppliercodeinfo codeinfo = JSON.parseObject(returnData, RegisterSuppliercodeinfo.class);
                     code = codeinfo.getData();

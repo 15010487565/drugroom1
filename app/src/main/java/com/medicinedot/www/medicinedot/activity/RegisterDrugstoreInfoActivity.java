@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.medicinedot.www.medicinedot.R;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 import com.medicinedot.www.medicinedot.threelevelganged.ArrayWheelAdapter;
 import com.medicinedot.www.medicinedot.threelevelganged.BaseThreeActivity;
 import com.medicinedot.www.medicinedot.threelevelganged.OnWheelChangedListener;
@@ -22,6 +21,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
 
@@ -71,7 +71,7 @@ public class RegisterDrugstoreInfoActivity extends BaseThreeActivity implements 
         address.setOnClickListener(this);
         drugstoreneed = (TextView) findViewById(R.id.drugstoreneed);
         drugstoreneed.setOnClickListener(this);
-        drugstoreneed.setText("请填写药品需求！");
+        drugstoreneed.setHint("请填写您的药品需求，可以输入您最近急需的3-5种药品！");
         setUpViews();
         setUpListener();
         setUpData();
@@ -97,7 +97,8 @@ public class RegisterDrugstoreInfoActivity extends BaseThreeActivity implements 
             case R.id.drugstoreneed:
                 Intent intent = new Intent(this,MultUpInfoActivity.class);
                 intent.putExtra("title","药品需求");
-                intent.putExtra("hintcontent","药品需求");
+                intent.putExtra("hint",true);
+                intent.putExtra("hintcontent","请填写您的药品需求，可以输入您最近急需的3-5种药品");
                 startActivityForResult(intent,0);
                 break;
 

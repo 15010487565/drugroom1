@@ -11,7 +11,6 @@ import com.alibaba.fastjson.JSON;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.adapter.MessageInformAdapter;
 import com.medicinedot.www.medicinedot.bean.MessageInformInfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -21,7 +20,7 @@ import java.util.Map;
 
 import www.xcd.com.mylibrary.base.activity.SimpleTopbarActivity;
 import www.xcd.com.mylibrary.base.view.XListView;
-import www.xcd.com.mylibrary.utils.ToastUtil;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
 
 public class MessageInformActivity extends SimpleTopbarActivity implements
@@ -72,7 +71,6 @@ public class MessageInformActivity extends SimpleTopbarActivity implements
                 case CHATDETAILS:
                     Bundle bundle_car = msg.getData();
                     int position_chat = bundle_car.getInt("position");
-                    ToastUtil.showToast("点击的是第" + position_chat + "item");
                     Intent intent = new Intent(MessageInformActivity.this, MessageinforDetailsActivity.class);
                     intent.putExtra("messageinform", (Serializable)messageInformInfo );
                     intent.putExtra("position",position_chat);

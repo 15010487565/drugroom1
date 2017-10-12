@@ -30,6 +30,10 @@ public class LocalityWebView extends SimpleTopbarActivity {
         webview = (WebView) findViewById(R.id.web);
         Intent intent = getIntent();
         String stringExtra = intent.getStringExtra("url");
+        String urltitle = intent.getStringExtra("urltitle");
+        if (urltitle !=null||!"".equals(urltitle)){
+            resetTopbarTitle(urltitle);
+        }
         Log.e("TAG_","stringExtra="+stringExtra);
         WebSettings setting = webview.getSettings();
         setting.setJavaScriptEnabled(true);

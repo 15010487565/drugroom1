@@ -21,13 +21,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.bean.RongYunUserInfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import www.xcd.com.mylibrary.base.activity.SimpleTopbarActivity;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.ClassUtils;
 import www.xcd.com.mylibrary.utils.GlideCircleTransform;
 
@@ -148,9 +148,8 @@ public class RongChatActivity  extends SimpleTopbarActivity {
                     }
                     SpannableString styledText = new SpannableString(homecontext);
                     styledText.setSpan(new TextAppearanceSpan(context, R.style.style_textcolor_black_66), 0, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    styledText.setSpan(new TextAppearanceSpan(context, R.style.style_textcolor_black_99), 6, homecontext.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    styledText.setSpan(new TextAppearanceSpan(context, R.style.style_textcolor_black_66_), 5, homecontext.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     chatcontext.setText(styledText, TextView.BufferType.SPANNABLE);
-
                     String image_head = userdata.getHeadimg();
                     try {
                         Glide.with(this)

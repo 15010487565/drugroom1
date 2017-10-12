@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,11 +7,16 @@
     android:focusableInTouchMode="true"
     android:orientation="vertical">
 
-    <include layout="@layout/view_simple_topbar" />
-    <RelativeLayout
+    <include
+        android:id="@+id/title"
+        layout="@layout/view_simple_topbar" />
+    <www.xcd.com.mylibrary.base.view.PullToRefreshLayout
+        android:id="@+id/refresh_view"
+        android:layout_below="@id/title"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <ScrollView
+        <include layout="@layout/refresh_head" />
+        <www.xcd.com.mylibrary.base.view.PullableScrollView
             android:scrollbars="none"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -26,7 +31,7 @@
                     android:id="@+id/home_convenientBanner"
                     app:canLoop="true"
                     android:layout_width="match_parent"
-                    android:layout_height="120dp">
+                    android:layout_height="@dimen/height_150">
 
                 </com.bigkoo.convenientbanner.ConvenientBanner>
                 <TextView
@@ -116,64 +121,66 @@
 
                 </LinearLayout>
             </LinearLayout>
-        </ScrollView>
+        </www.xcd.com.mylibrary.base.view.PullableScrollView>
+        <include layout="@layout/load_more" />
+
+    </www.xcd.com.mylibrary.base.view.PullToRefreshLayout>
+    <LinearLayout
+        android:id="@+id/address_select"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:background="@color/background_f3f3f3"
+        android:orientation="vertical">
         <LinearLayout
-            android:id="@+id/address_select"
+            android:padding="@dimen/margin_20"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/btn_off"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/textsize_18"
+                android:gravity="center_vertical"
+                android:text="取消"
+                android:textColor="@color/top_bar_background" />
+            <TextView
+                android:id="@+id/btn_confirm"
+                android:layout_width="0dp"
+                android:textSize="@dimen/textsize_18"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical|right"
+                android:text="完成"
+                android:textColor="@color/top_bar_background" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginBottom="@dimen/cityselect"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:visibility="gone"
-            android:background="@color/background_f3f3f3"
-            android:orientation="vertical">
-            <LinearLayout
-                android:padding="@dimen/margin_20"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/btn_off"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="@dimen/textsize_18"
-                    android:gravity="center_vertical"
-                    android:text="取消"
-                    android:textColor="@color/top_bar_background" />
-                <TextView
-                    android:id="@+id/btn_confirm"
-                    android:layout_width="0dp"
-                    android:textSize="@dimen/textsize_18"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical|right"
-                    android:text="完成"
-                    android:textColor="@color/top_bar_background" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginBottom="@dimen/cityselect"
-                android:layout_width="match_parent"
+            android:orientation="horizontal">
+            <com.medicinedot.www.medicinedot.threelevelganged.WheelView
+                android:id="@+id/id_province"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <com.medicinedot.www.medicinedot.threelevelganged.WheelView
-                    android:id="@+id/id_province"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-                </com.medicinedot.www.medicinedot.threelevelganged.WheelView>
+                android:layout_weight="1">
+            </com.medicinedot.www.medicinedot.threelevelganged.WheelView>
 
-                <com.medicinedot.www.medicinedot.threelevelganged.WheelView
-                    android:id="@+id/id_city"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+            <com.medicinedot.www.medicinedot.threelevelganged.WheelView
+                android:id="@+id/id_city"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
 
-                <com.medicinedot.www.medicinedot.threelevelganged.WheelView
-                    android:id="@+id/id_district"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
-            </LinearLayout>
+            <com.medicinedot.www.medicinedot.threelevelganged.WheelView
+                android:id="@+id/id_district"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
         </LinearLayout>
-    </RelativeLayout>
-</LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
 

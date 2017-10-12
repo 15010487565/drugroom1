@@ -55,17 +55,19 @@ public class MainSupplierActivity extends SimpleTopbarActivity {
     /**
      * tabs image normal
      */
-    private static int[] MAIN_TAB_IMAGE = new int[]{R.mipmap.icon_tab_home,
+    private static int[] MAIN_TAB_IMAGE = new int[]{
+            R.mipmap.icon_tab_home,
             R.mipmap.icon_tab_chat,
-            R.mipmap.icon_tab_chat,
+            R.mipmap.icon_tab_information,
             R.mipmap.icon_tab_me
     };
     /**
      * tabs image selected
      */
-    private static int[] MAIN_TAB_IMAGEHL = new int[]{R.mipmap.icon_tab_home_press,
+    private static int[] MAIN_TAB_IMAGEHL = new int[]{
+            R.mipmap.icon_tab_home_press,
             R.mipmap.icon_tab_chat_press,
-            R.mipmap.icon_tab_chat_press,
+            R.mipmap.icon_tab_information_press,
             R.mipmap.icon_tab_me_press
     };
 

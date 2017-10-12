@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +16,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.activity.MessageInformActivity;
 import com.medicinedot.www.medicinedot.bean.MessageInformInfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 
 import java.util.List;
+
+import www.xcd.com.mylibrary.entity.GlobalParam;
 
 /**
  * Created by Android on 2017/9/11.
@@ -57,7 +57,7 @@ public class MessageInformAdapter extends BaseAdapter {
         ViewHodler hodler = null;
         if (convertView == null) {
             hodler = new ViewHodler();
-            convertView = LayoutInflater.from(context).inflate(R.layout.messageinform_listitem,viewGroup,false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.information_listitem,viewGroup,false);
             hodler.chat_title = (TextView) convertView.findViewById(R.id.chat_title);
             hodler.chat_content = (TextView) convertView.findViewById(R.id.chat_content);
             hodler.chat_time = (TextView) convertView.findViewById(R.id.chat_time);
@@ -69,15 +69,17 @@ public class MessageInformAdapter extends BaseAdapter {
         }
         MessageInformInfo.DataBean dataBean = list.get(position);
         String type = dataBean.getType();
-        if ("1".equals(type)){//1:正文，2:系统消息，3:优惠活动
-            hodler.chat_look.setVisibility(View.VISIBLE);
-        }else if ("2".equals(type)){
-            hodler.chat_look.setVisibility(View.GONE);
-        }else if ("3".equals(type)){
-            hodler.chat_look.setVisibility(View.VISIBLE);
-        }else{
-            hodler.chat_look.setVisibility(View.VISIBLE);
-        }
+//        if ("1".equals(type)){//1:正文，2:系统消息，3:优惠活动
+//            hodler.chat_look.setVisibility(View.VISIBLE);
+//        }else if ("2".equals(type)){
+//            hodler.chat_look.setVisibility(View.GONE);
+//        }else if ("3".equals(type)){
+//            hodler.chat_look.setVisibility(View.VISIBLE);
+//        }else{
+//            hodler.chat_look.setVisibility(View.VISIBLE);
+//        }
+        String time = dataBean.getTime();
+        hodler.chat_time.setText(time);
         String title = dataBean.getTitle();
         hodler.chat_title.setText(title);
         String chatcontent = dataBean.getContent();
@@ -89,7 +91,7 @@ public class MessageInformAdapter extends BaseAdapter {
             hodler.chat_image.setVisibility(View.VISIBLE);
             Glide.with(context.getApplicationContext())
                     .load(GlobalParam.IP+image)
-                    .centerCrop()
+                    .fitCenter()
                     .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.mipmap.upload_image_side)
@@ -108,7 +110,6 @@ public class MessageInformAdapter extends BaseAdapter {
                 message.sendToTarget();
             }
         });
-        Log.e("TAG_","position="+position);
         return convertView;
     }
 

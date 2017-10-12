@@ -26,7 +26,6 @@ import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.bean.CityListAllInfo;
 import com.medicinedot.www.medicinedot.bean.Logininfo;
 import com.medicinedot.www.medicinedot.bean.RongYunUserInfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 
 import org.xmlpull.v1.XmlSerializer;
 
@@ -42,11 +41,13 @@ import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.UserInfo;
 import www.xcd.com.mylibrary.activity.PermissionsActivity;
 import www.xcd.com.mylibrary.base.activity.SimpleTopbarActivity;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.ClassUtils;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
 
 import static www.xcd.com.mylibrary.activity.PermissionsActivity.PERMISSIONS_GRANTED;
+import static www.xcd.com.mylibrary.utils.XCDSharePreference.getInstantiation;
 
 public class LoginActivity extends SimpleTopbarActivity {
 
@@ -77,6 +78,8 @@ public class LoginActivity extends SimpleTopbarActivity {
         super.afterSetContentView();
         login_phone = (EditText) findViewById(R.id.login_phone);
         login_phone.setOnFocusChangeListener(this);
+        String phone = XCDSharePreference.getInstantiation(this).getSharedPreferences("phone");
+        login_phone.setText(phone);
         login_password = (EditText) findViewById(R.id.login_password);
         login_password.setOnFocusChangeListener(this);
         login = (Button) findViewById(R.id.login);
@@ -142,37 +145,38 @@ public class LoginActivity extends SimpleTopbarActivity {
                     Logininfo info = JSON.parseObject(returnData, Logininfo.class);
                     Logininfo.DataBean data = info.getData();
                     String ronguserId = data.getRonguserId();
-                    XCDSharePreference.getInstantiation(this).setSharedPreferences("ronguserId", ronguserId);
+                    getInstantiation(this).setSharedPreferences("ronguserId", ronguserId);
                     String rongtoken = data.getRongtoken();
-                    XCDSharePreference.getInstantiation(this).setSharedPreferences("rongtoken", rongtoken);
+                    getInstantiation(this).setSharedPreferences("rongtoken", rongtoken);
                     if (!"".equals(rongtoken)){
                         connect(rongtoken);//连接融云
                     }
                     String utype = data.getUtype();
-                    XCDSharePreference.getInstantiation(this).setSharedPreferences("utype", utype);
+                    getInstantiation(this).setSharedPreferences("utype", utype);
                     String uid = data.getUid();
                     Log.e("TAG_uid","uid");
-                    XCDSharePreference.getInstantiation(this).setSharedPreferences("uid", uid);
+                    getInstantiation(this).setSharedPreferences("uid", uid);
                     String strname = data.getName();
-                    XCDSharePreference.getInstantiation(this).setSharedPreferences("name", strname);
+                    getInstantiation(this).setSharedPreferences("name", strname);
                     String content = data.getContent();
-                    XCDSharePreference.getInstantiation(this).setSharedPreferences("content", content);
+                    getInstantiation(this).setSharedPreferences("content", content);
                     String sex = data.getSex();
-                    XCDSharePreference.getInstantiation(this).setSharedPreferences("sex", sex);
+                    getInstantiation(this).setSharedPreferences("sex", sex);
                     String headimage = data.getHeadimg();
-                    XCDSharePreference.getInstantiation(this).setSharedPreferences("headimg", headimage);
+                    getInstantiation(this).setSharedPreferences("headimg", headimage);
                     String token = data.getToken();
-                    XCDSharePreference.getInstantiation(this).setSharedPreferences("token", token);
+                    getInstantiation(this).setSharedPreferences("token", token);
                     String straddress = data.getRegion();
-                    XCDSharePreference.getInstantiation(this).setSharedPreferences("region", straddress);
+                    getInstantiation(this).setSharedPreferences("region", straddress);
+                    getInstantiation(this).setSharedPreferences("finalregion", straddress);
                     String detailednessaddress = data.getAddress();
-                    XCDSharePreference.getInstantiation(this).setSharedPreferences("address", detailednessaddress);
+                    getInstantiation(this).setSharedPreferences("address", detailednessaddress);
                     String phone = data.getPhone();
-                    XCDSharePreference.getInstantiation(this).setSharedPreferences("phone", phone);
+                    getInstantiation(this).setSharedPreferences("phone", phone);
                     String is_member = data.getIs_member();
-                    XCDSharePreference.getInstantiation(this).setSharedPreferences("is_member", is_member);
+                    getInstantiation(this).setSharedPreferences("is_member", is_member);
                     String endtime = data.getEndtime();
-                    XCDSharePreference.getInstantiation(this).setSharedPreferences("endtime", endtime);
+                    getInstantiation(this).setSharedPreferences("endtime", endtime);
                     if (TextUtils.isEmpty(strname)||TextUtils.isEmpty(straddress)||"-".equals(straddress)){
                         if ("2".equals(utype)){
                             Intent intent = new Intent(this, RegisterDrugstoreInfoActivity.class);
@@ -192,7 +196,7 @@ public class LoginActivity extends SimpleTopbarActivity {
                             startActivity(new Intent(LoginActivity.this, MainDrugstoreActivity.class));
                         }
                     }
-
+                    finish();
                     break;
                 case 101:
                     CityListAllInfo cityallinfo = JSON.parseObject(returnData, CityListAllInfo.class);

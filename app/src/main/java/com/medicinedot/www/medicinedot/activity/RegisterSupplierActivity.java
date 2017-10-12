@@ -14,7 +14,6 @@ import com.alibaba.fastjson.JSON;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.bean.RegisterSuppliercodeinfo;
 import com.medicinedot.www.medicinedot.bean.RegisterSupplierinfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -23,6 +22,7 @@ import java.util.Map;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.RongIMClient;
 import www.xcd.com.mylibrary.base.activity.SimpleTopbarActivity;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.ClassUtils;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;

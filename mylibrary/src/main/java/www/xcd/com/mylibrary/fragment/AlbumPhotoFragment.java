@@ -147,7 +147,7 @@ public class AlbumPhotoFragment extends PhotoFragment implements OnClickListener
 			setPreViewBtnColor();
 			// 图片Adapter
 			List<YYPhotoItem> photoItems = aibum.getPhotoList();
-			if (photoItems==null){
+			if (photoItems==null||photoItems.size()==0){
 				return;
 			}
 			if (photoItems.get(0)==null){
@@ -211,7 +211,9 @@ public class AlbumPhotoFragment extends PhotoFragment implements OnClickListener
 		if (cursor!=null){
 			cursor.close();
 		}
-		bitmapCacheManager.clearCache();
+		if (bitmapCacheManager !=null){
+			bitmapCacheManager.clearCache();
+		}
 	}
 
 	/**

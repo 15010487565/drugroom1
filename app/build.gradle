@@ -28,10 +28,10 @@ android {
             debuggable true
             jniDebuggable true
             zipAlignEnabled true
+            // 打包时混淆
             minifyEnabled false
             shrinkResources  false
             signingConfig signingConfigs.config
-            // 打包时混淆
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {

@@ -10,6 +10,12 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.SpannedString;
+import android.text.style.AbsoluteSizeSpan;
+import android.util.Log;
+import android.widget.EditText;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -134,6 +140,7 @@ public class ClassUtils {
      */
     public final static int REQUEST_CODE_ASK_CALL_PHONE = 123;
     public static void call(Context context,String mobile,boolean isDialInterface) {
+        Log.e("TAG_拨打电话","isDialInterface="+isDialInterface);
         if (Build.VERSION.SDK_INT >= 23) {
             int checkCallPhonePermission = ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE);
             if(checkCallPhonePermission != PackageManager.PERMISSION_GRANTED){
@@ -193,5 +200,18 @@ public class ClassUtils {
         }else {
             return szImei;
         }
+    }
+    public static void setHintSize(String hintstring,EditText editText){
+        if (hintstring==null||"".equals(hintstring)){
+            return;
+        }
+        SpannableString ss = new SpannableString(hintstring);
+        // 新建一个属性对象,设置文字的大小
+        AbsoluteSizeSpan absoluteSizeSpan = new AbsoluteSizeSpan(16, true);
+        // 附加属性到文本
+        ss.setSpan(absoluteSizeSpan, 0, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        // 设置hint
+        editText.setHint(new SpannedString(ss)); // 一定要进行转换,否则属性会消失
     }
 }

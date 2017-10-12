@@ -10,13 +10,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.bean.MessageInformInfo;
-import com.medicinedot.www.medicinedot.entity.GlobalParam;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import www.xcd.com.mylibrary.base.activity.SimpleTopbarActivity;
+import www.xcd.com.mylibrary.entity.GlobalParam;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 
 public class MessageinforDetailsActivity extends SimpleTopbarActivity {
@@ -27,7 +27,7 @@ public class MessageinforDetailsActivity extends SimpleTopbarActivity {
 
     @Override
     protected Object getTopbarTitle() {
-        return "消息通知";
+        return "消息详情";
     }
 
     @Override
@@ -59,7 +59,7 @@ public class MessageinforDetailsActivity extends SimpleTopbarActivity {
                 messageimage.setVisibility(View.GONE);
                 messagecontent.setText(content ==null?"":content);
             }else {
-                messagecontent.setText(content ==null?"":"\t\t\t\t" +content);
+                messagecontent.setText(content ==null?"":content);
                 messageimage.setVisibility(View.VISIBLE);
                 try {
                     Glide.with(this)
