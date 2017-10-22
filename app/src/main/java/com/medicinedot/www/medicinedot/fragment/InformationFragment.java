@@ -5,7 +5,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 
 import com.alibaba.fastjson.JSON;
 import com.medicinedot.www.medicinedot.R;
@@ -37,7 +37,7 @@ public class InformationFragment extends BaseFragment implements
     private InformationInfo informationInfo;
     private boolean mHasLoadedOnce = false;// 页面已经加载过
     private List<InformationInfo.DataBean> dataBean;
-    private TextView hinttext;
+    private RelativeLayout nomessagerelat;
     @Override
     public void onResume() {
         super.onResume();
@@ -70,8 +70,7 @@ public class InformationFragment extends BaseFragment implements
         listview.setOnItemClickListener(this);
         adapter = new InformationAdapter(getActivity());
         mHandler = new Handler();
-        hinttext = (TextView) view.findViewById(R.id.hinttext);
-        hinttext.setVisibility(View.VISIBLE);
+        nomessagerelat = (RelativeLayout) view.findViewById(R.id.nomessagerelat);
         initData();
     }
 
@@ -92,14 +91,19 @@ public class InformationFragment extends BaseFragment implements
                     informationInfo = JSON.parseObject(returnData,InformationInfo.class);
                     dataBean = informationInfo.getData();
                     if (dataBean !=null &&dataBean.size()>0){
+                        listview.setVisibility(View.VISIBLE);
+                        nomessagerelat.setVisibility(View.GONE);
                         adapter.setData(dataBean);
                         listview.setAdapter(adapter);
+                    }else {
+                        listview.setVisibility(View.GONE);
+                        nomessagerelat.setVisibility(View.VISIBLE);
                     }
-                    hinttext.setVisibility(View.GONE);
                     break;
             }
-        }else{
-            hinttext.setVisibility(View.VISIBLE);
+        }else {
+            listview.setVisibility(View.GONE);
+            nomessagerelat.setVisibility(View.VISIBLE);
         }
     }
 

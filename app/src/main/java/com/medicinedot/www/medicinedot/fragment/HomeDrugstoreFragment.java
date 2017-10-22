@@ -46,7 +46,7 @@ import static com.medicinedot.www.medicinedot.R.id.homelookovernull;
 public class HomeDrugstoreFragment extends BaseFragment implements
         View.OnClickListener, OnItemClickListener
         , XListViewHome.IXListViewListener
-        , PullToRefreshLayout.OnRefreshListener{
+        , PullToRefreshLayout.OnRefreshListener {
 
     private List<HomeViewPagerImageinfo.DataBean> imagedata;
     ConvenientBanner homeConvenientBanner;
@@ -61,6 +61,7 @@ public class HomeDrugstoreFragment extends BaseFragment implements
     private TextView count;
     private String is_member;
     private String page = "1";//分页加载默认首页
+
     @Override
     protected Object getTopbarTitle() {
         return R.string.home;
@@ -89,7 +90,7 @@ public class HomeDrugstoreFragment extends BaseFragment implements
         initViewPagerImage();
         //首页数据
         String region = XCDSharePreference.getInstantiation(getActivity()).getSharedPreferences("region");
-        initData(region,"1");
+        initData(region, "1");
         //
         ((PullToRefreshLayout) view.findViewById(R.id.refresh_view))
                 .setOnRefreshListener(this);
@@ -103,7 +104,7 @@ public class HomeDrugstoreFragment extends BaseFragment implements
 
     private String titleregion;
 
-    private void initData(String titleregion,String page) {
+    private void initData(String titleregion, String page) {
         if (titleregion == null || "".equals(titleregion)) {
             titleregion = "北京市";
         } else {
@@ -139,8 +140,8 @@ public class HomeDrugstoreFragment extends BaseFragment implements
                     int position_moblie = bundle_moblie.getInt("position");
                     HomeDrugstoreinfo.DataBean dataBean = data.get(position_moblie);
                     String phone = dataBean.getPhone();
-                    if (!TextUtils.isEmpty(phone)){
-                        ClassUtils.call(getActivity(),phone,true);
+                    if (!TextUtils.isEmpty(phone)) {
+                        ClassUtils.call(getActivity(), phone, true);
                     }
                     break;
             }
@@ -153,11 +154,11 @@ public class HomeDrugstoreFragment extends BaseFragment implements
         HomeDrugstoreinfo.DataBean dataBean = data.get(position);
         ronguserIdChatObjext = dataBean.getRonguserId();
         rongusernameChatObjext = dataBean.getName();
-        Log.e("TAG_融云","id="+ronguserIdChatObjext+";name="+rongusernameChatObjext);
+        Log.e("TAG_融云", "id=" + ronguserIdChatObjext + ";name=" + rongusernameChatObjext);
         String supplierid = dataBean.getUid();
-        if (TextUtils.isEmpty(supplierid)){
+        if (TextUtils.isEmpty(supplierid)) {
             ToastUtil.showToast("获取信息错误！");
-        }else {
+        } else {
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("uid", supplierid);//用户类型 1 供应商 2 药店
             params.put("pharmacyid", uid);    //药店id
@@ -205,18 +206,18 @@ public class HomeDrugstoreFragment extends BaseFragment implements
                         count.setText(titleregion + "共入驻" + infocount_ + "位供应商");
                         data = info.getData();
                         String countcoun = info.getCount();
-                        if ("0".equals(countcoun)){
+                        if ("0".equals(countcoun)) {
                             nulllinear.setVisibility(View.VISIBLE);
                             count.setVisibility(View.GONE);
                             listview.setVisibility(View.GONE);
                             data.clear();
-                        }else {
-                            if (data == null ||"".equals(data)||data.size()==0){
+                        } else {
+                            if (data == null || "".equals(data) || data.size() == 0) {
                                 ToastUtil.showToast("没有更多数据了");
-                            }else {
-                                if (LOADMORE.equals(PullToRefreshstate)){
+                            } else {
+                                if (LOADMORE.equals(PullToRefreshstate)) {
                                     adapter.addData(data);
-                                }else {
+                                } else {
                                     adapter.setData(data);
                                 }
                                 listview.setAdapter(adapter);
@@ -254,19 +255,25 @@ public class HomeDrugstoreFragment extends BaseFragment implements
                                 .setManualPageable(true)  //设置手动影响（设置了该项无法手动切换）
                         //设置点击监听事件
                         ;
+                    } else {
+                        homeConvenientBanner.setVisibility(View.GONE);
                     }
+                } else {
+                    homeConvenientBanner.setVisibility(View.GONE);
                 }
                 break;
             case 102:
-                if (returnCode == 200) {
-                    if (RongIM.getInstance() != null && !TextUtils.isEmpty(ronguserIdChatObjext) && !TextUtils.isEmpty(rongusernameChatObjext)) {
-                        RongIM.getInstance().startPrivateChat(getActivity(), ronguserIdChatObjext, rongusernameChatObjext);
-                    }else {
-                        ToastUtil.showToast("获取聊天信息异常！");
+                if (RongIM.getInstance() != null && !TextUtils.isEmpty(ronguserIdChatObjext) && !TextUtils.isEmpty(rongusernameChatObjext)) {
+                    if (returnCode == 200) {
+                        XCDSharePreference.getInstantiation(getActivity()).setSharedPreferences("RONGVIPSHOW","1");
+                    } else {
+                        XCDSharePreference.getInstantiation(getActivity()).setSharedPreferences("RONGVIPSHOW","2");
                     }
-                }else {
-                    ToastUtil.showToast(returnMsg);
+                    RongIM.getInstance().startPrivateChat(getActivity(), ronguserIdChatObjext, rongusernameChatObjext);
+                } else {
+                    ToastUtil.showToast("获取聊天信息异常！");
                 }
+
                 break;
         }
 
@@ -345,7 +352,7 @@ public class HomeDrugstoreFragment extends BaseFragment implements
         PullToRefreshstate = REFRESH;
         this.pullToRefreshLayoutRefresh = pullToRefreshLayoutRefresh;
         // 下拉刷新操作
-        initData(titleregion,"1");
+        initData(titleregion, "1");
 
     }
 
@@ -353,7 +360,7 @@ public class HomeDrugstoreFragment extends BaseFragment implements
     public void onLoadMore(final PullToRefreshLayout pullToRefreshLayoutLoadMore) {
         PullToRefreshstate = LOADMORE;
         this.pullToRefreshLayoutLoadMore = pullToRefreshLayoutLoadMore;
-        initData(titleregion,String.valueOf(Integer.parseInt(page)+1));
+        initData(titleregion, String.valueOf(Integer.parseInt(page) + 1));
     }
 
     public class LocalImageHolderView implements Holder<HomeViewPagerImageinfo.DataBean> {
@@ -374,6 +381,7 @@ public class HomeDrugstoreFragment extends BaseFragment implements
                     .load(GlobalParam.IP + data.getImage())
                     .centerCrop()
                     .crossFade()
+                    .fitCenter()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.mipmap.upload_image_side)
                     .error(R.mipmap.upload_image_side)

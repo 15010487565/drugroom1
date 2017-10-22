@@ -77,7 +77,7 @@ public class SettingAboutActivity extends SimpleTopbarActivity {
                         if (data!=null&&data.size()>0){
                             for (int i = 0; i < data.size(); i++) {
                                 SettingAboutInfo.DataBean dataBean = data.get(i);
-                                versions.setText(getVersionName());
+                                versions.setText("V"+getVersionName());
                                 about.setText(dataBean.getContent());
                                 phone.setText(dataBean.getPhone());
                                 try {
@@ -85,6 +85,7 @@ public class SettingAboutActivity extends SimpleTopbarActivity {
                                             .load(GlobalParam.IP+dataBean.getImage())
                                             .centerCrop()
                                             .crossFade()
+                                            .fitCenter()
                                             .transform(new GlideCircleTransform(this))
                                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                                             .placeholder(R.mipmap.defaulthead)

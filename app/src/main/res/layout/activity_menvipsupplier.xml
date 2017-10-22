@@ -3,6 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical">
 
     <include layout="@layout/view_simple_topbar" />
@@ -309,7 +311,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:background="@color/white"
+                        android:background="@color/background_eaeaea"
                         android:layout_height="@dimen/height_45">
                         <ImageView
                             android:background="@mipmap/wexin"
@@ -331,7 +333,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:background="@color/background_eaeaea"
+                        android:background="@color/white"
                         android:layout_height="@dimen/height_45">
                         <ImageView
                             android:background="@mipmap/alipay"
@@ -400,7 +402,7 @@
                     android:id="@+id/gridview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:numColumns="auto_fit"
+                    android:numColumns="3"
                     android:verticalSpacing="10dp"
                     android:horizontalSpacing="10dp"
                     android:paddingLeft="@dimen/margin_15"

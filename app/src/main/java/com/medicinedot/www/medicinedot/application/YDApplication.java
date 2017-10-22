@@ -16,6 +16,7 @@ import android.view.View;
 import com.alibaba.fastjson.JSON;
 import com.medicinedot.www.medicinedot.R;
 import com.medicinedot.www.medicinedot.bean.RongYunUserInfo;
+import com.medicinedot.www.medicinedot.rong.BaseExtensionModule;
 import com.medicinedot.www.medicinedot.rong.RongReceiveMessageListener;
 import com.medicinedot.www.medicinedot.rong.SendMessageListener;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -23,12 +24,18 @@ import com.yonyou.sns.im.core.YYIMChat;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import io.rong.imkit.DefaultExtensionModule;
+import io.rong.imkit.IExtensionModule;
+import io.rong.imkit.RongExtensionManager;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.model.UIConversation;
+import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.UserInfo;
+import io.rong.push.RongPushClient;
 import www.xcd.com.mylibrary.base.application.BaseApplication;
 import www.xcd.com.mylibrary.config.HttpConfig;
 import www.xcd.com.mylibrary.entity.GlobalParam;
@@ -37,7 +44,6 @@ import www.xcd.com.mylibrary.http.HttpInterface;
 import www.xcd.com.mylibrary.utils.AppManager;
 import www.xcd.com.mylibrary.utils.CrashHandler;
 import www.xcd.com.mylibrary.utils.NetUtil;
-import www.xcd.com.mylibrary.utils.ToastUtil;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
 
 import static www.xcd.com.mylibrary.utils.ToastUtil.showToast;
@@ -47,7 +53,8 @@ import static www.xcd.com.mylibrary.utils.ToastUtil.showToast;
  */
 
 public class YDApplication extends BaseApplication implements RongIM.UserInfoProvider
-        , HttpInterface, RongIM.ConversationListBehaviorListener {
+        , HttpInterface, RongIM.ConversationListBehaviorListener, RongIMClient.ConnectionStatusListener{
+
 
     private void initAppCrashHandler() {
             CrashHandler crashHandler = CrashHandler.getInstance();
@@ -76,10 +83,19 @@ public class YDApplication extends BaseApplication implements RongIM.UserInfoPro
             RongIM.setOnReceiveMessageListener(new RongReceiveMessageListener());
             RongIM.getInstance().setSendMessageListener(new SendMessageListener());
             RongIM.setUserInfoProvider(this, true);
+            RongIM.setConnectionStatusListener(this);
+            setMyExtensionModule();
             /**
              * 设置会话列表界面操作的监听器。
              */
             RongIM.setConversationListBehaviorListener(this);
+            RongIM.getInstance().setGroupMembersProvider(new RongIM.IGroupMembersProvider() {
+                @Override
+                public void getGroupMembers(String groupId, RongIM.IGroupMemberCallback callback) {
+                }
+            });
+            Log.e("TAG_","=========");
+            RongPushClient.checkManifest(getApplicationContext());
 //            RongIM.setConversationListBehaviorListener(new RongConversationListBehaviorListener());
         } catch (Exception e) {
             e.printStackTrace();
@@ -184,40 +200,54 @@ public class YDApplication extends BaseApplication implements RongIM.UserInfoPro
             case 103:
                 if (RongIM.getInstance() != null && !TextUtils.isEmpty(conversationTargetId) && !TextUtils.isEmpty(uiConversationTitle)) {
                     if (returnCode == 200) {
-                        Activity activity = AppManager.getInstance().currentActivity();
-                        RongIM.getInstance().startPrivateChat(activity, conversationTargetId, uiConversationTitle);
+                        //显示发送按钮
+                        XCDSharePreference.getInstantiation(this).setSharedPreferences("RONGVIPSHOW","1");
+                        Log.e("TAG_====","1");
+//                        Activity activity = AppManager.getInstance().currentActivity();
+//                        RongIM.getInstance().startPrivateChat(activity, conversationTargetId, uiConversationTitle);
                     } else {
-                        String utype = XCDSharePreference.getInstantiation(this).getSharedPreferences("utype");
-                        if ("1".equals(utype)) {
-                            ToastUtil.showToast("您还不是会员！");
-                        } else if ("2".equals(utype)) {
-                            ToastUtil.showToast(returnMsg);
-                        }
-
+                        XCDSharePreference.getInstantiation(this).setSharedPreferences("RONGVIPSHOW","2");
+                        Log.e("TAG_====","2");
+//                        String utype = XCDSharePreference.getInstantiation(this).getSharedPreferences("utype");
+//                        if ("1".equals(utype)) {
+//                            ToastUtil.showToast("您还不是会员！");
+//                        } else if ("2".equals(utype)) {
+//                            ToastUtil.showToast(returnMsg);
+//                        }
+//
                     }
+                    Activity activity = AppManager.getInstance().currentActivity();
+                    RongIM.getInstance().startPrivateChat(activity, conversationTargetId, uiConversationTitle);
+                }else {
+                    XCDSharePreference.getInstantiation(this).setSharedPreferences("RONGVIPSHOW","2");
+                    Log.e("TAG_====","3");
                 }
+
                 break;
             case 104:
                 RongYunUserInfo result = JSON.parseObject(returnData, RongYunUserInfo.class);
                 RongYunUserInfo.DataBean userdata = result.getData();
-                String utype = userdata.getUtype();
-                String tpyeuid = userdata.getUid();
-                if (uid == null || "".equals(uid)) {
-                    uid = XCDSharePreference.getInstantiation(this).getSharedPreferences("uid");
-                }
-                if (uid != null && !"".equals(uid)) {
-                    Map<String, Object> params = new HashMap<String, Object>();
-                    if ("1".equals(utype)) {//用户类型 1 供应商 2 药店
-                        supplierid = tpyeuid;//供应商id
-                        pharmacyid = uid;
-                    } else {
-                        pharmacyid = tpyeuid;//药店id
-                        supplierid = uid;
+                if (userdata!=null){
+                    String utype = userdata.getUtype();
+                    String tpyeuid = userdata.getUid();
+                    if (uid == null || "".equals(uid)) {
+                        uid = XCDSharePreference.getInstantiation(this).getSharedPreferences("uid");
                     }
-                    params.put("uid", supplierid);
-                    params.put("pharmacyid", pharmacyid);
-                    okHttpGet(103, GlobalParam.ISMEMBERFORUSER, params);
+                    if (uid != null && !"".equals(uid)) {
+                        Map<String, Object> params = new HashMap<String, Object>();
+                        if ("1".equals(utype)) {//用户类型 1 供应商 2 药店
+                            supplierid = tpyeuid;//供应商id
+                            pharmacyid = uid;
+                        } else {
+                            pharmacyid = tpyeuid;//药店id
+                            supplierid = uid;
+                        }
+                        params.put("uid", supplierid);
+                        params.put("pharmacyid", pharmacyid);
+                        okHttpGet(103, GlobalParam.ISMEMBERFORUSER, params);
+                    }
                 }
+
 
                 break;
         }
@@ -313,7 +343,30 @@ public class YDApplication extends BaseApplication implements RongIM.UserInfoPro
             }
             return true;
         } else {
+            XCDSharePreference.getInstantiation(this).setSharedPreferences("RONGVIPSHOW","2");
+            Log.e("TAG_====","4");
             return false;
         }
+    }
+    public void setMyExtensionModule() {
+        List<IExtensionModule> moduleList = RongExtensionManager.getInstance().getExtensionModules();
+        IExtensionModule defaultModule = null;
+        if (moduleList != null) {
+            for (IExtensionModule module : moduleList) {
+                if (module instanceof DefaultExtensionModule) {
+                    defaultModule = module;
+                    break;
+                }
+            }
+            if (defaultModule != null) {
+                RongExtensionManager.getInstance().unregisterExtensionModule(defaultModule);
+                RongExtensionManager.getInstance().registerExtensionModule(new BaseExtensionModule());
+            }
+        }
+    }
+
+    @Override
+    public void onChanged(ConnectionStatus connectionStatus) {
+
     }
 }

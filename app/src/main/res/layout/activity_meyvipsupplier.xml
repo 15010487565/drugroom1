@@ -199,7 +199,7 @@
                 android:id="@+id/gridview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:numColumns="auto_fit"
+                android:numColumns="3"
                 android:verticalSpacing="10dp"
                 android:horizontalSpacing="10dp"
                 android:paddingLeft="@dimen/margin_15"

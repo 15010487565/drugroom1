@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.RelativeLayout;
 
 import com.alibaba.fastjson.JSON;
 import com.medicinedot.www.medicinedot.R;
@@ -31,6 +32,7 @@ public class MessageInformActivity extends SimpleTopbarActivity implements
     private MessageInformAdapter adapter;
     public static final int CHATDETAILS = 100;
     private String uid;
+    private RelativeLayout nomessagerelat;
     @Override
     protected Object getTopbarTitle() {
         return "消息通知";
@@ -47,6 +49,7 @@ public class MessageInformActivity extends SimpleTopbarActivity implements
         super.afterSetContentView();
         uid = XCDSharePreference.getInstantiation(this).getSharedPreferences("uid");
         listview = (XListView) findViewById(R.id.chat_listview);
+        nomessagerelat = (RelativeLayout) findViewById(R.id.nomessagerelat);
         listview.setPullLoadEnable(false);//设置上拉刷新
         listview.setPullRefreshEnable(true);//设置下拉刷新
         listview.setXListViewListener(this); //设置监听事件，重写两个方法
@@ -88,11 +91,19 @@ public class MessageInformActivity extends SimpleTopbarActivity implements
                     messageInformInfo = JSON.parseObject(returnData,MessageInformInfo.class);
                     List<MessageInformInfo.DataBean> dataBean = messageInformInfo.getData();
                     if (dataBean !=null &&dataBean.size()>0){
+                        listview.setVisibility(View.VISIBLE);
+                        nomessagerelat.setVisibility(View.GONE);
                         adapter.setData(dataBean);
                         listview.setAdapter(adapter);
+                    }else {
+                        listview.setVisibility(View.GONE);
+                        nomessagerelat.setVisibility(View.VISIBLE);
                     }
                     break;
             }
+        }else {
+            listview.setVisibility(View.GONE);
+            nomessagerelat.setVisibility(View.VISIBLE);
         }
     }
 

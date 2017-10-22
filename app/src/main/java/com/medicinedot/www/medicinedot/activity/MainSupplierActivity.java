@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -122,10 +123,13 @@ public class MainSupplierActivity extends SimpleTopbarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // 重设title
-//        resetTitle(tabWidget.getCurIndex());
+        Log.e("TAG_子类","onResume");
     }
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.e("TAG_子类","onPause");
+    }
     /**
      * 获得所有的FragmentClass
      *

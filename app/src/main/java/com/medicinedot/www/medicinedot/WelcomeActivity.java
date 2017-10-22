@@ -1,6 +1,8 @@
 package com.medicinedot.www.medicinedot;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +12,9 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.medicinedot.www.medicinedot.activity.LoginActivity;
+import com.medicinedot.www.medicinedot.activity.WelcomeViewPagerActivity;
+
+import www.xcd.com.mylibrary.utils.XCDSharePreference;
 
 /**
  * Created by Android on 2017/8/7.
@@ -53,9 +58,28 @@ public class WelcomeActivity extends FragmentActivity {
     class splashhandler implements Runnable {
 
         public void run() {
-            startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));
-            finish();
+            try {
+                String fristversionName= XCDSharePreference.getInstantiation(WelcomeActivity.this).getSharedPreferences("FRISTVERSIONNAME");
+                String versionName = getVersionName();
+                if (versionName.equals(fristversionName)){
+                    startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));
+                }else {
+
+                    startActivity(new Intent(WelcomeActivity.this, WelcomeViewPagerActivity.class));
+                }
+                finish();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+    }
+    private String getVersionName() throws Exception {
+        // 获取packagemanager的实例
+        PackageManager packageManager = getPackageManager();
+        // getPackageName()是你当前类的包名，0代表是获取版本信息
+        PackageInfo packInfo = packageManager.getPackageInfo(getPackageName(), 0);
+        String version = packInfo.versionName;
+        return version;
     }
 }
 

@@ -48,6 +48,7 @@ import www.xcd.com.mylibrary.entity.HomeViewPagerImageinfo;
 import www.xcd.com.mylibrary.utils.ToastUtil;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
 
+import static com.medicinedot.www.medicinedot.R.id.home_convenientBanner;
 import static www.xcd.com.mylibrary.utils.XCDSharePreference.context;
 import static www.xcd.com.mylibrary.utils.XCDSharePreference.getInstantiation;
 
@@ -130,7 +131,7 @@ public class HomeSupplierFragment extends BaseThreeFragment implements
         homelookovernull = (Button) view.findViewById(R.id.homelookovernull);
         homelookovernull.setOnClickListener(this);
 
-        homeConvenientBanner = (ConvenientBanner) view.findViewById(R.id.home_convenientBanner);
+        homeConvenientBanner = (ConvenientBanner) view.findViewById(home_convenientBanner);
         //初始化轮播图
         initViewPagerImage();
         //首页数据
@@ -302,7 +303,7 @@ public class HomeSupplierFragment extends BaseThreeFragment implements
             case R.id.homelookovernull://首页无数据查看其他地区
                 if (mProvinceDatas == null) {
                     boolean permissions = checkupPermissions(WRITEREADPERMISSIONS);
-                    if (permissions&&citylistForMember.size()>0&&citylistForMember !=null) {
+                    if (permissions&&citylistForMember !=null&&citylistForMember.size()>0) {
                         setUpData(citylistForMember);
                     }
                 } else {
@@ -432,20 +433,25 @@ public class HomeSupplierFragment extends BaseThreeFragment implements
                                 .setManualPageable(true)  //设置手动影响（设置了该项无法手动切换）
                         //设置点击监听事件
                         ;
+                    }else {
+                        homeConvenientBanner.setVisibility(View.GONE);
                     }
+                }else {
+                    homeConvenientBanner.setVisibility(View.GONE);
                 }
                 break;
             case 102:
-                if (returnCode == 200) {
+
                     if (RongIM.getInstance() != null && !TextUtils.isEmpty(ronguserIdChatObjext) && !TextUtils.isEmpty(rongusernameChatObjext)) {
+                        if (returnCode == 200) {
+                            XCDSharePreference.getInstantiation(getActivity()).setSharedPreferences("RONGVIPSHOW","1");
+                        }else {
+                            XCDSharePreference.getInstantiation(getActivity()).setSharedPreferences("RONGVIPSHOW","2");
+                        }
                         RongIM.getInstance().startPrivateChat(getActivity(), ronguserIdChatObjext, rongusernameChatObjext);
                     } else {
                         ToastUtil.showToast("获取聊天信息异常！");
                     }
-                } else {
-                    ToastUtil.showToast(returnMsg);
-                }
-
                 break;
             case 103:
                 if (returnCode == 200){
@@ -544,6 +550,7 @@ public class HomeSupplierFragment extends BaseThreeFragment implements
             Glide.with(getActivity())
                     .load(GlobalParam.IP + data.getImage())
                     .centerCrop()
+                    .fitCenter()
                     .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.mipmap.upload_image_side)

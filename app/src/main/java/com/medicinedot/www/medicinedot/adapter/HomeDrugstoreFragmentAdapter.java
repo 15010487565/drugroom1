@@ -120,10 +120,11 @@ public class HomeDrugstoreFragmentAdapter extends BaseAdapter {
                 .load(GlobalParam.IP + headimg)
                 .centerCrop()
                 .crossFade()
+                .fitCenter()
                 .transform(new GlideCircleTransform(context))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.mipmap.upload_image_side)
-                .error(R.mipmap.upload_image_side)
+                .placeholder(R.mipmap.defaulthead)
+                .error(R.mipmap.defaulthead)
                 .into(hodler.titleimage);
         final String uid = dataBean.getUid();
         //聊天按键

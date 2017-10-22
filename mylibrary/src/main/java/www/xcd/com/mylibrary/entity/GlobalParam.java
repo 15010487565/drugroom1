@@ -9,6 +9,7 @@ public class GlobalParam {
 
     public final static String APPLICATIONID = "com.medicinedot.www.medicinedot";
     //绑定头URL   http://69.165.64.194/chongai/index.php?
+//    public final static String IP = "http://47.95.239.122";
     public final static String IP = "http://101.201.235.27:8084";
     //登陆
     public final static String LOGIN = IP + "/Index/User/login";

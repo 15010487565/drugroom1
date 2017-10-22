@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.rong.imkit">
-
+    <uses-sdk
+        android:minSdkVersion="17"
+        android:targetSdkVersion="24" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -87,7 +89,7 @@
         <!-- 否则使用拍照功能时，会崩溃 -->
         <!--<provider-->
             <!--android:name="android.support.v4.content.FileProvider"-->
-            <!--android:authorities="com.Lechuang.app.FileProvider"-->
+            <!--android:authorities="${applicationId}.FileProvider"-->
             <!--android:grantUriPermissions="true"-->
             <!--android:exported="false">-->
             <!--<meta-data-->

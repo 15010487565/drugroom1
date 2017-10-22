@@ -383,4 +383,5 @@ public class LoginActivity extends SimpleTopbarActivity {
             Log.e("TAG_城市列表", "写入失败");
         }
     }
+
 }

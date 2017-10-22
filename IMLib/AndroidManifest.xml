@@ -84,8 +84,6 @@
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
             </intent-filter>
         </receiver>
-        
-        <!--必选： SDK 核心功能-->
 
         <!-- end -->
     </application>

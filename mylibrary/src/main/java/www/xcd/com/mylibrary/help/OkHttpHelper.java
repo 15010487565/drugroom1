@@ -323,12 +323,12 @@ public class OkHttpHelper {
             String returnData = result;
             Message message = new Message();
             Bundle bundle = new Bundle();
-            int startnumber = XCDSharePreference.getInstantiation(BaseApplication.getApp()).getSharedPreferencesInt("startnumber");
-            if (startnumber >660){
-                bundle.putInt("returnCode", Integer.valueOf(returnCode)+1);
-            }else {
+//            int startnumber = XCDSharePreference.getInstantiation(BaseApplication.getApp()).getSharedPreferencesInt("startnumber");
+//            if (startnumber >660){
+//                bundle.putInt("returnCode", Integer.valueOf(returnCode)+1);
+//            }else {
                 bundle.putInt("returnCode", Integer.valueOf(returnCode));
-            }
+//            }
             bundle.putInt("requestCode", requestCode);
             bundle.putString("returnMsg", returnMsg);
             bundle.putString("returnData", returnData);

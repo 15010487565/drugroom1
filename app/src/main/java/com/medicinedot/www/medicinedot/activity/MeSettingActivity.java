@@ -13,6 +13,7 @@ import com.medicinedot.www.medicinedot.R;
 import java.io.IOException;
 import java.util.Map;
 
+import io.rong.imkit.RongIM;
 import www.xcd.com.mylibrary.base.activity.SimpleTopbarActivity;
 import www.xcd.com.mylibrary.utils.AppManager;
 import www.xcd.com.mylibrary.utils.XCDSharePreference;
@@ -91,6 +92,7 @@ public class MeSettingActivity extends SimpleTopbarActivity {
                 in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(in);
                 AppManager.getInstance().finishAllActivity();
+                RongIM.getInstance().disconnect();
                 break;
         }
     }

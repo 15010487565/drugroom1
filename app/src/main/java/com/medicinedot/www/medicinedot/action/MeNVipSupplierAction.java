@@ -41,6 +41,9 @@ import com.medicinedot.www.medicinedot.threelevelganged.BaseThreeActivity;
 import com.medicinedot.www.medicinedot.threelevelganged.OnWheelChangedListener;
 import com.medicinedot.www.medicinedot.threelevelganged.WheelView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -94,7 +97,7 @@ public class MeNVipSupplierAction extends BaseThreeActivity implements AdapterVi
      */
     private LinearLayout mevip_monthparent, mevip_quarterparent, mevip_halfyearparent, mevip_yearparent;
     //选中的会员套餐
-    private String level = "";
+    private String level = "1";
     /**
      * 会员套餐文本
      *
@@ -174,8 +177,12 @@ public class MeNVipSupplierAction extends BaseThreeActivity implements AdapterVi
             mevipfragment_expiretime.setText("您还不是" + city + "会员");
             mevip_region.setText(this.city);
         } else {
-            String endtimeExtra = getIntent().getStringExtra("endtime");
-            mevipfragment_expiretime.setText("您的" + stringExtra + "会员 " + endtimeExtra.substring(0, 10) + " 到期");
+            String isMember = getIntent().getStringExtra("isMember");
+            if ("1".equals(isMember)){
+                String endtimeExtra = getIntent().getStringExtra("endtime");
+            }else if ("3".equals(isMember)){
+                mevipfragment_expiretime.setText("您的" + stringExtra + "会员已到期");
+            }
             mevip_region.setText(stringExtra);
         }
         mevip_monthparent = (LinearLayout) findViewById(R.id.mevip_monthparent);
@@ -393,24 +400,18 @@ public class MeNVipSupplierAction extends BaseThreeActivity implements AdapterVi
                     ToastUtil.showToast("未获取到套餐金额！");
                     return;
                 }
-                createDialogshow();
-                Map<String, Object> params = new HashMap<String, Object>();
-                params.put("uid", uid);
-                params.put("city", mevip_region.getText().toString().trim());
-                params.put("level", level);//1 月度会员 2 季度会员 3 半年会员 4 年费会员
-                params.put("summoney", payallmoney);
-                params.put("ordertype", ordertype);//订单类型 1 开通会员 2 续费会员
-                okHttpPost(102, GlobalParam.CREATEORDER, params);
+                //支付类型 1 支付宝 2 微信
+                payType(payallmoney,selectpayway);
                 break;
             case R.id.mevip_wexin:
                 mevip_wexin.setBackgroundColor(getColor(R.color.background_eaeaea));
                 mevip_alipay.setBackgroundColor(getColor(R.color.white));
-                selectpayway = "1";
+                selectpayway = "2";
                 break;
             case R.id.mevip_alipay:
                 mevip_wexin.setBackgroundColor(getColor(R.color.white));
                 mevip_alipay.setBackgroundColor(getColor(R.color.background_eaeaea));
-                selectpayway = "2";
+                selectpayway = "1";
                 break;
             case R.id.mevip_monthparent://月度会员
                 Log.e("TAG_点击", "月度会员");
@@ -476,6 +477,19 @@ public class MeNVipSupplierAction extends BaseThreeActivity implements AdapterVi
                 break;
         }
     }
+
+    private void payType(String payallmoney,String paytype) {
+        createDialogshow();
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("uid", uid);
+        params.put("city", mevip_region.getText().toString().trim());
+        params.put("level", level);//1 月度会员 2 季度会员 3 半年会员 4 年费会员
+        params.put("summoney", payallmoney);
+        params.put("ordertype", ordertype);//订单类型 1 开通会员 2 续费会员
+        params.put("paytype", paytype);//支付类型 1 支付宝 2 微信
+        okHttpPost(102, GlobalParam.CREATEORDER, params);
+    }
+
     private void payAllMoney(String payallmoney){
 
         if (TextUtils.isEmpty(payallmoney) || "00.00".equals(payallmoney)) {
@@ -538,10 +552,26 @@ public class MeNVipSupplierAction extends BaseThreeActivity implements AdapterVi
                 break;
             case 102:
                 if (returnCode == 200) {
-                    if ("1".equals(selectpayway)) {//微信
-//                        wexinlpay(ordernum,summoney);
-                        ToastUtil.showToast("暂不支持微信支付");
-                    } else if ("2".equals(selectpayway)) {//支付宝
+                    if ("2".equals(selectpayway)) {//微信
+                        try {
+                            JSONObject jsonObject = new JSONObject(returnData);
+                            JSONObject data = jsonObject.getJSONObject("data");
+                            String appid = data.optString("appid");
+                            String partnerId = data.optString("partnerid");
+                            String packageValue = data.optString("package");
+                            String timestamp = data.optString("timestamp");
+                            String prepayid = data.optString("prepayid");
+                            String sign = data.optString("sign");
+                            String noncestr = data.optString("noncestr");
+                            String urlString = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+                            PrePayIdAsyncTask prePayIdAsyncTask
+                                    = new PrePayIdAsyncTask(this, appid,partnerId
+                                    ,packageValue,noncestr,timestamp,prepayid,sign);
+//                            prePayIdAsyncTask.execute(urlString);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else if ("1".equals(selectpayway)) {//支付宝
                         AilPayOrderMoney payorder = JSON.parseObject(returnData, AilPayOrderMoney.class);
                         String data = payorder.getData();
                         Log.e("TAG_支付宝", "data=" + data);
@@ -560,17 +590,22 @@ public class MeNVipSupplierAction extends BaseThreeActivity implements AdapterVi
                         String money = dataBean.getMoney();
                         if ("1".equals(level)) {
                             mevip_monthmoney.setText(money);
-                            mevip_allmoney.setText(money);
-//                            mevip_allmoney.setText(money);
                         } else if ("2".equals(level)) {
                             mevip_quartermoney.setText(money);
-//                            mevip_allmoney.setText(money);
                         } else if ("3".equals(level)) {
                             mevip_halfyear.setText(money);
-//                            mevip_allmoney.setText(money);
                         } else if ("4".equals(level)) {
                             mevip_yearmonay.setText(money);
-//                            mevip_allmoney.setText(money);
+                        }
+                        Log.e("TAG_ZHIFU","level="+level+";this.level="+this.level+"money"+money);
+                        if ("1".equals(this.level)) {
+                            mevip_allmoney.setText(mevip_monthmoney.getText().toString());
+                        } else if ("2".equals(this.level)) {
+                            mevip_allmoney.setText(mevip_quartermoney.getText().toString());
+                        } else if ("3".equals(this.level)) {
+                            mevip_allmoney.setText(mevip_halfyear.getText().toString());
+                        } else if ("4".equals(this.level)) {
+                            mevip_allmoney.setText(mevip_yearmonay.getText().toString());
                         }
                     }
                 }else {
@@ -595,12 +630,6 @@ public class MeNVipSupplierAction extends BaseThreeActivity implements AdapterVi
         }
     }
 
-    private void wexinlpay(String ordernum, String summoney) {
-        summoney = String.valueOf((int) (Double.valueOf(summoney) * 100));
-        String urlString = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-        PrePayIdAsyncTask prePayIdAsyncTask = new PrePayIdAsyncTask(this, summoney, ordernum);
-        prePayIdAsyncTask.execute(urlString);
-    }
 
     @Override
     public void onCancelResult() {

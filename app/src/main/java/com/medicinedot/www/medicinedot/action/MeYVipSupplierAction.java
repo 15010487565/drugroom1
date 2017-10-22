@@ -212,7 +212,7 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
         super.onClick(v);
         switch (v.getId()) {
             case R.id.meyvip_expiremoney:
-                getBuyVip(city, endtime);
+                getBuyVip(city, endtime,"");
                 break;
             case R.id.vipuser_agreement:
                 Intent intent = new Intent(this, LocalityWebView.class);
@@ -221,7 +221,7 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
                 startActivity(intent);
                 break;
             case R.id.mevip_regionparent:
-                getBuyVip(city, endtime);
+                getBuyVip(city, endtime,"");
                 break;
         }
     }
@@ -256,17 +256,19 @@ public class MeYVipSupplierAction extends SimpleTopbarActivity implements Adapte
                         MeVipCityListInfo.DataBean dataBean = data.get(position_chat);
                         String city = dataBean.getCity();
                         String endtime = dataBean.getEndtime();
-                        getBuyVip(city, endtime);
+                        String isMember = dataBean.getIsMember();
+                        getBuyVip(city, endtime,isMember);
                     }
                     break;
             }
         }
     };
 
-    public void getBuyVip(String city, String time) {
+    public void getBuyVip(String city, String time,String isMember) {
         Intent intent = new Intent(this, MeNVipSupplierAction.class);
         intent.putExtra("city", city);
         intent.putExtra("endtime", time);
+        intent.putExtra("isMember", isMember);
         intent.putExtra("ordertype", "2");
         startActivity(intent);
     }

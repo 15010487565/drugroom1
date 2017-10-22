@@ -93,6 +93,7 @@ public class MessageInformAdapter extends BaseAdapter {
                     .load(GlobalParam.IP+image)
                     .fitCenter()
                     .crossFade()
+                    .fitCenter()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.mipmap.upload_image_side)
                     .error(R.mipmap.upload_image_side)

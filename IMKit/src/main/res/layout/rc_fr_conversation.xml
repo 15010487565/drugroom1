@@ -5,18 +5,36 @@
     android:layout_height="match_parent"
     android:background="@color/rc_normal_bg">
 
+
+    <LinearLayout
+        android:id="@+id/rc_extensionre"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <io.rong.imkit.RongExtension
+            android:id="@+id/rc_extension"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            app:RCStyle="SCE" />
+        <TextView
+            android:id="@+id/rongviphint"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:textColor="#999999"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:background="#ffffff"
+            app:RCStyle="SCE"
+            />
+    </LinearLayout>
     <include
         android:id="@id/rc_layout_msg_list"
         layout="@layout/rc_fr_messagelist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/rc_extension" />
-
-    <io.rong.imkit.RongExtension
-        android:id="@+id/rc_extension"
-        android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:RCStyle="SCE" />
+        android:layout_above="@+id/rc_extensionre" />
 
 </RelativeLayout>

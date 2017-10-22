@@ -18,13 +18,26 @@
         android:dividerHeight="@dimen/margin_1">
 
     </www.xcd.com.mylibrary.base.view.XListView>
-    <TextView
-        android:id="@+id/hinttext"
-        android:gravity="center"
-        android:textSize="@dimen/textsize_18"
-        android:textColor="@color/black_99"
-        android:visibility="gone"
+    <RelativeLayout
+        android:id="@+id/nomessagerelat"
+        android:gravity="center_horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="暂无资讯"/>
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/nomessagetext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_centerInParent="true"
+            android:textColor="@color/black_99"
+            android:textSize="@dimen/textsize_18"
+            android:text="暂无消息"/>
+        <ImageView
+            android:layout_width="@dimen/height_120"
+            android:layout_height="@dimen/height_120"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/margin_20"
+            android:layout_above="@id/nomessagetext"
+            android:background="@mipmap/nomessage"/>
+    </RelativeLayout>
 </LinearLayout>

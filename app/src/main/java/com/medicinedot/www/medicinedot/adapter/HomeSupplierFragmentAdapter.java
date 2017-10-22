@@ -47,7 +47,11 @@ public class HomeSupplierFragmentAdapter extends BaseAdapter{
     }
     public void  addData( List<HomeSupplierinfo.DataBean> list,String is_member){
         this.is_member = is_member;
-        this.list.addAll(list);
+        if (this.list==null){
+            this.list = list;
+        }else {
+            this.list.addAll(list);
+        }
         notifyDataSetChanged();
     }
     @Override
@@ -132,10 +136,11 @@ public class HomeSupplierFragmentAdapter extends BaseAdapter{
                 .load(GlobalParam.IP+headimg)
                 .centerCrop()
                 .crossFade()
+                .fitCenter()
                 .transform(new GlideCircleTransform(context))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.mipmap.upload_image_side)
-                .error(R.mipmap.upload_image_side)
+                .placeholder(R.mipmap.defaulthead)
+                .error(R.mipmap.defaulthead)
                 .into( hodler.titleimage);
         final String uid = dataBean.getUid();
         hodler.homechatimage.setOnClickListener(new View.OnClickListener() {

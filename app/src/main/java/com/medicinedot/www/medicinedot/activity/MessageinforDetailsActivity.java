@@ -64,7 +64,7 @@ public class MessageinforDetailsActivity extends SimpleTopbarActivity {
                 try {
                     Glide.with(this)
                             .load(GlobalParam.IP +image)
-                            .centerCrop()
+                            .fitCenter()
                             .crossFade()
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .placeholder(R.mipmap.upload_image_side)

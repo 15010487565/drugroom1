@@ -1,18 +1,26 @@
 package www.xcd.com.mylibrary.base.activity;
 
 import android.Manifest;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import io.rong.imkit.RongIM;
+import io.rong.imlib.RongIMClient;
 import www.xcd.com.mylibrary.R;
 import www.xcd.com.mylibrary.utils.AppManager;
+import www.xcd.com.mylibrary.utils.CustomDialog;
 import www.xcd.com.mylibrary.utils.SystemBarTintManager;
 
 
@@ -20,8 +28,9 @@ import www.xcd.com.mylibrary.utils.SystemBarTintManager;
  * Created by xcd15 on 2017/5/3.
  */
 
-public abstract class BaseActivity  extends FragmentActivity {
+public abstract class BaseActivity  extends FragmentActivity implements RongIMClient.ConnectionStatusListener{
 
+    private CustomDialog dialog;
     private boolean isActive = true;
     public static final String[] PERMISSIONS = new String[]{
             Manifest.permission.READ_CONTACTS
@@ -50,6 +59,7 @@ public abstract class BaseActivity  extends FragmentActivity {
     private SystemBarTintManager tintManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //透明状态栏
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -64,6 +74,8 @@ public abstract class BaseActivity  extends FragmentActivity {
         }
         super.onCreate(savedInstanceState);
 		AppManager.getInstance().addActivity(this);
+        RongIM.setConnectionStatusListener(this);
+        initDialog();
     }
 
 
@@ -93,12 +105,14 @@ public abstract class BaseActivity  extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         isActive = true;
+        Log.e("TAG_父类","onResume");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         isActive = false;
+        Log.e("TAG_父类","onPause");
     }
 
     public boolean activityIsActivity() {
@@ -159,5 +173,53 @@ public abstract class BaseActivity  extends FragmentActivity {
     }
     protected void onDestroyDeatchView() {
     }
+    /**
+     * 初始化踢下线弹出框
+     */
+    public void initDialog() {
+        // 冲突踢下线
+        CustomDialog.Builder builder = new CustomDialog.Builder(BaseActivity.this);
+        builder.setTitle("帐号下线");
+        builder.setMessage("您的帐号已在其他移动端登录，已断开连接。");
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
 
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent in = new Intent("android.intent.action.LOGIN");
+                in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(in);
+                AppManager.getInstance().finishAllActivity();
+            }
+        });
+        dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+    }
+    /**
+     * 展示踢人dialog
+     */
+    protected void showKickDialog(){
+        Log.e("TAG_踢下线","activityIsActivity="+activityIsActivity()+";isActive="+isActive);
+        if (dialog != null && !dialog.isShowing()&&activityIsActivity()) {
+            dialog.show();
+        }
+    }
+    @Override
+    public void onChanged(ConnectionStatus connectionStatus) {
+        switch (connectionStatus) {
+            case KICKED_OFFLINE_BY_OTHER_CLIENT:
+                handler.sendEmptyMessage(1);
+                break;
+        }
+    }
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case 1:
+                    showKickDialog();
+                    break;
+            }
+        }
+    };
 }

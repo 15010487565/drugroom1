@@ -90,7 +90,10 @@
         <item name="android:textSize">16dp</item>
         <item name="android:textColor">@color/black_99</item>
     </style>
-
+    <style name="style_textcolor_top_bar_background">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@color/top_bar_background</item>
+    </style>
     <style name="style_textcolor_top_bar">
         <item name="android:textSize">18dp</item>
         <item name="android:textColor">@color/top_bar_background</item>
